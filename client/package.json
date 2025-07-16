@@ -25,6 +25,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "tailwindcss": "^4",
+    "tailwindcss-debug-screens": "^3.0.1",
     "typescript": "^5"
   }
 }

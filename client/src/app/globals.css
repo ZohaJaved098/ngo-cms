@@ -5,8 +5,8 @@ html {
   max-width: 2000px;
   overflow-x: hidden;
 }
+@plugin "tailwindcss-debug-screens";
 /* Designs to follow 
-
 gap in between element would be gap-5 horizontally .
 main color are white and blue-500 and gray 
 border is gray-600 and b-2
