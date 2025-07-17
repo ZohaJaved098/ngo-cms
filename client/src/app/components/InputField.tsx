@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 // import { MdOutlineEmail } from "react-icons/md";
 type InputFieldProps = {
-  label?: string;
-  type?: string;
+  label: string;
+  type: string;
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -53,15 +53,9 @@ export const InputField: React.FC<InputFieldProps> = ({
         {type === "password" && (
           <div className="absolute right-5 top-11 cursor-pointer">
             {showPassword ? (
-              <FaRegEyeSlash
-                // className=" dark:text-neutral-100"
-                onClick={() => setShowPassword(false)}
-              />
+              <FaRegEyeSlash onClick={() => setShowPassword(false)} />
             ) : (
-              <FaRegEye
-                // className="dark:text-neutral-300"
-                onClick={() => setShowPassword(true)}
-              />
+              <FaRegEye onClick={() => setShowPassword(true)} />
             )}
           </div>
         )}

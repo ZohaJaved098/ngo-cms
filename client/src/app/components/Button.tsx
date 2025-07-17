@@ -1,13 +1,13 @@
 import React from "react";
 type ButtonProps = {
   btnText: string;
-  primary: boolean;
-  secondary: boolean;
-  cancel: boolean;
+  primary?: boolean;
+  secondary?: boolean;
+  cancel?: boolean;
   type: "button" | "submit" | "reset";
   onClickFunction: () => void;
   className?: string;
-  loading: boolean;
+  loading?: boolean;
 };
 export const Button: React.FC<ButtonProps> = ({
   btnText,
