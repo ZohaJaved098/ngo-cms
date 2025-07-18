@@ -54,7 +54,11 @@ const loginUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.status(200).json({ message: `User successfully Logged in.`, token });
+    //save token to cookie
+    res
+      .cookie("access-token", token, { httpOnly: true })
+      .status(200)
+      .json({ message: `User successfully Logged in.`, token });
   } catch (error) {
     res.status(500).json({ message: `Error log in user ${error} ` });
   }
