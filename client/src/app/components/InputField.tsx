@@ -31,12 +31,12 @@ export const InputField: React.FC<InputFieldProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div
-      className={`flex flex-col justify-start items-start my-1 w-full relative rounded-lg  `}
+      className={`flex flex-col justify-start gap-3 items-start my-1 w-full  rounded-lg  `}
     >
       {label && <label htmlFor={name}>{label}</label>}
-      <div className="flex items-center gap-3 w-full">
+      <div className="flex items-center gap-3 w-full relative ">
         <input
-          className={`p-3 rounded-lg w-full outline-0 bg-white `}
+          className={`p-2 rounded-lg w-full outline-0 bg-white text-black  `}
           type={
             type === "password" ? (showPassword ? "text" : "password") : type
           }
@@ -51,16 +51,22 @@ export const InputField: React.FC<InputFieldProps> = ({
           accept={accept}
         />
         {type === "password" && (
-          <div className="absolute right-5 top-11 cursor-pointer">
+          <div className="absolute right-5 top-2.5 cursor-pointer text-black">
             {showPassword ? (
-              <FaRegEyeSlash onClick={() => setShowPassword(false)} />
+              <FaRegEyeSlash
+                className="w-5 h-5"
+                onClick={() => setShowPassword(false)}
+              />
             ) : (
-              <FaRegEye onClick={() => setShowPassword(true)} />
+              <FaRegEye
+                className="w-5 h-5"
+                onClick={() => setShowPassword(true)}
+              />
             )}
           </div>
         )}
       </div>
-      {error && <p className="text-red-500 animate-bounce ">{error}</p>}
+      {error && <p className="text-red-500  ">{error}</p>}
     </div>
   );
 };

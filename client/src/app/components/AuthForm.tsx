@@ -2,63 +2,93 @@
 import React, { useState } from "react";
 import Link from "next/link";
 // import { useRouter } from "next/navigation";
-import { validateForm } from "@/app/utils/formValidate";
+
 import { InputField } from "@/app/components/InputField";
+import { RadioInput } from "@/app/components/RadioInput";
 import { Button } from "@/app/components/Button";
+
+import { useDispatch } from "react-redux";
+import { loginSuccess, registerSuccess } from "@/app/redux/auth/authSlice";
+import { useRouter } from "next/navigation";
 
 type AuthFormProps = {
   login: boolean;
 };
 type FormErrors = {
-  userName?: string;
-  userEmail?: string;
-  userPassword?: string;
+  username?: string;
+  email?: string;
+  password?: string;
   confirmPassword?: string;
   role?: string;
+  existingUser?: string;
 };
 
 const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
   const [inputs, setInputs] = useState({
-    userName: "",
-    userEmail: "",
-    userPassword: "",
+    username: "",
+    email: "",
+    password: "",
     confirmPassword: "",
     role: "",
   });
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [errors, setErrors] = useState<FormErrors>({});
-
   const [loading, setLoading] = useState(false);
   //   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Input changed:", e.target.value);
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
-    console.log("Updated inputs:", inputs);
+    console.log("Input changed:", e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Validate the form inputs
-    const validationErrors = validateForm(inputs, login);
-    console.log("validationErrors", validationErrors);
-    setErrors(validationErrors);
 
-    // If there are validation errors, do not proceed with the form submission
-    if (Object.keys(validationErrors).length > 0) {
+    const authUrl = login
+      ? `${process.env.NEXT_PUBLIC_AUTH_API_URL}/login`
+      : `${process.env.NEXT_PUBLIC_AUTH_API_URL}/register`;
+
+    const res = await fetch(authUrl, {
+      method: "POST",
+      body: JSON.stringify(inputs),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setErrors(data.errors || {});
+      setLoading(false);
       return;
     }
-    // If there are no validation errors, proceed with the form submission
-    // handleEmailAuth({
-    //   auth,
-    //   inputs,
-    //   login,
-    //   navigate,
-    //   setErrors,
-    // });
 
-    console.log("Form submitted");
+    setErrors({});
+    setInputs({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      role: "",
+    });
+
+    if (login) {
+      dispatch(loginSuccess({ ...data.user, token: data.token }));
+
+      if (data.user.role === "admin" || data.user.role === "manager") {
+        router.push("/dashboard");
+      } else {
+        router.push("/");
+      }
+    } else {
+      dispatch(registerSuccess());
+      router.push("/auth/login");
+    }
+
     setLoading(false);
   };
 
@@ -69,26 +99,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
         id={login ? "login" : "register"}
         name={login ? "login" : "register"}
         onSubmit={handleSubmit}
-        className="flex flex-col gap-2 w-full h-full sm:h-screen md:w-1/2"
+        className="flex flex-col gap-2 w-full h-full"
       >
         {!login && (
           <InputField
             type={"text"}
             label={"Name"}
-            name={"userName"}
-            value={inputs.userName}
+            name={"username"}
+            value={inputs.username}
             onChange={handleChange}
             autoComplete={"on"}
-            error={errors.userName}
+            error={errors.username}
           />
         )}
         <InputField
           label={"Email"}
-          name={"userEmail"}
+          name={"email"}
           type={"email"}
-          value={inputs.userEmail}
+          value={inputs.email}
           onChange={handleChange}
-          error={errors.userEmail}
+          error={errors.email}
           autoComplete="off"
         />
         {login ? (
@@ -96,10 +126,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
             <InputField
               label="Password"
               type="password"
-              name="userPassword"
-              value={inputs.userPassword}
+              name="password"
+              value={inputs.password}
               onChange={handleChange}
-              error={errors.userPassword}
+              error={errors.password}
             />
             <div className="flex justify-end text-sm">
               <Link href="/" className="text-blue-400 underline">
@@ -112,10 +142,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
             <InputField
               label="Set New Password"
               type="password"
-              name="userPassword"
-              value={inputs.userPassword}
+              name="password"
+              value={inputs.password}
               onChange={handleChange}
-              error={errors.userPassword}
+              error={errors.password}
             />
             <InputField
               label="Confirm Password"
@@ -126,6 +156,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
               error={errors.confirmPassword}
             />
           </>
+        )}
+        {!login && (
+          <div>
+            <RadioInput
+              name="role"
+              value={inputs.role}
+              onChange={handleChange}
+              error={errors.role}
+              options={["admin", "manager", "user"]}
+            />
+          </div>
+        )}
+        {errors.existingUser && (
+          <p className="text-red-500  ">{errors.existingUser}</p>
         )}
         <div className="flex flex-col gap-3 items-start">
           <div className="flex justify-center items-center w-full gap-5">

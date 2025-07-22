@@ -29,7 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
         ${cancel && "bg-gray-500 text-white"}
         
         ${className}
-         focus:outline-0 p-5 rounded-lg text-center w-full
+         focus:outline-0 p-2 rounded-lg text-center w-full
       `}
       onClick={onClickFunction}
     >

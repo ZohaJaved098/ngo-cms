@@ -1,20 +1,37 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-// import {
-// FaHistory,
-//   FaUserCog,
-// } from "react-icons/fa";
-import { IoMdLogIn } from "react-icons/io";
+import { FaHistory, FaUserCog } from "react-icons/fa";
+import { IoMdLogIn, IoMdLogOut } from "react-icons/io";
 import { FaRegUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
+import { logout } from "@/app/redux/auth/authSlice";
+import { useRouter } from "next/navigation";
 
 const Avatar = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const dispatch = useDispatch();
+
+  const router = useRouter();
+
   const [avatarOpened, setAvatarOpened] = useState(false);
   const pathname = usePathname();
   useEffect(() => {
     setAvatarOpened(false);
   }, [pathname]);
+
+  //logout logic here
+  const handleLogout = async () => {
+    await fetch(`${process.env.NEXT_PUBLIC_AUTH_API_URL}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    dispatch(logout());
+    router.push("/auth/login");
+  };
+
   return (
     <div className="flex">
       {/* Avatar button */}
@@ -41,36 +58,39 @@ const Avatar = () => {
       >
         <ul className="flex flex-col gap-5  mx-auto">
           <li className="">
-            <p className="text-md font-semibold">Guest</p>
+            <p className="text-md font-semibold">{user.username}</p>
           </li>
           <hr />
-          <li>
-            <Link href="/auth/login" className="flex items-center gap-2">
-              <IoMdLogIn />
-              <p className="text-sm">Login</p>
-            </Link>
-          </li>
-
-          {/* Show only when logged in */}
-          {/* <li>
-            <Link href="/" className="flex items-center gap-2">
-              <FaHistory />
-              <p className="text-sm">My Donation History</p>
-            </Link>
-          </li>
-          <li>
-            <Link href="/" className="flex items-center gap-2">
-              <FaUserCog />
-              <p className="text-sm">My Profile</p>
-            </Link>
-          </li>
-          <hr />
-          <li>
-            <a className="flex items-center gap-2">
-              <IoMdLogOut />
-              <p className="text-sm">Logout</p>
-            </a>
-          </li> */}
+          {user.username === "Guest" ? (
+            <li>
+              <Link href="/auth/login" className="flex items-center gap-2">
+                <IoMdLogIn />
+                <p className="text-sm">Login</p>
+              </Link>
+            </li>
+          ) : (
+            <>
+              <li>
+                <Link href="/" className="flex items-center gap-2">
+                  <FaHistory />
+                  <p className="text-sm">My Donation History</p>
+                </Link>
+              </li>
+              <li>
+                <Link href="/" className="flex items-center gap-2">
+                  <FaUserCog />
+                  <p className="text-sm">My Profile</p>
+                </Link>
+              </li>
+              <hr />
+              <li onClick={handleLogout}>
+                <span className="flex items-center gap-2">
+                  <IoMdLogOut />
+                  <p className="text-sm">Logout</p>
+                </span>
+              </li>
+            </>
+          )}
         </ul>
       </div>
     </div>

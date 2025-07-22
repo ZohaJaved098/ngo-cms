@@ -3,14 +3,30 @@ const express = require("express");
 const dbConnect = require("./config/dbConnection");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 // Connect to the database
 dbConnect();
 
 //create express app
 const app = express();
 app.use(express.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(cookieParser());
+
+//define port
 const PORT = process.env.PORT || 5000;
+
+//page of server
+app.get("/", (req, res) => {
+  res.write("Backend server is running");
+  res.end();
+});
 
 // routes
 app.use("/api/auth", authRoutes);

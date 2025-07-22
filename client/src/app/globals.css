@@ -1,9 +1,9 @@
 @import "tailwindcss";
-body,
-html {
-  min-width: 310px;
+body {
+  min-width: 320px;
   max-width: 2000px;
   overflow-x: hidden;
+  color: black;
 }
 @plugin "tailwindcss-debug-screens";
 /* Designs to follow 
@@ -13,5 +13,10 @@ border is gray-600 and b-2
 */
 .auth_gradient {
   /* gradient here */
-  color: brown;
+  background: linear-gradient(rgb(0, 96, 174), rgb(4, 37, 68));
+  box-shadow: 0 12px 15px 0 #00000040;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
 }

@@ -1,3 +1,4 @@
+const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
@@ -15,6 +16,9 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+    },
+    confirmPassword: {
+      type: String,
     },
     //Super Admin=>admin, Editor=>manager and Viewer=>user
     role: {
