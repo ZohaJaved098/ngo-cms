@@ -121,16 +121,17 @@ const loginUser = async (req, res) => {
     //upon success generate token
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      process.env.JWT_SECRET
+      // { expiresIn: "3h" }
     );
 
     //save token to cookie
-    res;
     res
       .cookie("access-token", token, {
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
+        // maxAge: 24 * 60 * 60 * 1000, // 1 day in ms
+        secure: false,
+        sameSite: "lax",
       })
       .status(200)
       .json({ message: `User successfully Logged in.`, token, user: user });
@@ -150,29 +151,29 @@ const logoutUser = (req, res) => {
   }
 };
 
-const getMe = async (req, res) => {
-  try {
-    const token = req.cookies["access-token"];
-    if (!token) {
-      return res.status(401).json({ message: "No token provided" });
-    }
+// const getMe = async (req, res) => {
+//   try {
+//     const token = req.cookies["access-token"];
+//     if (!token) {
+//       return res.status(401).json({ message: "No token provided" });
+//     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("-password");
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const user = await User.findById(decoded.id).select("-password");
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
 
-    res.status(200).json({ user });
-  } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
-  }
-};
+//     res.status(200).json({ user });
+//   } catch (err) {
+//     res.status(401).json({ message: "Invalid token", err });
+//   }
+// };
 
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
-  getMe,
+  // getMe,
 };

@@ -1,11 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+
 import { FaHistory, FaUserCog } from "react-icons/fa";
 import { IoMdLogIn, IoMdLogOut } from "react-icons/io";
 import { FaRegUserCircle } from "react-icons/fa";
+
 import { usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
+
 import { RootState } from "@/app/redux/store";
 import { logout } from "@/app/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
@@ -62,7 +65,7 @@ const Avatar = () => {
           </li>
           <hr />
           {user.username === "Guest" ? (
-            <li>
+            <li className="cursor-pointer">
               <Link href="/auth/login" className="flex items-center gap-2">
                 <IoMdLogIn />
                 <p className="text-sm">Login</p>
@@ -70,20 +73,20 @@ const Avatar = () => {
             </li>
           ) : (
             <>
-              <li>
+              <li className="cursor-pointer">
                 <Link href="/" className="flex items-center gap-2">
                   <FaHistory />
                   <p className="text-sm">My Donation History</p>
                 </Link>
               </li>
-              <li>
+              <li className="cursor-pointer">
                 <Link href="/" className="flex items-center gap-2">
                   <FaUserCog />
                   <p className="text-sm">My Profile</p>
                 </Link>
               </li>
               <hr />
-              <li onClick={handleLogout}>
+              <li className="cursor-pointer" onClick={handleLogout}>
                 <span className="flex items-center gap-2">
                   <IoMdLogOut />
                   <p className="text-sm">Logout</p>

@@ -3,6 +3,7 @@ type ButtonProps = {
   btnText: string;
   primary?: boolean;
   secondary?: boolean;
+  tertiary?: boolean;
   cancel?: boolean;
   type: "button" | "submit" | "reset";
   onClickFunction: () => void;
@@ -13,6 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   btnText,
   primary,
   secondary,
+  tertiary,
   cancel,
   type,
   onClickFunction,
@@ -25,7 +27,8 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={loading}
       className={`
         ${primary && "bg-red-700 font-black text-white "}
-        ${secondary && "bg-white border-blue-400 border-4 "}
+        ${secondary && "bg-blue-700 text-white "}
+        ${tertiary && "bg-green-700 text-white "}
         ${cancel && "bg-gray-500 text-white"}
         
         ${className}

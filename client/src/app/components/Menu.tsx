@@ -1,13 +1,19 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
+
 import { FaChevronDown, FaBloggerB } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { MdOutlineEventNote } from "react-icons/md";
 import { GrGallery } from "react-icons/gr";
-import SubMenu from "./SubMenu";
+import { TfiDashboard } from "react-icons/tfi";
 
+import SubMenu from "./SubMenu";
 const Menu = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
   const [menuOpened, setMenuOpened] = useState(false);
   const [subMenu, setSubMenu] = useState<"blog" | "event" | null>(null);
   useEffect(() => {
@@ -108,6 +114,19 @@ const Menu = () => {
               </p>
             </Link>
           </li>
+          {(user.role === "admin" || user.role === "manager") && (
+            <li className="group">
+              <Link
+                href="/dashboard"
+                className="flex sm:flex-col sm:gap-0 gap-3 items-center "
+              >
+                <TfiDashboard className=" w-5 h-5 group-hover:w-7 group-hover:h-7 transition-all" />
+                <p className="text-sm font-light group-hover:font-semibold">
+                  Dashboard
+                </p>
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </div>

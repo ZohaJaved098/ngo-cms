@@ -1,11 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import Logo from "@/app/assets/Logo.png";
 import { LiaDonateSolid } from "react-icons/lia";
 
 import Menu from "./Menu";
 import Avatar from "./Avatar";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+  const pathname = usePathname();
+  const isDashboard = pathname.startsWith("/dashboard");
+  if (isDashboard) return null;
+
   return (
     <div className="fixed top-0 right-0 z-20 min-h-32 max-h-full transition-all w-screen flex flex-col bg-white items-center shadow-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center min-h-5 h-full w-full py-2 px-4 md:px-10 bg-blue-500 border-b-2 border-b-gray-600">

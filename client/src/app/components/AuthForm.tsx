@@ -54,6 +54,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
     const res = await fetch(authUrl, {
       method: "POST",
       body: JSON.stringify(inputs),
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
