@@ -1,20 +1,43 @@
 "use client";
 import { Button } from "@/app/components/Button";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+
+type Page = {
+  _id: string;
+  title: string;
+  slug: string;
+  content: string;
+  status: string;
+};
 
 const Pages = () => {
+  const [pages, setPages] = useState<Page[]>([]);
+  const router = useRouter();
+  useEffect(() => {
+    const fetchAllPages = async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_PAGES_API_URL}/all-pages`
+      );
+      const data = await res.json();
+
+      setPages(data.pages);
+    };
+    fetchAllPages();
+  }, []);
   const onNewClick = () => {
-    console.log("New button is Clicked");
+    router.push(`pages/create`);
   };
-  const onViewClick = () => {
-    console.log("View button is Clicked");
+  const onViewClick = (id: string) => {
+    router.push(`pages/${id}`);
   };
-  const onEditClick = () => {
-    console.log("Edit button is Clicked");
+  const onEditClick = (id: string) => {
+    router.push(`pages/edit/${id}`);
   };
   const onPublishToggle = () => {
     console.log("Publish button is Clicked");
   };
+
   return (
     <div className="flex flex-col gap-10 h-full">
       <div className="flex justify-between items-center">
@@ -41,41 +64,45 @@ const Pages = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td className="border border-gray-400 px-4 py-2">About Us</td>
-            <td className="border border-gray-400 px-4 py-2">/about-us</td>
-            <td className="border border-gray-400 px-4 py-2">/</td>
-            <td className="border border-gray-400 px-4 py-2">
-              About us: we are great!
-            </td>
-            <td className="border border-gray-400 px-4 py-2 text-red-500">
-              Unpublished
-            </td>
-            <td className="border border-gray-400 px-4 py-2">
-              <Button
-                type="button"
-                btnText="View"
-                secondary={true}
-                onClickFunction={onViewClick}
-              />
-            </td>
-            <td className="border border-gray-400 px-4 py-2">
-              <Button
-                type="button"
-                btnText="Edit"
-                tertiary={true}
-                onClickFunction={onEditClick}
-              />
-            </td>
-            <td className="border border-gray-400 px-4 py-2">
-              <Button
-                type="button"
-                btnText="Publish"
-                primary={true}
-                onClickFunction={onPublishToggle}
-              />
-            </td>
-          </tr>
+          {pages.map((page) => (
+            <tr key={page._id}>
+              <td className="border border-gray-400 px-4 py-2 capitalize ">
+                {page.title}
+              </td>
+              <td className="border border-gray-400 px-4 py-2">{page.slug}</td>
+              <td className="border border-gray-400 px-4 py-2">/</td>
+              <td className="border border-gray-400 px-4 py-2">
+                {page.content}
+              </td>
+              <td className="border border-gray-400 px-4 py-2 text-red-500 capitalize ">
+                {page.status}
+              </td>
+              <td className="border border-gray-400 px-4 py-2">
+                <Button
+                  type="button"
+                  btnText="View"
+                  secondary={true}
+                  onClickFunction={() => onViewClick(page._id)}
+                />
+              </td>
+              <td className="border border-gray-400 px-4 py-2">
+                <Button
+                  type="button"
+                  btnText="Edit"
+                  tertiary={true}
+                  onClickFunction={() => onEditClick(page._id)}
+                />
+              </td>
+              <td className="border border-gray-400 px-4 py-2">
+                <Button
+                  type="button"
+                  btnText="Publish"
+                  primary={true}
+                  onClickFunction={onPublishToggle}
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

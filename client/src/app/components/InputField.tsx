@@ -1,5 +1,8 @@
+"use client";
+import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+
 // import { MdOutlineEmail } from "react-icons/md";
 type InputFieldProps = {
   label: string;
@@ -29,6 +32,9 @@ export const InputField: React.FC<InputFieldProps> = ({
   accept,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const pathname = usePathname();
+  const isDashboard = pathname.startsWith("/dashboard");
+
   return (
     <div
       className={`flex flex-col justify-start gap-3 items-start my-1 w-full  rounded-lg  `}
@@ -36,7 +42,9 @@ export const InputField: React.FC<InputFieldProps> = ({
       {label && <label htmlFor={name}>{label}</label>}
       <div className="flex items-center gap-3 w-full relative ">
         <input
-          className={`p-2 rounded-lg w-full outline-0 bg-white text-black  `}
+          className={`p-2 rounded-lg w-full outline-0 text-black ${
+            isDashboard ? "bg-gray-300" : "bg-white  "
+          }`}
           type={
             type === "password" ? (showPassword ? "text" : "password") : type
           }

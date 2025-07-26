@@ -14,7 +14,7 @@ type ActiveLinkProps = {
 const ActiveLink: React.FC<ActiveLinkProps> = ({
   href,
   children,
-  //   exact = false,
+  // exact = false,
   activeClassName = "bg-blue-500 font-semibold",
   className = "",
 }) => {
