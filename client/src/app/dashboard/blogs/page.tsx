@@ -1,44 +1,78 @@
 "use client";
 
-// import { useSelector } from "react-redux";
-
-// import { RootState } from "@/app/redux/store";
 import { Button } from "@/app/components/Button";
-// import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+type Blogs = {
+  _id: string;
+  name: string;
+  typeOfBlog: string;
+  content: string;
+  author: string[];
+  tags: string[];
+  publishedDate: string | null;
+  isPublished: boolean;
+};
+
 const Blogs = () => {
-  // const user = useSelector((state: RootState) => state.auth.user); //current user
+  const [blogs, setBlogs] = useState<Blogs[]>([]);
+  const router = useRouter();
+  const fetchAllBlogs = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BLOGS_API_URL}/all-blogs`
+    );
+    const data = await res.json();
+
+    setBlogs(data.blogs);
+  };
+  useEffect(() => {
+    fetchAllBlogs();
+  }, []);
+
   const onNewClick = () => {
-    console.log("New button is Clicked");
+    router.push(`blogs/create`);
   };
-  const onViewClick = () => {
-    {
-      /* view blog detail */
-    }
-    console.log("View button is Clicked");
+  const onViewClick = (id: string) => {
+    router.push(`blogs/${id}`);
   };
-  const onEditClick = () => {
-    // edit blog
-    console.log("Edit button is Clicked");
+  const onEditClick = (id: string) => {
+    router.push(`blogs/edit/${id}`);
   };
-  const onPublish = () => {
-    //delete blog
-    console.log("Publish button is Clicked");
+  const handlePublishToggle = async (blog: Blogs) => {
+    const updatedStatus = !blog.isPublished;
+
+    const payload = {
+      ...blog,
+      isPublished: updatedStatus,
+    };
+
+    await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${blog._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+      credentials: "include",
+    });
+
+    fetchAllBlogs();
   };
-  const onDelete = () => {
-    //delete blog
-    console.log("Delete button is Clicked");
+
+  const onDelete = async (id: string) => {
+    await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    fetchAllBlogs();
   };
-  //   useEffect(() => {
-  // to get all Blogs from db
-  //     const Blogs = await fetch;
-  //   });
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5 ">
         <h3 className="text-xl font-semibold">All Blogs</h3>
         <Button
           type="button"
-          btnText="Add new Manager"
+          btnText="Add new Blog"
           secondary={true}
           onClickFunction={onNewClick}
           className="max-w-40"
@@ -81,68 +115,78 @@ const Blogs = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td className="border border-gray-400 px-4 py-2 max-w-28 capitalize ">
-                My blog
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28 capitalize ">
-                tech
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28 ">
-                actual review of blog content
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28 ">
-                Zoha Javed
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-40 ">
-                <ul className="flex flex-wrap gap-2">
-                  <li className="bg-cyan-600 text-white rounded-2xl py-2 px-3 ">
-                    Tag1
-                  </li>
-                  <li className="bg-cyan-600 text-white rounded-2xl py-2 px-3 ">
-                    Tag2
-                  </li>
-                  <li className="bg-cyan-600 text-white rounded-2xl py-2 px-3 ">
-                    Tag3
-                  </li>
-                </ul>
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28 ">
-                25th Jul 25
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28">
-                <Button
-                  type="button"
-                  btnText="View"
-                  secondary={true}
-                  onClickFunction={onViewClick}
-                />
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28">
-                <Button
-                  type="button"
-                  btnText="Edit"
-                  tertiary={true}
-                  onClickFunction={onEditClick}
-                />
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28">
-                <Button
-                  type="button"
-                  btnText="Publish"
-                  primary={true}
-                  onClickFunction={onPublish}
-                />
-              </td>
-              <td className="border border-gray-400 px-4 py-2 max-w-28">
-                <Button
-                  type="button"
-                  btnText="Delete"
-                  primary={true}
-                  onClickFunction={onDelete}
-                />
-              </td>
-            </tr>
+            {blogs.map((blog) => (
+              <tr key={blog._id}>
+                <td className="border border-gray-400 px-4 py-2 max-w-28 capitalize ">
+                  {blog.name}
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28 capitalize ">
+                  {blog.typeOfBlog}
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28 ">
+                  <p
+                    className="truncate max-w-32 overflow-hidden whitespace-nowrap"
+                    dangerouslySetInnerHTML={{ __html: blog.content }}
+                  ></p>
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28 ">
+                  <ul>
+                    {blog.author.map((a, i) => (
+                      <li key={i}>{a};</li>
+                    ))}
+                  </ul>
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-40 ">
+                  <ul className="flex flex-wrap gap-2">
+                    {blog.tags.map((tag, i) => (
+                      <li
+                        key={i}
+                        className="bg-cyan-600 text-white rounded-2xl py-2 px-3"
+                      >
+                        {tag}
+                      </li>
+                    ))}
+                  </ul>
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28 ">
+                  {blog.publishedDate
+                    ? new Date(blog.publishedDate).toLocaleDateString()
+                    : "—"}
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28">
+                  <Button
+                    type="button"
+                    btnText="View"
+                    secondary={true}
+                    onClickFunction={() => onViewClick(blog._id)}
+                  />
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28">
+                  <Button
+                    type="button"
+                    btnText="Edit"
+                    tertiary={true}
+                    onClickFunction={() => onEditClick(blog._id)}
+                  />
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28">
+                  <Button
+                    type="button"
+                    btnText={blog.isPublished ? "Unpublish" : "Publish"}
+                    primary={true}
+                    onClickFunction={() => handlePublishToggle(blog)}
+                  />
+                </td>
+                <td className="border border-gray-400 px-4 py-2 max-w-28">
+                  <Button
+                    type="button"
+                    btnText="Delete"
+                    primary={true}
+                    onClickFunction={() => onDelete(blog._id)}
+                  />
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

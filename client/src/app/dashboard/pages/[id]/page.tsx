@@ -24,7 +24,6 @@ const ViewPage = () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`);
       const data = await res.json();
       setPage(data.page);
-      //   console.log("fecthed data ", data.page);
     };
     fetchAPage();
   }, [id]);
@@ -66,9 +65,8 @@ const ViewPage = () => {
           onClickFunction={onPublishToggle}
         />
       </div>
-      <div>
-        <p>{page.content}</p>
-      </div>
+      <div dangerouslySetInnerHTML={{ __html: page.content }} />
+
       <div className="flex items-center justify-between w-full">
         <Button
           type="button"

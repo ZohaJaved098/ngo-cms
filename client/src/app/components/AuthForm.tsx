@@ -40,7 +40,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
-    console.log("Input changed:", e.target.value);
+    // console.log("Input changed:", e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -10,7 +10,7 @@ const getPages = async (req, res) => {
   }
 };
 const createPage = async (req, res) => {
-  const { title, slug, content, status } = req.body;
+  const { title, slug, content, isPublished } = req.body;
   const errors = {};
   try {
     if (!title) {
@@ -28,9 +28,9 @@ const createPage = async (req, res) => {
       errors.content = "Content is required";
     }
 
-    if (!status) {
-      errors.status = "Status is required";
-    }
+    // if (!isPublished) {
+    //   errors.isPublished = "Status is required";
+    // }
 
     if (Object.keys(errors).length > 0) {
       return res
@@ -42,7 +42,7 @@ const createPage = async (req, res) => {
       title,
       slug,
       content,
-      status,
+      isPublished,
     });
     await newPage.save();
     res.status(201).json({
@@ -78,7 +78,7 @@ const updatePage = async (req, res) => {
   const errors = {};
   try {
     const pageId = req.params.id;
-    const { title, slug, content, status } = req.body;
+    const { title, slug, content, isPublished } = req.body;
     const page = await Page.findById(pageId);
     if (!page) return res.status(404).json({ message: `Page not found!` });
 
@@ -89,7 +89,7 @@ const updatePage = async (req, res) => {
 
     await Page.findByIdAndUpdate(
       pageId,
-      { title, slug, content, status },
+      { title, slug, content, isPublished },
       { new: true }
     );
     res.status(200).json({ message: `page updated` });
@@ -108,5 +108,6 @@ const deletePage = async (req, res) => {
     res.status(500).json({ message: `Error deleting page`, error });
   }
 };
+// const getPageBySlug
 
 module.exports = { getPages, createPage, viewPage, updatePage, deletePage };

@@ -39,7 +39,11 @@ export const InputField: React.FC<InputFieldProps> = ({
     <div
       className={`flex flex-col justify-start gap-3 items-start my-1 w-full  rounded-lg  `}
     >
-      {label && <label htmlFor={name}>{label}</label>}
+      {label && (
+        <label className=" capitalize" htmlFor={name}>
+          {label}
+        </label>
+      )}
       <div className="flex items-center gap-3 w-full relative ">
         <input
           className={`p-2 rounded-lg w-full outline-0 text-black ${

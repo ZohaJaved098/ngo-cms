@@ -25,6 +25,7 @@ const Pages = () => {
     };
     fetchAllPages();
   }, []);
+
   const onNewClick = () => {
     router.push(`pages/create`);
   };
@@ -72,7 +73,10 @@ const Pages = () => {
               <td className="border border-gray-400 px-4 py-2">{page.slug}</td>
               <td className="border border-gray-400 px-4 py-2">/</td>
               <td className="border border-gray-400 px-4 py-2">
-                {page.content}
+                <p
+                  className="truncate max-w-32 overflow-hidden whitespace-nowrap"
+                  dangerouslySetInnerHTML={{ __html: page.content }}
+                ></p>
               </td>
               <td className="border border-gray-400 px-4 py-2 text-red-500 capitalize ">
                 {page.status}

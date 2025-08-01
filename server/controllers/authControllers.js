@@ -6,7 +6,6 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,20}$/;
 const emailRegex = /\S+@\S+\.\S+/;
 
 // Register a new user
-
 const registerUser = async (req, res) => {
   try {
     const { username, email, password, confirmPassword, role } = req.body;

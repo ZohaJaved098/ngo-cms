@@ -16,13 +16,12 @@ const PagesSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
-    status: {
-      type: String,
+
+    isPublished: {
+      type: Boolean,
       required: true,
-      enum: ["published", "unpublished", "inProgress"],
-      unique: true,
     },
   },
   {
