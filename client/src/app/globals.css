@@ -6,6 +6,7 @@ body {
   color: black;
 }
 @plugin "tailwindcss-debug-screens";
+/* @plugin "@tailwindcss/typography"; */
 /* Designs to follow 
 gap in between element would be gap-5 horizontally .
 main color are white and blue-500 and gray 

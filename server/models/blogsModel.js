@@ -15,6 +15,10 @@ const BlogsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    headerImage: {
+      type: String,
+      required: false,
+    },
     author: [
       {
         type: String,
