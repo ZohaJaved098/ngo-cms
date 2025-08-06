@@ -57,6 +57,7 @@ const CreateBlog = () => {
     });
 
     const data = await res.json();
+    console.log("data is ", data);
 
     if (!res.ok) {
       setErrors(data.errors || {});
@@ -91,7 +92,7 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="w-4/5 my-10 m-auto h-full flex flex-col gap-5">
+    <div className="w-4/5 my-10 m-auto flex flex-col gap-5">
       <div className="flex items-start justify-between">
         <h1 className="font-bold text-3xl">Create a Blog</h1>
       </div>

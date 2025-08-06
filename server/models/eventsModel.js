@@ -1,5 +1,31 @@
 const mongoose = require("mongoose");
 
+const RegisteredUserSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    occupation: {
+      type: String,
+      required: true,
+    },
+    reason: {
+      type: String,
+      required: true,
+    },
+    registeredAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: false }
+);
+
 const EventsSchema = new mongoose.Schema(
   {
     name: {
@@ -14,7 +40,6 @@ const EventsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    //array of guest speakers could be more than 1 guests
     guestSpeakers: [
       {
         type: String,
@@ -29,14 +54,18 @@ const EventsSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    //registered accounts number and and their details
-    registered: {
-      type: String,
+    eventDate: {
+      type: Date,
+      required: true,
     },
     status: {
       type: String,
       enum: ["completed", "ongoing", "cancelled"],
       required: true,
+    },
+    registeredUsers: [RegisteredUserSchema],
+    coverImage: {
+      type: String,
     },
   },
   {
@@ -44,4 +73,4 @@ const EventsSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Events", EventsSchema);
+module.exports = mongoose.model("Event", EventsSchema);

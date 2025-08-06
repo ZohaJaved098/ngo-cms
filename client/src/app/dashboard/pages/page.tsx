@@ -67,21 +67,23 @@ const Pages = () => {
         <tbody>
           {pages.map((page) => (
             <tr key={page._id}>
-              <td className="border border-gray-400 px-4 py-2 capitalize ">
+              <td className="border border-gray-400 px-4 py-2 max-w-28 capitalize ">
                 {page.title}
               </td>
-              <td className="border border-gray-400 px-4 py-2">{page.slug}</td>
-              <td className="border border-gray-400 px-4 py-2">/</td>
-              <td className="border border-gray-400 px-4 py-2">
+              <td className="border border-gray-400 px-4 py-2 max-w-28">
+                {page.slug}
+              </td>
+              <td className="border border-gray-400 px-4 py-2 max-w-28">/</td>
+              <td className="border border-gray-400 px-4 py-2 max-w-28">
                 <p
-                  className="truncate max-w-32 overflow-hidden whitespace-nowrap"
+                  className="line-clamp-2 max-w-48"
                   dangerouslySetInnerHTML={{ __html: page.content }}
                 ></p>
               </td>
-              <td className="border border-gray-400 px-4 py-2 text-red-500 capitalize ">
+              <td className="border border-gray-400 px-4 py-2 max-w-28 text-red-500 capitalize ">
                 {page.status}
               </td>
-              <td className="border border-gray-400 px-4 py-2">
+              <td className="border border-gray-400 px-4 py-2 max-w-28">
                 <Button
                   type="button"
                   btnText="View"
@@ -89,7 +91,7 @@ const Pages = () => {
                   onClickFunction={() => onViewClick(page._id)}
                 />
               </td>
-              <td className="border border-gray-400 px-4 py-2">
+              <td className="border border-gray-400 px-4 py-2 max-w-28">
                 <Button
                   type="button"
                   btnText="Edit"
@@ -97,7 +99,7 @@ const Pages = () => {
                   onClickFunction={() => onEditClick(page._id)}
                 />
               </td>
-              <td className="border border-gray-400 px-4 py-2">
+              <td className="border border-gray-400 px-4 py-2 max-w-28">
                 <Button
                   type="button"
                   btnText="Publish"

@@ -6,41 +6,52 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const CkEditor = ({ editorData, setEditorData, handleOnUpdate }) => {
   return (
-    <CKEditor
-      editor={ClassicEditor}
-      data={editorData}
-      config={{
-        toolbar: [
-          "undo",
-          "redo",
-          "|",
-          "heading",
-          "|",
-          "bold",
-          "italic",
-          "link",
-          "|",
-          "bulletedList",
-          "numberedList",
-          "|",
-          "insertTable",
-          "imageUpload",
-        ],
-        image: {
+    <div className="w-full min-h-[300px] overflow-y-auto overflow-x-hidden">
+      <CKEditor
+        editor={ClassicEditor}
+        data={editorData}
+        config={{
           toolbar: [
-            "imageTextAlternative",
-            "imageStyle:full",
-            "imageStyle:side",
+            "undo",
+            "redo",
+            "|",
+            "heading",
+            "fontSize",
+            "|",
+            "bold",
+            "italic",
+            "link",
+            "blockQuote",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "insertTable",
+            "imageUpload",
           ],
-        },
-        extraPlugins: [MyCustomUploadAdapterPlugin],
-      }}
-      onChange={(_event, editor) => {
-        const data = editor.getData();
-        setEditorData(data);
-        handleOnUpdate(data, "description");
-      }}
-    />
+          fontSize: {
+            options: ["tiny", "small", "default", "big", "huge"],
+            supportAllValues: true,
+          },
+          image: {
+            toolbar: [
+              "imageTextAlternative",
+              "imageStyle:full",
+              "imageStyle:side",
+            ],
+          },
+          extraPlugins: [MyCustomUploadAdapterPlugin],
+          contentsCss: [
+            "body { word-wrap: break-word; overflow-wrap: break-word; }",
+          ],
+        }}
+        onChange={(_event, editor) => {
+          const data = editor.getData();
+          setEditorData(data);
+          handleOnUpdate(data, "description");
+        }}
+      />
+    </div>
   );
 };
 

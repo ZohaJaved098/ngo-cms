@@ -1,15 +1,16 @@
 const Event = require("../models/eventsModel");
 
-//all events
+// Get all events
 const getEvents = async (req, res) => {
   try {
     const events = await Event.find();
-    res.status(200).json({ message: `All Events are`, events });
+    res.status(200).json({ message: "All Events fetched", events });
   } catch (error) {
     res.status(500).json({ message: "Error getting all Events", error });
   }
 };
-//create event
+
+// Create event
 const createEvent = async (req, res) => {
   const {
     name,
@@ -18,39 +19,28 @@ const createEvent = async (req, res) => {
     guestSpeakers,
     typeOfVenue,
     location,
-    registered,
+    eventDate,
     status,
+    coverImage, // optional
   } = req.body;
+
   const errors = {};
+
+  if (!name) errors.name = "Name is required";
+  if (!typeOfEvent) errors.typeOfEvent = "Event type is required";
+  if (!description) errors.description = "Description is required";
+  if (!Array.isArray(guestSpeakers) || guestSpeakers.length === 0)
+    errors.guestSpeakers = "At least one guest speaker is required";
+  if (!typeOfVenue) errors.typeOfVenue = "Venue Type is required";
+  if (!location) errors.location = "Location is required";
+  if (!eventDate) errors.eventDate = "Event date & time is required";
+  if (!status) errors.status = "Event status is required";
+
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({ message: "Error Creating Event", errors });
+  }
+
   try {
-    if (!name) {
-      errors.name = "Name is required";
-    }
-    if (!typeOfEvent) {
-      errors.typeOfEvent = "Event type is required";
-    }
-
-    if (!description) {
-      errors.description = "Description is required";
-    }
-
-    if (!Array.isArray(guestSpeakers) || guestSpeakers.length === 0) {
-      errors.guestSpeakers = "Guest Speakers are required";
-    }
-
-    if (!typeOfVenue) {
-      errors.typeOfVenue = "Vanue Type is required";
-    }
-    if (!location) {
-      errors.location = "Location is required";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      return res
-        .status(400)
-        .json({ message: `Error Creating Events!`, errors: errors });
-    }
-    //if no errors proceed
     const newEvent = new Event({
       name,
       typeOfEvent,
@@ -58,12 +48,16 @@ const createEvent = async (req, res) => {
       guestSpeakers,
       typeOfVenue,
       location,
-      registered,
+      eventDate,
       status,
+      coverImage,
+      registeredUsers: [],
     });
+
     await newEvent.save();
+
     res.status(201).json({
-      message: `New Event created successfully with title: ${newEvent.name} `,
+      message: `Event "${newEvent.name}" created successfully`,
       newEvent,
     });
   } catch (error) {
@@ -73,42 +67,43 @@ const createEvent = async (req, res) => {
     });
   }
 };
+
+// View single event
 const viewEvent = async (req, res) => {
   const eventId = req.params.id;
   try {
     const event = await Event.findById(eventId);
-
-    if (!event) return res.status(404).json({ message: `Event not found!` });
+    if (!event) return res.status(404).json({ message: "Event not found!" });
 
     res.status(200).json({
-      message: "Event info",
+      message: "Event info fetched",
       event,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: `Error fetching one Event of id ${eventId}`, error });
+    res.status(500).json({ message: `Error fetching event`, error });
   }
 };
 
+// Update event
 const updateEvent = async (req, res) => {
-  const errors = {};
-  try {
-    const eventId = req.params.id;
-    const {
-      name,
-      typeOfEvent,
-      description,
-      guestSpeakers,
-      typeOfVenue,
-      location,
-      registered,
-      status,
-    } = req.body;
-    const event = await Event.findById(eventId);
-    if (!event) return res.status(404).json({ message: `Event not found!` });
+  const eventId = req.params.id;
+  const {
+    name,
+    typeOfEvent,
+    description,
+    guestSpeakers,
+    typeOfVenue,
+    location,
+    eventDate,
+    status,
+    coverImage,
+  } = req.body;
 
-    await Event.findByIdAndUpdate(
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found!" });
+
+    const updated = await Event.findByIdAndUpdate(
       eventId,
       {
         name,
@@ -117,28 +112,54 @@ const updateEvent = async (req, res) => {
         guestSpeakers,
         typeOfVenue,
         location,
-        registered,
+        eventDate,
         status,
+        coverImage,
       },
       { new: true }
     );
-    res.status(200).json({ message: `Event updated` });
+
+    res.status(200).json({ message: "Event updated", updated });
   } catch (error) {
-    res.status(500).json({ message: `error Updating Event ` });
+    res.status(500).json({ message: "Error updating Event", error });
   }
 };
-const deleteEvent = async (req, res) => {
-  try {
-    const eventId = req.params.id;
-    const event = await Event.findById(eventId);
 
-    if (!event) return res.status(404).json({ message: `Event not found!` });
+// Delete event
+const deleteEvent = async (req, res) => {
+  const eventId = req.params.id;
+  try {
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: "Event not found!" });
 
     await Event.findByIdAndDelete(eventId);
 
-    res.status(200).json({ message: `Event Deleted` });
+    res.status(200).json({ message: "Event deleted" });
   } catch (error) {
-    res.status(500).json({ message: `Error deleting Event`, error });
+    res.status(500).json({ message: "Error deleting Event", error });
+  }
+};
+// Register a user to an event
+const registerUserToEvent = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, occupation, reason } = req.body;
+
+  if (!name || !email || !occupation || !reason) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    event.registeredUsers.push({ name, email, occupation, reason });
+    await event.save();
+
+    res.status(200).json({ message: "Successfully registered for the event!" });
+  } catch (error) {
+    res.status(500).json({ message: "Error registering user", error });
   }
 };
 
@@ -148,4 +169,5 @@ module.exports = {
   viewEvent,
   updateEvent,
   deleteEvent,
+  registerUserToEvent,
 };

@@ -21,3 +21,7 @@ border is gray-600 and b-2
 ::-webkit-scrollbar {
   width: 2px;
 }
+
+.footer-gradient {
+  background: linear-gradient(to right, #0060ae, #042544);
+}

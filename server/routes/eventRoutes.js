@@ -4,6 +4,7 @@ const {
   viewEvent,
   updateEvent,
   deleteEvent,
+  registerUserToEvent,
 } = require("../controllers/eventControllers");
 const authorizedRoles = require("../middlewares/roleMiddleware");
 const verifyToken = require("../middlewares/authMiddleware");
@@ -30,4 +31,6 @@ router.delete(
   authorizedRoles("admin", "manager"),
   deleteEvent
 );
+
+router.post("/register/:id", registerUserToEvent);
 module.exports = router;

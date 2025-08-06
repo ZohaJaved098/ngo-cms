@@ -9,6 +9,7 @@ type ButtonProps = {
   onClickFunction: () => void;
   className?: string;
   loading?: boolean;
+  disabled?: boolean;
 };
 export const Button: React.FC<ButtonProps> = ({
   btnText,
@@ -19,24 +20,26 @@ export const Button: React.FC<ButtonProps> = ({
   type,
   onClickFunction,
   className,
-  loading,
+  // loading,
+  disabled,
 }) => {
   return (
     <button
       type={type}
-      disabled={loading}
+      disabled={disabled}
       className={`
-        ${primary && "bg-red-700 font-black text-white "}
-        ${secondary && "bg-blue-700 text-white "}
-        ${tertiary && "bg-green-700 text-white "}
-        ${cancel && "bg-gray-500 text-white"}
+        ${primary && "bg-red-700 font-black  "}
+        ${secondary && "bg-blue-700  "}
+        ${tertiary && "bg-green-700  "}
+        ${cancel && "bg-gray-500 "}
         
         ${className}
-         focus:outline-0 p-2 rounded-lg text-center w-full
+         focus:outline-0 px-4 py-2 rounded-lg text-center tracking-wide w-full
+         cursor-pointer
       `}
       onClick={onClickFunction}
     >
-      <p className={``}>{btnText}</p>
+      <p className={`text-white text-base`}>{btnText}</p>
     </button>
   );
 };

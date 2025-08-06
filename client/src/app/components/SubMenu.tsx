@@ -31,19 +31,19 @@ const SubMenu: React.FC<SubMenuProps> = ({ menuType, isOpen }) => {
             <GrGallery className=" w-5 h-5 group-hover:w-6 group-hover:h-6 transition-all" />
             Gallery
           </Link>
-          <Link
+          {/* <Link
             href="/"
             className=" flex gap-5 text-sm text-gray-700 hover:text-gray-900 hover:underline "
           >
             View others blog
-          </Link>
+          </Link> */}
         </div>
       )}
 
       {menuType === "event" && (
         <div className="flex flex-col gap-3">
           <Link
-            href="/"
+            href="/events"
             className=" flex gap-5 text-sm text-gray-700 hover:text-gray-900 hover:underline "
           >
             All Events

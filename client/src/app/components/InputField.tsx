@@ -46,7 +46,7 @@ export const InputField: React.FC<InputFieldProps> = ({
       )}
       <div className="flex items-center gap-3 w-full relative ">
         <input
-          className={`p-2 rounded-lg w-full outline-0 text-black ${
+          className={`p-4 rounded-lg w-full outline-0 text-black ${
             isDashboard ? "bg-gray-300" : "bg-white  "
           }`}
           type={

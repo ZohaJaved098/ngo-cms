@@ -68,7 +68,7 @@ const ViewBlog = () => {
       <h1>Not found! Go back to /dashboard/blogs</h1>
     </div>
   ) : (
-    <div className="w-4/5 mt-10 m-auto h-full flex flex-col items-start gap-5">
+    <div className="w-4/5 mt-10 m-auto flex flex-col items-start gap-5">
       <div className="w-full flex justify-between items-center">
         <h1 className="font-bold text-3xl tracking-wider">{blog.name}</h1>
       </div>

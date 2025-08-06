@@ -116,7 +116,7 @@ const Blogs = () => {
           </thead>
           <tbody>
             {blogs.map((blog) => (
-              <tr key={blog._id}>
+              <tr key={blog._id} className="max-h-60">
                 <td className="border border-gray-400 px-4 py-2 max-w-28 capitalize ">
                   {blog.name}
                 </td>
@@ -125,7 +125,7 @@ const Blogs = () => {
                 </td>
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   <p
-                    className="truncate max-w-32 overflow-hidden whitespace-nowrap"
+                    className="line-clamp-2 max-w-48"
                     dangerouslySetInnerHTML={{ __html: blog.content }}
                   ></p>
                 </td>
@@ -169,7 +169,7 @@ const Blogs = () => {
                     onClickFunction={() => onEditClick(blog._id)}
                   />
                 </td>
-                <td className="border border-gray-400 px-4 py-2 max-w-28">
+                <td className="border border-gray-400 px-4 py-2 max-w-40">
                   <Button
                     type="button"
                     btnText={blog.isPublished ? "Unpublish" : "Publish"}

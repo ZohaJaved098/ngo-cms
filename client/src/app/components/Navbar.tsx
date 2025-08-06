@@ -7,6 +7,7 @@ import { LiaDonateSolid } from "react-icons/lia";
 import Menu from "./Menu";
 import Avatar from "./Avatar";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -21,7 +22,9 @@ const Navbar = () => {
       </div>
       <div className="flex items-center justify-between max-h-[100px] w-full px-4 md:px-10 my-2">
         {/* demo logo */}
-        <Image src={Logo} alt="logo" width={70} height={70} />
+        <Link href={"/"}>
+          <Image src={Logo} alt="logo" width={70} height={70} />
+        </Link>
 
         <div className="flex gap-5 items-center">
           <Menu />
