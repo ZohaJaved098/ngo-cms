@@ -28,7 +28,7 @@ const Navbar = () => {
 
         <div className="flex gap-5 items-center">
           <Menu />
-          <span className="flex flex-col items-center group ">
+          <span className="flex flex-col items-center group cursor-pointer ">
             <LiaDonateSolid
               title="Donate"
               className="w-5 h-5 group-hover:w-7 group-hover:h-7 transition-all"

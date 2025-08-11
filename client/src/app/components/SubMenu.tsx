@@ -49,16 +49,16 @@ const SubMenu: React.FC<SubMenuProps> = ({ menuType, isOpen }) => {
             All Events
           </Link>
           <Link
-            href="/"
+            href="/events/view/month"
             className=" flex gap-5 text-sm text-gray-700 hover:text-gray-900 hover:underline "
           >
-            Events this Month
+            This Month
           </Link>
           <Link
-            href="/"
+            href="/events/view/registered"
             className=" flex gap-5 text-sm text-gray-700 hover:text-gray-900 hover:underline "
           >
-            Events I&apos;m going to
+            Registered
           </Link>
         </div>
       )}

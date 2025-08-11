@@ -36,7 +36,7 @@ const Avatar = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex cursor-pointer ">
       {/* Avatar button */}
       <span
         className="flex flex-col items-center group relative"
@@ -47,7 +47,7 @@ const Avatar = () => {
           className="w-5 h-5 group-hover:w-7 group-hover:h-7 transition-all"
         />
         <p className="hidden sm:block text-sm font-light group-hover:font-semibold ">
-          Avatar
+          {user ? user.username : "Avatar"}
         </p>
       </span>
 

@@ -39,7 +39,7 @@ const Menu = () => {
     <div className="flex">
       {/* Menu button */}
       <span
-        className="flex sm:hidden flex-col items-center group relative"
+        className="flex sm:hidden flex-col items-center group relative cursor-pointer"
         onClick={() => setMenuOpened(!menuOpened)}
       >
         <RxHamburgerMenu
@@ -59,7 +59,7 @@ const Menu = () => {
         <ul className="flex sm:flex-row flex-col gap-5 sm:justify-center sm:items-start mx-auto">
           {/* Media MENU ITEM */}
           <li
-            className="flex flex-col items-start gap-2 group relative"
+            className="flex flex-col items-start gap-2 group relative cursor-pointer"
             onClick={() =>
               setSubMenu((prev) => (prev === "media" ? null : "media"))
             }
@@ -82,7 +82,7 @@ const Menu = () => {
 
           {/* EVENT MENU ITEM */}
           <li
-            className="flex flex-col items-start group relative  "
+            className="flex flex-col items-start group relative cursor-pointer  "
             onClick={() =>
               setSubMenu((prev) => (prev === "event" ? null : "event"))
             }
@@ -116,7 +116,7 @@ const Menu = () => {
             </Link>
           </li> */}
           {(user.role === "admin" || user.role === "manager") && (
-            <li className="group">
+            <li className="group cursor-pointer">
               <Link
                 href="/dashboard"
                 className="flex sm:flex-col sm:gap-0 gap-3 items-center "

@@ -115,10 +115,9 @@ const ViewBlog = () => {
 
       {/* Content */}
       <div
-        className="prose prose-lg w-full mt-5"
+        className="prose-content"
         dangerouslySetInnerHTML={{ __html: blog.content }}
       />
-
       {/* Actions */}
       <div className="flex items-center justify-between w-full mt-10">
         <Button

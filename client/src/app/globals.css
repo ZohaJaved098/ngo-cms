@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 body {
   min-width: 320px;
   max-width: 2000px;
@@ -12,6 +13,16 @@ gap in between element would be gap-5 horizontally .
 main color are white and blue-500 and gray 
 border is gray-600 and b-2
 */
+
+/* globals.css */
+.prose-content {
+  @apply text-base leading-relaxed text-gray-800 space-y-1;
+  @apply [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-6;
+  @apply [&_img]:rounded-lg [&_img]:mx-auto;
+  @apply [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300;
+  @apply [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600;
+}
+
 .auth_gradient {
   /* gradient here */
   background: linear-gradient(rgb(0, 96, 174), rgb(4, 37, 68));

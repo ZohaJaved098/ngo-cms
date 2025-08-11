@@ -1,4 +1,3 @@
-const { type } = require("express/lib/response");
 const mongoose = require("mongoose");
 
 const PagesSchema = new mongoose.Schema(
@@ -16,12 +15,15 @@ const PagesSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
-      // unique: true,
     },
-
     isPublished: {
       type: Boolean,
-      required: true,
+      default: false,
+    },
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Page",
+      default: null,
     },
   },
   {
