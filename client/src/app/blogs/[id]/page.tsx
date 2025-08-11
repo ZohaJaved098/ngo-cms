@@ -78,9 +78,7 @@ const BlogDetailPage = () => {
 
         <hr className="border-gray-300" />
         <div
-          className="text-base leading-relaxed text-gray-800 space-y-4
-             [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-6
-             [&_img]:rounded-lg [&_img]:mx-auto"
+          className="prose-content"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         />
       </div>

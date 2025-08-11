@@ -73,7 +73,7 @@ const ViewEvent = () => {
       </div>
 
       <p
-        className="text-gray-800 whitespace-pre-line"
+        className="prose-content"
         dangerouslySetInnerHTML={{ __html: event.description }}
       ></p>
 

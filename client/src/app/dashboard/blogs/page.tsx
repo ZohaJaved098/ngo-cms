@@ -125,7 +125,7 @@ const Blogs = () => {
                 </td>
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   <p
-                    className="line-clamp-2 max-w-48"
+                    className="line-clamp-2 max-w-48 prose-content"
                     dangerouslySetInnerHTML={{ __html: blog.content }}
                   ></p>
                 </td>

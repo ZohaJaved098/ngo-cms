@@ -62,7 +62,10 @@ const PublicBlogs = () => {
               </span>
 
               <div className="text-gray-700 text-sm line-clamp-3">
-                <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+                <div
+                  className="prose-content"
+                  dangerouslySetInnerHTML={{ __html: blog.content }}
+                />
               </div>
 
               <Link

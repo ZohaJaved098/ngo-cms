@@ -106,7 +106,7 @@ const FilteredEventsPage = () => {
 
               {event.description && (
                 <p
-                  className="text-gray-800 text-sm line-clamp-2"
+                  className="text-gray-800 text-sm line-clamp-2 prose-content"
                   dangerouslySetInnerHTML={{ __html: event.description }}
                 ></p>
               )}
