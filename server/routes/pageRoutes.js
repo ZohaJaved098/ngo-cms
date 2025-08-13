@@ -9,10 +9,13 @@ const {
 const express = require("express");
 const router = express.Router();
 
+router.get("/slug/{*slug}", (req, res) => {
+  const slug = decodeURIComponent(req.params.slug);
+  getPageBySlug(req, res, slug);
+});
+
 router.get("/all-pages", getPages);
 router.post("/create", createPage);
-
-router.get("/slug/:slug", getPageBySlug);
 
 router.get("/:id", viewPage);
 router.put("/:id", updatePage);

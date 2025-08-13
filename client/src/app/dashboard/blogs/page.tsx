@@ -3,6 +3,7 @@
 import { Button } from "@/app/components/Button";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Contents from "@/app/components/Contents";
 
 type Blogs = {
   _id: string;
@@ -124,10 +125,7 @@ const Blogs = () => {
                   {blog.typeOfBlog}
                 </td>
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
-                  <p
-                    className="line-clamp-2 max-w-48 prose-content"
-                    dangerouslySetInnerHTML={{ __html: blog.content }}
-                  ></p>
+                  <Contents shortened={true} content={blog.content} />
                 </td>
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   <ul>

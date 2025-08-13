@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/app/components/Button";
+import Contents from "@/app/components/Contents";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -72,10 +73,7 @@ const ViewEvent = () => {
         </span>
       </div>
 
-      <p
-        className="prose-content"
-        dangerouslySetInnerHTML={{ __html: event.description }}
-      ></p>
+      <Contents content={event.description} />
 
       <div className="grid grid-cols-2 gap-4">
         <div>

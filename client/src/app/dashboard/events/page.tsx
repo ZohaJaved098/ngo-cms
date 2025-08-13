@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
+import Contents from "@/app/components/Contents";
 
 type Event = {
   _id: string;
@@ -99,10 +100,7 @@ const Events = () => {
                   {event.typeOfEvent}
                 </td>
                 <td className="border border-gray-400 px-4 py-2 min-w-28">
-                  <p
-                    className="line-clamp-2 max-w-48 prose-content"
-                    dangerouslySetInnerHTML={{ __html: event.description }}
-                  ></p>
+                  <Contents content={event.description} />
                 </td>
                 <td className="border border-gray-400 px-4 py-2 min-w-28">
                   <ul className="">

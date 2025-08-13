@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa6";
+import Contents from "@/app/components/Contents";
 
 type RegisteredUser = {
   name: string;
@@ -105,10 +106,7 @@ const FilteredEventsPage = () => {
               </div>
 
               {event.description && (
-                <p
-                  className="text-gray-800 text-sm line-clamp-2 prose-content"
-                  dangerouslySetInnerHTML={{ __html: event.description }}
-                ></p>
+                <Contents content={event.description} shortened />
               )}
 
               <Link

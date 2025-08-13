@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import RelevantLinks from "@/app/components/RelevantLinks";
+import Contents from "@/app/components/Contents";
 
 type Blog = {
   _id: string;
@@ -77,10 +78,7 @@ const BlogDetailPage = () => {
         </div>
 
         <hr className="border-gray-300" />
-        <div
-          className="prose-content"
-          dangerouslySetInnerHTML={{ __html: blog.content }}
-        />
+        <Contents content={blog.content} />
       </div>
 
       {/* Relevant sidebar */}

@@ -4,6 +4,7 @@ import { Button } from "@/app/components/Button";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Contents from "@/app/components/Contents";
 
 type Blogs = {
   _id: string;
@@ -114,10 +115,8 @@ const ViewBlog = () => {
       </div>
 
       {/* Content */}
-      <div
-        className="prose-content"
-        dangerouslySetInnerHTML={{ __html: blog.content }}
-      />
+
+      <Contents content={blog.content} />
       {/* Actions */}
       <div className="flex items-center justify-between w-full mt-10">
         <Button

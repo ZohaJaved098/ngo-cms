@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Contents from "../components/Contents";
 
 type Event = {
   _id: string;
@@ -66,10 +67,7 @@ const PublicEvents = () => {
                   })}
                 </p>
 
-                <p
-                  className="text-gray-700 text-sm line-clamp-2 prose-content"
-                  dangerouslySetInnerHTML={{ __html: event.description }}
-                ></p>
+                <Contents content={event.description} />
               </div>
 
               <span

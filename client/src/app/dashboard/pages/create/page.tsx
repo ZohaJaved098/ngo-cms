@@ -1,81 +1,131 @@
 "use client";
+
 import { Button } from "@/app/components/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InputField } from "@/app/components/InputField";
 import { useRouter } from "next/navigation";
 import CkEditor from "@/app/components/CkEditor";
-import { RadioInput } from "@/app/components/RadioInput";
 
 type FormErrors = {
   title?: string;
   slug?: string;
   content?: string;
-  status?: string;
+  isPublished?: string;
 };
+
+type ParentPage = {
+  _id: string;
+  title: string;
+  slug: string;
+};
+
 const CreatePage = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
-    content: "",
-    status: "",
+    isPublished: false,
+    parent: "",
   });
   const [content, setContent] = useState<string>("");
+  const [parentPages, setParentPages] = useState<ParentPage[]>([]);
   const router = useRouter();
+
+  // Fetch all existing pages for parent dropdown
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_PAGES_API_URL}/all-pages`
+        );
+        const data = await res.json();
+        setParentPages(data.pages);
+      } catch (err) {
+        console.error("Error fetching parent pages:", err);
+      }
+    };
+    fetchPages();
+  }, []);
+
+  // CKEditor change
   const onContentChange = (editor: string, field: string): void => {
     if (field === "description") {
       setContent(editor);
     }
   };
-  const onChangeFunction = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+  // input change handler
+  const onChangeFunction = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+
+    if (name === "slug") {
+      let formatted = value;
+      if (!formatted.startsWith("/")) {
+        formatted = "/" + formatted;
+      }
+      formatted = formatted.replace(/[^a-zA-Z0-9/-]/g, "");
+      setFormData((prev) => ({ ...prev, slug: formatted }));
+    } else if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: (e.target as HTMLInputElement).checked,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
+  // Create page
   const onCreateClick = async () => {
+    console.log("create btn clicked");
     const payload = {
       ...formData,
       content,
+      parent: formData.parent || null,
     };
-    const res = await fetch(`${process.env.NEXT_PUBLIC_PAGES_API_URL}/create`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setErrors(data.errors || {});
-      return;
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_PAGES_API_URL}/create`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        setErrors(data.errors || {});
+        return;
+      }
+
+      setErrors({});
+      setFormData({
+        title: "",
+        slug: "",
+        isPublished: false,
+        parent: "",
+      });
+      setContent("");
+      router.push("/dashboard/pages");
+    } catch (err) {
+      console.error("Error creating page:", err);
     }
-
-    setErrors({});
-    setFormData({
-      title: "",
-      slug: "",
-      content: "",
-      status: "",
-    });
-    setContent("");
-
-    router.push("/dashboard/pages");
   };
 
   const onCancelClick = () => {
-    setFormData({
-      title: "",
-      slug: "",
-      content: "",
-      status: "",
-    });
     router.push("/dashboard/pages");
   };
+
   return (
-    <div className="w-4/5 my-10 m-auto h-full flex flex-col gap-5">
-      <div className="flex items-start justify-between ">
-        <h1 className="font-bold text-3xl">Create a page</h1>
-      </div>
-      <form method="POST" className="flex flex-col gap-5">
-        <div className="flex justify-between items-start gap-5 w-full">
+    <div className="w-4/5 my-10 m-auto flex flex-col gap-5">
+      <h1 className="font-bold text-3xl">Create a Page</h1>
+
+      <form className="flex flex-col gap-5">
+        {/* Title + Slug */}
+        <div className="flex justify-between items-start gap-10 w-full">
           <InputField
             label="Title"
             name="title"
@@ -85,7 +135,7 @@ const CreatePage = () => {
             placeholder="About Us"
             onChange={onChangeFunction}
           />
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full">
             <InputField
               label="Slug"
               name="slug"
@@ -95,34 +145,58 @@ const CreatePage = () => {
               placeholder="/about-us"
               onChange={onChangeFunction}
             />
-            <p className=" text-xs text-gray-500">
-              Slugs must start with / and can have letters, numbers and -
-              (dash). No other character would be acceptable.
+            <p className="text-xs text-right text-gray-500">
+              Slug must contain only letters, numbers, hyphens (-), or slashes
+              for nesting.
             </p>
           </div>
         </div>
-        <hr className="w-full text-gray-400 " />
-        <div className="max-w-32 flex flex-col items-start justify-center ">
-          <label htmlFor={"status"} className="capitalize font-bold">
-            Status
-          </label>
-          <RadioInput
-            name="status"
-            value={formData.status}
-            onChange={onChangeFunction}
-            options={["inProgress", "published", "unpublished"]}
-          />
+
+        {/* Publish checkbox */}
+        <div className="flex justify-between w-full items-center gap-3">
+          {/* Parent page selection */}
+          <div className="flex gap-5 items-center w-full">
+            <label className="">Parent Page:</label>
+            <select
+              name="parent"
+              value={formData.parent}
+              onChange={onChangeFunction}
+              className="border border-gray-300 outline-0 min-w-60 rounded p-2 text-sm"
+            >
+              <option value="">No Parent</option>
+              {parentPages.map((p) => (
+                <option key={p._id} value={p._id}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex gap-5 items-center w-full">
+            <input
+              type="checkbox"
+              name="isPublished"
+              checked={formData.isPublished}
+              onChange={onChangeFunction}
+              className="w-4 h-4"
+            />
+            <label>Published</label>
+          </div>
         </div>
-        <div className="flex flex-col items-center gap-5 w-full">
+
+        {/* Content editor */}
+        <div className="flex flex-col gap-3">
           <CkEditor
             editorData={content}
             setEditorData={setContent}
             handleOnUpdate={onContentChange}
           />
-          {errors.content && <p className="text-red-500  ">{errors.content}</p>}
+          {errors.content && (
+            <p className="text-red-500 text-sm">{errors.content}</p>
+          )}
         </div>
-        <hr className="w-full text-gray-400 " />
-        <div className="flex items-center justify-between ">
+
+        {/* Actions */}
+        <div className="flex items-center justify-between">
           <Button
             type="button"
             btnText="Create Page"

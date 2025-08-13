@@ -6,7 +6,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const CkEditor = ({ editorData, setEditorData, handleOnUpdate }) => {
   return (
-    <div className="w-full min-h-[300px] overflow-y-auto overflow-x-hidden">
+    <div className="w-full min-h-[200px] overflow-y-auto overflow-x-hidden">
       <CKEditor
         editor={ClassicEditor}
         data={editorData}

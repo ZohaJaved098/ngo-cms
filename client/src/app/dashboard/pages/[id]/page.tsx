@@ -1,16 +1,23 @@
 "use client";
 
 import { Button } from "@/app/components/Button";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Contents from "@/app/components/Contents";
+
+type ParentPage = {
+  _id: string;
+  title: string;
+  slug: string;
+};
 
 type Page = {
   _id: string;
   title: string;
   slug: string;
   content: string;
-  status: string;
+  isPublished: boolean;
+  parent?: ParentPage | null;
 };
 
 const ViewPage = () => {
@@ -19,54 +26,108 @@ const ViewPage = () => {
   const id = params.id;
   const router = useRouter();
 
+  // Fetch single page
   useEffect(() => {
     const fetchAPage = async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`);
-      const data = await res.json();
-      setPage(data.page);
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`
+        );
+        const data = await res.json();
+        setPage(data.page);
+      } catch (err) {
+        console.error("Error fetching page:", err);
+      }
     };
     fetchAPage();
   }, [id]);
 
+  // Edit navigation
   const onEditClick = (id: string) => {
     router.push(`edit/${id}`);
   };
+
+  // Back to list
   const onCancelClick = () => {
     router.push(`/dashboard/pages`);
   };
 
-  const onPublishToggle = () => {
-    console.log("Publish button is Clicked");
+  // Toggle publish/unpublish
+  const onPublishToggle = async () => {
+    if (!page) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${page._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isPublished: !page.isPublished }),
+        }
+      );
+      if (res.ok) {
+        setPage((prev) =>
+          prev ? { ...prev, isPublished: !prev.isPublished } : prev
+        );
+      }
+    } catch (err) {
+      console.error("Error toggling publish:", err);
+    }
   };
 
-  return page == null ? (
-    <div className="">
-      <h1>Not found! Go back to http://localhost:3000/dashboard/pages </h1>
-    </div>
-  ) : (
-    <div className="w-4/5 mt-10 m-auto h-full flex flex-col items-start gap-5">
-      <div className=" w-full flex justify-between items-center">
-        <h1 className="font-black text-3xl">{page.title}</h1>
-        <p className="font-light text-xl underline">{page.slug}</p>
+  if (!page) {
+    return (
+      <div className="mt-10 w-4/5 mx-auto">
+        <h1 className="text-red-500">
+          Page not found! Go back to{" "}
+          <span
+            className="underline text-blue-500 cursor-pointer"
+            onClick={() => router.push("/dashboard/pages")}
+          >
+            Pages
+          </span>
+        </h1>
       </div>
+    );
+  }
+
+  return (
+    <div className="w-4/5 mt-10 m-auto flex flex-col items-start gap-5">
+      {/* Title and Slug */}
+      <div className="w-full flex justify-between items-center">
+        <h1 className="font-black text-3xl">{page.title}</h1>
+        <p className="font-light text-lg text-gray-500">{page.slug}</p>
+      </div>
+
+      {/* Parent */}
+      <p className="text-sm text-gray-600">
+        Parent: {page.parent?.title || "—"}
+      </p>
+
+      {/* Status + Toggle */}
       <div className="flex items-center justify-between w-full ">
-        <p
-          className={`${
-            page.status == "unpublished" ? "text-red-600" : "text-green-600"
-          } capitalize text-xl font-bold `}
+        <span
+          className={`px-3 py-1 rounded-full text-sm font-semibold ${
+            page.isPublished
+              ? "bg-green-100 text-green-700"
+              : "bg-red-100 text-red-700"
+          }`}
         >
-          {page.status}
-        </p>
+          {page.isPublished ? "Published" : "Unpublished"}
+        </span>
+
         <Button
-          btnText={`${page.status == "unpublished" ? "Publish" : "Unpublish"}`}
+          btnText={page.isPublished ? "Unpublish" : "Publish"}
           secondary={true}
           type="button"
           className="max-w-20"
           onClickFunction={onPublishToggle}
         />
       </div>
-      <div dangerouslySetInnerHTML={{ __html: page.content }} />
 
+      {/* Page content */}
+      <Contents content={page.content} />
+
+      {/* Actions */}
       <div className="flex items-center justify-between w-full">
         <Button
           type="button"

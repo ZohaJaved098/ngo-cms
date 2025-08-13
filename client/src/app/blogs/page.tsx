@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Contents from "../components/Contents";
 
 type Blog = {
   _id: string;
@@ -61,12 +62,7 @@ const PublicBlogs = () => {
                 </p>
               </span>
 
-              <div className="text-gray-700 text-sm line-clamp-3">
-                <div
-                  className="prose-content"
-                  dangerouslySetInnerHTML={{ __html: blog.content }}
-                />
-              </div>
+              <Contents content={blog.content} shortened />
 
               <Link
                 href={`/blogs/${blog._id}`}

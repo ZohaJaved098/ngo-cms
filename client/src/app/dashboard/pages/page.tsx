@@ -1,7 +1,15 @@
 "use client";
+
 import { Button } from "@/app/components/Button";
+import Contents from "@/app/components/Contents";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
+type ParentPage = {
+  _id: string;
+  title: string;
+  slug: string;
+};
 
 type Page = {
   _id: string;
@@ -9,20 +17,25 @@ type Page = {
   slug: string;
   content: string;
   isPublished: boolean;
-  parent?: string;
+  parent?: ParentPage | null;
 };
 
 const Pages = () => {
   const [pages, setPages] = useState<Page[]>([]);
   const router = useRouter();
 
+  // Fetch all pages
   useEffect(() => {
     const fetchAllPages = async () => {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PAGES_API_URL}/all-pages`
-      );
-      const data = await res.json();
-      setPages(data.pages);
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_PAGES_API_URL}/all-pages`
+        );
+        const data = await res.json();
+        setPages(data.pages || []);
+      } catch (err) {
+        console.error("Error fetching pages:", err);
+      }
     };
     fetchAllPages();
   }, []);
@@ -39,6 +52,7 @@ const Pages = () => {
     router.push(`pages/edit/${id}`);
   };
 
+  // Toggle publish/unpublish
   const onPublishToggle = async (id: string, currentStatus: boolean) => {
     try {
       const res = await fetch(
@@ -49,8 +63,6 @@ const Pages = () => {
           body: JSON.stringify({ isPublished: !currentStatus }),
         }
       );
-      const data = await res.json();
-      console.log("data from page", data);
       if (res.ok) {
         setPages((prev) =>
           prev.map((p) =>
@@ -97,13 +109,10 @@ const Pages = () => {
               </td>
               <td className="border px-4 py-2 max-w-28">{page.slug}</td>
               <td className="border px-4 py-2 max-w-28">
-                {page.parent || "-"}
+                {page.parent?.title || "-"}
               </td>
               <td className="border px-4 py-2 max-w-48">
-                <p
-                  className="line-clamp-2"
-                  dangerouslySetInnerHTML={{ __html: page.content }}
-                ></p>
+                <Contents shortened content={page.content} />
               </td>
               <td className="border px-4 py-2 max-w-28">
                 <span

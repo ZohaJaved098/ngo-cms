@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import RelevantLinks from "@/app/components/RelevantLinks";
 import { Button } from "@/app/components/Button";
 import { RootState } from "@/app/redux/store";
+import Contents from "@/app/components/Contents";
 
 type RegisteredUser = {
   name: string;
@@ -127,10 +128,7 @@ const EventDetailPage = () => {
 
         <hr className="border-gray-300" />
 
-        <div
-          className="prose-content"
-          dangerouslySetInnerHTML={{ __html: event.description }}
-        />
+        <Contents content={event.description} />
 
         <Button
           btnText={buttonText}

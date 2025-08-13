@@ -11,10 +11,8 @@ const getPages = async (_req, res) => {
     res.status(500).json({ message: "Error getting pages", error });
   }
 };
-
-// ✅ Create a new page
 const createPage = async (req, res) => {
-  const { title, slug, content, isPublished, parent } = req.body;
+  let { title, slug, content, isPublished, parent } = req.body;
   const errors = {};
 
   try {
@@ -23,12 +21,20 @@ const createPage = async (req, res) => {
       errors.slug = "Slug is required";
     } else if (!slugRegex.test(slug)) {
       errors.slug =
-        "Slug must start with / and contain only letters, numbers, hyphens";
+        "Slug must start with / and contain only letters, numbers, hyphens, and slashes.";
     }
     if (!content) errors.content = "Content is required";
 
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ message: "Validation errors", errors });
+    }
+
+    if (parent) {
+      const parentPage = await Page.findById(parent);
+      if (!parentPage) {
+        return res.status(400).json({ message: "Invalid parent page ID" });
+      }
+      slug = `${parentPage.slug.replace(/\/$/, "")}/${slug.replace(/^\//, "")}`;
     }
 
     const newPage = new Page({
@@ -64,7 +70,7 @@ const viewPage = async (req, res) => {
 
 // ✅ Update a page
 const updatePage = async (req, res) => {
-  const { title, slug, content, isPublished, parent } = req.body;
+  let { title, slug, content, isPublished, parent } = req.body;
   const pageId = req.params.id;
   const errors = {};
 
@@ -75,9 +81,17 @@ const updatePage = async (req, res) => {
     if (slug && !slugRegex.test(slug)) {
       errors.slug = "Invalid slug format";
     }
-
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ message: "Validation error", errors });
+    }
+
+    // 🔹 Auto-prefix slug if parent exists
+    if (parent) {
+      const parentPage = await Page.findById(parent);
+      if (!parentPage) {
+        return res.status(400).json({ message: "Invalid parent page ID" });
+      }
+      slug = `${parentPage.slug.replace(/\/$/, "")}/${slug.replace(/^\//, "")}`;
     }
 
     await Page.findByIdAndUpdate(
@@ -114,10 +128,10 @@ const deletePage = async (req, res) => {
 };
 
 // ✅ Get a page by its slug (frontend public use)
-const getPageBySlug = async (req, res) => {
-  const { slug } = req.params;
+const getPageBySlug = async (req, res, slugParam) => {
   try {
-    const page = await Page.findOne({ slug, isPublished: true });
+    console.log("Looking for slug:", slugParam);
+    const page = await Page.findOne({ slug: slugParam, isPublished: true });
     if (!page) return res.status(404).json({ message: "Page not found!" });
 
     res.status(200).json({ message: "Public Page", page });
