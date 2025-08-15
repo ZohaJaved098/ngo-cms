@@ -1,9 +1,5 @@
 "use client";
-// import Link from "next/link";
-import {
-  // useDispatch,
-  useSelector,
-} from "react-redux";
+import { useSelector } from "react-redux";
 
 import { RootState } from "@/app/redux/store";
 
@@ -26,7 +22,7 @@ const Sidebar = () => {
         </p>
       </div>
       <hr className=" w-full bg-white" />
-      {/* links */}
+
       <div className="flex flex-col gap-5 w-full ">
         <ActiveLink
           href="/dashboard"
@@ -63,30 +59,7 @@ const Sidebar = () => {
           <MdOutlineEvent className="w-5 h-5" />
           <p>Events</p>
         </ActiveLink>
-        {/* <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-          </span>
-          <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-          </span>
-          <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-          </span>
-          <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-          </span>
-          <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-          </span>
-          <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-          </span> */}
+
         {user.role === "admin" && (
           <ActiveLink
             href={"/dashboard/users"}

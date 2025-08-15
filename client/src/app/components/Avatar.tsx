@@ -25,7 +25,6 @@ const Avatar = () => {
     setAvatarOpened(false);
   }, [pathname]);
 
-  //logout logic here
   const handleLogout = async () => {
     await fetch(`${process.env.NEXT_PUBLIC_AUTH_API_URL}/logout`, {
       method: "POST",

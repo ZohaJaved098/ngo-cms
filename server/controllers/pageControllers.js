@@ -130,7 +130,7 @@ const deletePage = async (req, res) => {
 // ✅ Get a page by its slug (frontend public use)
 const getPageBySlug = async (req, res, slugParam) => {
   try {
-    console.log("Looking for slug:", slugParam);
+    // console.log("Looking for slug:", slugParam);
     const page = await Page.findOne({ slug: slugParam, isPublished: true });
     if (!page) return res.status(404).json({ message: "Page not found!" });
 

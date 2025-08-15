@@ -18,7 +18,6 @@ async function getPageData(slugPath: string) {
 export default async function Pages(props: {
   params: Promise<{ slug: string[] }>;
 }) {
-  // ✅ Await params per Next.js 15 requirement
   const { slug } = await props.params;
   const slugPath = "/" + slug.join("/");
 

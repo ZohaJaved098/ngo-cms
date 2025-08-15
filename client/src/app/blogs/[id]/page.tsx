@@ -81,7 +81,7 @@ const BlogDetailPage = () => {
         <Contents content={blog.content} />
       </div>
 
-      {/* Relevant sidebar */}
+      {/* Relevant rightbar */}
       <RelevantLinks
         heading="Relevant Blogs"
         items={relatedBlogs.map((b) => ({

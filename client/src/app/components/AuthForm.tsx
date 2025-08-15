@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
 
 import { InputField } from "@/app/components/InputField";
 import { RadioInput } from "@/app/components/RadioInput";
@@ -35,12 +34,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
-  //   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
-    // console.log("Input changed:", e.target.value);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -132,11 +129,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
               onChange={handleChange}
               error={errors.password}
             />
-            <div className="flex justify-end text-sm">
+            {/* <div className="flex justify-end text-sm">
               <Link href="/" className="text-blue-400 underline">
                 Forgot Password?
               </Link>
-            </div>
+            </div> */}
           </>
         ) : (
           <>

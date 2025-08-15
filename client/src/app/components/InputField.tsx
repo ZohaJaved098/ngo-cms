@@ -3,7 +3,6 @@ import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
-// import { MdOutlineEmail } from "react-icons/md";
 type InputFieldProps = {
   label: string;
   type: string;
