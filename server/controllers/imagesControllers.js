@@ -3,66 +3,77 @@ const Image = require("../models/imagesModel");
 //all Images
 const getImages = async (req, res) => {
   try {
-    const images = await Image.find();
-    res.status(200).json({ message: `All Images are`, images });
+    const images = await Image.find().sort({ order: 1, createdAt: -1 });
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+    const formattedImages = images.map((img) => ({
+      ...img._doc,
+      imageUrl: `${baseUrl}${img.imagePath}`, // prepend full URL
+    }));
+
+    res.status(200).json({ message: "All Images", images: formattedImages });
   } catch (error) {
     res.status(500).json({ message: "Error getting all Images", error });
   }
 };
-//create Image
+
+// Create Image
 const createImage = async (req, res) => {
-  const { name, srcLink, alt, title } = req.body;
-  const errors = {};
   try {
-    if (!name) {
-      errors.name = "Name is required";
-    }
-    if (!srcLink) {
-      errors.srcLink = "Image Link is required";
+    if (!req.file) {
+      return res.status(400).json({ message: "Image file is required" });
     }
 
-    if (!alt) {
-      errors.alt = "alt is required";
-    }
+    const { name, alt, title, description, link, ctaText, order } = req.body;
 
-    if (!title) {
-      errors.title = "Title is required";
-    }
-
-    if (Object.keys(errors).length > 0) {
+    if (!name || !alt || !title) {
       return res
         .status(400)
-        .json({ message: `Error Creating Images!`, errors: errors });
+        .json({ message: "Name, alt, and title are required" });
     }
-    //if no errors proceed
+
     const newImage = new Image({
       name,
-      srcLink,
+      imagePath: `/uploads/sliders/${req.file.filename}`,
       alt,
       title,
+      description,
+      link,
+      ctaText,
+      order: order || 0,
     });
+
     await newImage.save();
+
     res.status(201).json({
-      message: `New Image created successfully with title: ${newImage.name} `,
+      message: `New slide created successfully: ${newImage.name}`,
       newImage,
     });
   } catch (error) {
     res.status(500).json({
       message: "Error creating new Image",
-      error,
+      error: error.message,
     });
   }
 };
+
 const viewImage = async (req, res) => {
   const imageId = req.params.id;
   try {
     const image = await Image.findById(imageId);
+    if (!image) {
+      return res.status(404).json({ message: `Image not found!` });
+    }
 
-    if (!image) return res.status(404).json({ message: `Image not found!` });
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const formattedImage = {
+      ...image._doc,
+      imageUrl: `${baseUrl}${image.imagePath}`,
+    };
 
     res.status(200).json({
       message: "Image info",
-      image,
+      image: formattedImage,
     });
   } catch (error) {
     res
@@ -71,29 +82,45 @@ const viewImage = async (req, res) => {
   }
 };
 
+// Update Image
 const updateImage = async (req, res) => {
-  const errors = {};
   try {
     const imageId = req.params.id;
-    const { name, srcLink, alt, title } = req.body;
-    const image = await Image.findById(imageId);
-    if (!image) return res.status(404).json({ message: `Image not found!` });
+    const existingImage = await Image.findById(imageId);
 
-    await Image.findByIdAndUpdate(
-      imageId,
-      {
-        name,
-        srcLink,
-        alt,
-        title,
-      },
-      { new: true }
-    );
-    res.status(200).json({ message: `Image updated` });
+    if (!existingImage) {
+      return res.status(404).json({ message: "Image not found" });
+    }
+
+    const updatedData = {
+      name: req.body.name || existingImage.name,
+      alt: req.body.alt || existingImage.alt,
+      title: req.body.title || existingImage.title,
+      description: req.body.description || existingImage.description,
+      link: req.body.link || existingImage.link,
+      ctaText: req.body.ctaText || existingImage.ctaText,
+      order: req.body.order ?? existingImage.order,
+    };
+
+    // If a new file is uploaded, replace the imagePath
+    if (req.file) {
+      updatedData.imagePath = `/uploads/sliders/${req.file.filename}`;
+    }
+
+    const updatedImage = await Image.findByIdAndUpdate(imageId, updatedData, {
+      new: true,
+    });
+
+    res
+      .status(200)
+      .json({ message: "Image updated successfully", updatedImage });
   } catch (error) {
-    res.status(500).json({ message: `error Updating Image ` });
+    res
+      .status(500)
+      .json({ message: "Error updating image", error: error.message });
   }
 };
+
 const deleteImage = async (req, res) => {
   try {
     const imageId = req.params.id;

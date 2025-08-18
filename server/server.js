@@ -43,6 +43,7 @@ app.use("/api/pages", pageRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/images", imagesRoutes);
+app.use("/uploads", express.static("uploads"));
 
 //start server
 app.listen(PORT, () => {

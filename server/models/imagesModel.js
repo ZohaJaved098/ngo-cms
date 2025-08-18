@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
-//images slider for home page
+
 const ImagesSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    srcLink: {
+    imagePath: {
       type: String,
-      required: true,
+      required: true, // "/uploads/sliders/image1.jpg"
     },
     alt: {
       type: String,
@@ -18,10 +18,23 @@ const ImagesSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: String, // optional slide text
+    },
+    link: {
+      type: String, // optional CTA link
+    },
+    ctaText: {
+      type: String, // optional CTA button text
+    },
+    order: {
+      type: Number,
+      default: 0, // for slider sorting
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("Images", ImagesSchema);
+module.exports = mongoose.model("Image", ImagesSchema);

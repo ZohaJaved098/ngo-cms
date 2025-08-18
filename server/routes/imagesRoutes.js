@@ -1,3 +1,5 @@
+const express = require("express");
+const router = express.Router();
 const {
   createImage,
   getImages,
@@ -8,27 +10,33 @@ const {
 
 const authorizedRoles = require("../middlewares/roleMiddleware");
 const verifyToken = require("../middlewares/authMiddleware");
-const express = require("express");
-const router = express.Router();
+const upload = require("../middlewares/uploadMiddleware");
 
 router.get("/all-images", getImages);
+
 router.post(
   "/create",
   verifyToken,
   authorizedRoles("admin", "manager"),
+  upload.single("image"),
   createImage
 );
-router.get("/:id", verifyToken, authorizedRoles("admin", "manager"), viewImage);
+
 router.put(
   "/:id",
   verifyToken,
   authorizedRoles("admin", "manager"),
+  upload.single("image"),
   updateImage
 );
+
+router.get("/:id", verifyToken, authorizedRoles("admin", "manager"), viewImage);
+
 router.delete(
   "/:id",
   verifyToken,
   authorizedRoles("admin", "manager"),
   deleteImage
 );
+
 module.exports = router;

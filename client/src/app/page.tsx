@@ -1,6 +1,7 @@
 "use client";
 import { useSelector } from "react-redux";
 import { RootState } from "./redux/store";
+import HomeSlider from "./components/HomeSlider";
 // import { useState, useEffect } from "react";
 
 // type Page = {
@@ -26,6 +27,7 @@ export default function Home() {
   // }, []);
   return (
     <div className="h-screen mt-32">
+      <HomeSlider />
       <h1 className="text-purple-600 text-3xl">Hello {user.username}</h1>
       {/* {pages.map((page) => (
         <div key={page._id}>
