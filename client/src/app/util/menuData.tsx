@@ -31,18 +31,18 @@ export const menuData: MenuItem[] = [
         id: "registered",
         title: "Registered",
         href: "/events/view/registered",
-        children: [
-          {
-            id: "attending",
-            title: "Attending",
-            href: "/events/view/registered/attending",
-          },
-          {
-            id: "not-attending",
-            title: "Not Attending",
-            href: "/events/view/registered/not-attending",
-          },
-        ],
+        // children: [
+        //   {
+        //     id: "attending",
+        //     title: "Attending",
+        //     href: "/events/view/registered/attending",
+        //   },
+        //   {
+        //     id: "not-attending",
+        //     title: "Not Attending",
+        //     href: "/events/view/registered/not-attending",
+        //   },
+        // ],
       },
     ],
   },

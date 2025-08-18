@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { menuData, MenuItem } from "../util/menuData";
@@ -14,13 +14,19 @@ const SubMenuD = ({ items, level = 0 }: SubMenuProps) => {
   const pathname = usePathname();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
-  useEffect(() => setOpenMenuId(null), [pathname]);
+  const isNested = useMemo(() => level > 0, [level]);
+
+  useEffect(() => {
+    if (isNested) {
+      setOpenMenuId(null);
+    }
+  }, [pathname, isNested]);
 
   return (
     <ul
       className={`flex gap-2 sm:gap-5 ${
         level === 0 ? "sm:flex-row flex-col" : "flex-col"
-      } `}
+      }`}
     >
       {items.map((item) => {
         const hasChildren = !!item.children?.length;
@@ -50,19 +56,15 @@ const SubMenuD = ({ items, level = 0 }: SubMenuProps) => {
                   />
                 </button>
 
-                {/* Submenu container */}
                 <div
                   id={`submenu-${item.id}`}
                   className={[
                     "transition-all ease-out overflow-hidden p-3",
-
-                    isOpen ? "max-h-full opacity-100" : "max-h-0 opacity-0",
+                    isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
                     "duration-300",
-
                     level === 0
-                      ? "sm:absolute sm:top-full sm:left-0 sm:min-w-48 sm:max-h-none sm:opacity-100 sm:translate-y-0 sm:duration-200 sm:ease-out"
+                      ? "sm:absolute sm:top-full sm:left-0 sm:min-w-48 sm:opacity-100 sm:translate-y-0 sm:duration-200 sm:ease-out"
                       : "",
-
                     isOpen
                       ? "sm:visible"
                       : "sm:invisible sm:opacity-0 sm:translate-y-2",
@@ -77,7 +79,9 @@ const SubMenuD = ({ items, level = 0 }: SubMenuProps) => {
             ) : (
               <Link
                 href={item.href || "/"}
-                onClick={() => setOpenMenuId(null)}
+                onClick={() => {
+                  if (isNested) setOpenMenuId(null);
+                }}
                 className="flex gap-2 items-center group hover:font-semibold"
               >
                 {item.icon}

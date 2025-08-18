@@ -1,54 +1,47 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { usePathname } from "next/navigation";
-
 import { RxHamburgerMenu } from "react-icons/rx";
-// import { FaChevronDown } from "react-icons/fa";
-// import { MdOutlineEventNote } from "react-icons/md";
-// import { TfiLayoutMediaCenter } from "react-icons/tfi";
 import { TfiDashboard } from "react-icons/tfi";
-
-// import SubMenu from "./SubMenu";
 import SubMenuD from "./SubMenuD";
-const Menu = () => {
+
+const BREAKPOINT_PX = 640; // Tailwind 'sm' breakpoint
+
+export default function Menu() {
   const user = useSelector((state: RootState) => state.auth.user);
-  const [menuOpened, setMenuOpened] = useState(false);
-  // const [subMenu, setSubMenu] = useState<"media" | "event" | null>(null);
   const pathname = usePathname();
 
-  // Close menu whenever route changes
+  const [menuOpened, setMenuOpened] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  // keep isDesktop in sync with Tailwind's sm breakpoint
   useEffect(() => {
-    setMenuOpened(false);
-  }, [pathname]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 800) {
-        setMenuOpened(true);
-      } else {
-        setMenuOpened(false);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    const mq = window.matchMedia(`(min-width:${BREAKPOINT_PX}px)`);
+    const update = () => setIsDesktop(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
+
+  // when switching modes: desktop -> open, mobile -> closed
+  useEffect(() => {
+    setMenuOpened(isDesktop);
+  }, [isDesktop]);
+
+  // on route change: only auto-close on mobile
+  useEffect(() => {
+    if (!isDesktop) setMenuOpened(false);
+  }, [pathname, isDesktop]);
 
   return (
     <div className="flex">
-      {/* Menu button */}
+      {/* Mobile toggle */}
       <span
         className="flex sm:hidden flex-col items-center group relative cursor-pointer"
-        onClick={() => setMenuOpened(!menuOpened)}
+        onClick={() => setMenuOpened((v) => !v)}
       >
         <RxHamburgerMenu
           title="menu"
@@ -56,13 +49,20 @@ const Menu = () => {
         />
       </span>
 
-      {/* list */}
+      {/* Menu list container */}
       <div
-        className={`${
+        className={[
+          // mobile show/hide
           menuOpened
             ? "opacity-100 scale-y-100 visible"
-            : "opacity-0 scale-y-0 invisible"
-        } overflow-y-auto sm:overflow-visible absolute top-full right-0 sm:static sm:top-0 sm:right-0 w-full sm:w-auto max-h-[80vh] p-5 sm:p-0 shadow-lg sm:shadow-none bg-gray-200 sm:bg-transparent transition-all duration-500 ease-in-out origin-top transform`}
+            : "opacity-0 scale-y-0 invisible",
+          // force visible on desktop regardless of state
+          "sm:opacity-100 sm:scale-y-100 sm:visible",
+          "overflow-y-auto sm:overflow-visible absolute top-full right-0 sm:static sm:top-0 sm:right-0",
+          "w-full sm:w-auto max-h-[80vh] p-5 sm:p-0",
+          "shadow-lg sm:shadow-none bg-gray-200 sm:bg-transparent",
+          "transition-all duration-500 ease-in-out origin-top transform",
+        ].join(" ")}
       >
         <ul className="flex sm:flex-row flex-col gap-5 sm:justify-center sm:items-start mx-auto">
           <SubMenuD />
@@ -72,7 +72,7 @@ const Menu = () => {
                 href="/dashboard"
                 className="flex sm:flex-col sm:gap-0 gap-3 items-center "
               >
-                <TfiDashboard className=" w-5 h-5 group-hover:w-6 group-hover:h-6 transition-all" />
+                <TfiDashboard className="w-5 h-5 group-hover:w-6 group-hover:h-6 transition-all" />
                 <p className="text-sm font-light group-hover:font-semibold">
                   Dashboard
                 </p>
@@ -83,6 +83,4 @@ const Menu = () => {
       </div>
     </div>
   );
-};
-
-export default Menu;
+}

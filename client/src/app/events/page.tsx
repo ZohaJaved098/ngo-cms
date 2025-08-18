@@ -35,7 +35,7 @@ const PublicEvents = () => {
   }, []);
 
   return (
-    <div className="w-11/12 h-screen mx-auto mt-32 mb-16">
+    <div className="w-11/12 h-screen mx-auto mt-40 mb-16">
       <h1 className="text-4xl font-bold mb-10 text-center">Upcoming Events</h1>
 
       {events.length === 0 ? (
@@ -67,7 +67,7 @@ const PublicEvents = () => {
                   })}
                 </p>
 
-                <Contents content={event.description} />
+                <Contents shortened content={event.description} />
               </div>
 
               <span
