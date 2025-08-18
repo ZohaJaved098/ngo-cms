@@ -62,7 +62,7 @@ const Menu = () => {
           menuOpened
             ? "opacity-100 scale-y-100 visible"
             : "opacity-0 scale-y-0 invisible"
-        } overflow-y-auto absolute top-full right-0 sm:static sm:top-0 sm:right-0 w-full sm:w-auto max-h-[80vh] p-5 sm:p-0 shadow-lg sm:shadow-none bg-gray-200 sm:bg-transparent transition-all duration-500 ease-in-out origin-top transform`}
+        } overflow-y-auto sm:overflow-visible absolute top-full right-0 sm:static sm:top-0 sm:right-0 w-full sm:w-auto max-h-[80vh] p-5 sm:p-0 shadow-lg sm:shadow-none bg-gray-200 sm:bg-transparent transition-all duration-500 ease-in-out origin-top transform`}
       >
         <ul className="flex sm:flex-row flex-col gap-5 sm:justify-center sm:items-start mx-auto">
           <SubMenuD />
