@@ -6,9 +6,9 @@ import { RootState } from "@/app/redux/store";
 import { usePathname } from "next/navigation";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { TfiDashboard } from "react-icons/tfi";
-import SubMenuD from "./SubMenuD";
+import SubMenu from "./SubMenu";
 
-const BREAKPOINT_PX = 640; // Tailwind 'sm' breakpoint
+const BREAKPOINT_PX = 640;
 
 export default function Menu() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -17,7 +17,6 @@ export default function Menu() {
   const [menuOpened, setMenuOpened] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
-  // keep isDesktop in sync with Tailwind's sm breakpoint
   useEffect(() => {
     const mq = window.matchMedia(`(min-width:${BREAKPOINT_PX}px)`);
     const update = () => setIsDesktop(mq.matches);
@@ -26,7 +25,6 @@ export default function Menu() {
     return () => mq.removeEventListener("change", update);
   }, []);
 
-  // when switching modes: desktop -> open, mobile -> closed
   useEffect(() => {
     setMenuOpened(isDesktop);
   }, [isDesktop]);
@@ -65,7 +63,7 @@ export default function Menu() {
         ].join(" ")}
       >
         <ul className="flex sm:flex-row flex-col gap-5 sm:justify-center sm:items-start mx-auto">
-          <SubMenuD />
+          <SubMenu />
           {(user.role === "admin" || user.role === "manager") && (
             <li className="group cursor-pointer">
               <Link

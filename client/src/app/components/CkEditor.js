@@ -70,10 +70,18 @@ class MyUploadAdapter {
     return this.loader.file.then(
       (file) =>
         new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve({ default: reader.result });
-          reader.onerror = (error) => reject(error);
+          const data = new FormData();
+          data.append("upload", file);
+
+          fetch(`${process.env.NEXT_PUBLIC_CONTENT_API_URL}/upload`, {
+            method: "POST",
+            body: data,
+          })
+            .then((res) => res.json())
+            .then((result) => {
+              resolve({ default: result.url });
+            })
+            .catch((err) => reject(err));
         })
     );
   }

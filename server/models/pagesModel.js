@@ -12,6 +12,9 @@ const PagesSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    banner: {
+      type: String,
+    },
     content: {
       type: String,
       required: true,

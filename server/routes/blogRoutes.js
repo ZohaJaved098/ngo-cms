@@ -4,10 +4,12 @@ const {
   viewBlog,
   updateBlog,
   deleteBlog,
+  uploadBlogPage,
 } = require("../controllers/blogControllers");
 const authorizedRoles = require("../middlewares/roleMiddleware");
 const verifyToken = require("../middlewares/authMiddleware");
 const express = require("express");
+const { uploadBlogBanner } = require("../middlewares/uploadMiddleware");
 const router = express.Router();
 
 router.get("/all-blogs", getBlogs);
@@ -29,5 +31,12 @@ router.delete(
   verifyToken,
   authorizedRoles("admin", "manager"),
   deleteBlog
+);
+router.post(
+  "/:id/upload-banner",
+  verifyToken,
+  authorizedRoles("admin", "manager"),
+  uploadBlogBanner.single("headerImage"),
+  uploadBlogPage
 );
 module.exports = router;

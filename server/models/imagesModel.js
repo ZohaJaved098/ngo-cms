@@ -19,7 +19,7 @@ const ImagesSchema = new mongoose.Schema(
       required: true,
     },
     description: {
-      type: String, // optional slide text
+      type: String,
     },
     link: {
       type: String, // optional CTA link

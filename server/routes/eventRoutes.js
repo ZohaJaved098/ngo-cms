@@ -5,9 +5,11 @@ const {
   updateEvent,
   deleteEvent,
   registerUserToEvent,
+  uploadEventPage,
 } = require("../controllers/eventControllers");
 const authorizedRoles = require("../middlewares/roleMiddleware");
 const verifyToken = require("../middlewares/authMiddleware");
+const { uploadEventBanner } = require("../middlewares/uploadMiddleware");
 const express = require("express");
 const router = express.Router();
 
@@ -30,6 +32,13 @@ router.delete(
   verifyToken,
   authorizedRoles("admin", "manager"),
   deleteEvent
+);
+router.post(
+  "/:id/upload-banner",
+  verifyToken,
+  authorizedRoles("admin", "manager"),
+  uploadEventBanner.single("coverImage"),
+  uploadEventPage
 );
 
 router.post("/register/:id", registerUserToEvent);

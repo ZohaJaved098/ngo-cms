@@ -2,6 +2,7 @@
 
 import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
+import Loader from "@/app/components/Loader";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -22,11 +23,13 @@ type Page = {
 
 const Pages = () => {
   const [pages, setPages] = useState<Page[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   // Fetch all pages
   useEffect(() => {
     const fetchAllPages = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_PAGES_API_URL}/all-pages`
@@ -38,6 +41,7 @@ const Pages = () => {
       }
     };
     fetchAllPages();
+    setLoading(false);
   }, []);
 
   const onNewClick = () => {
@@ -54,6 +58,7 @@ const Pages = () => {
 
   // Toggle publish/unpublish
   const onPublishToggle = async (id: string, currentStatus: boolean) => {
+    setLoading(true);
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`,
@@ -73,7 +78,9 @@ const Pages = () => {
     } catch (err) {
       console.error("Error toggling publish:", err);
     }
+    setLoading(false);
   };
+  if (loading) return <Loader />;
 
   return (
     <div className="flex flex-col gap-10 h-full">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
+import Loader from "@/app/components/Loader";
 
 type Event = {
   _id: string;
@@ -25,14 +26,17 @@ type Event = {
 
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const fetchEvents = async () => {
+    setLoading(true);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_EVENTS_API_URL}/all-events`
     );
     const data = await res.json();
     setEvents(data.events);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -43,13 +47,16 @@ const Events = () => {
   const onEditClick = (id: string) =>
     router.push(`/dashboard/events/edit/${id}`);
   const onDelete = async (id: string) => {
+    setLoading(true);
     await fetch(`${process.env.NEXT_PUBLIC_EVENTS_API_URL}/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
     fetchEvents();
+    setLoading(false);
   };
 
+  if (loading) return <Loader />;
   return (
     <div className="flex flex-col gap-10 h-full w-full">
       <div className="flex justify-between items-center mt-5 w-full">
@@ -100,7 +107,7 @@ const Events = () => {
                   {event.typeOfEvent}
                 </td>
                 <td className="border border-gray-400 px-4 py-2 min-w-28">
-                  <Contents content={event.description} />
+                  <Contents shortened content={event.description} />
                 </td>
                 <td className="border border-gray-400 px-4 py-2 min-w-28">
                   <ul className="">

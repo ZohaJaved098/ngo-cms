@@ -118,10 +118,32 @@ const deleteBlog = async (req, res) => {
   }
 };
 
+// Upload blog header image
+const uploadBlogPage = async (req, res) => {
+  try {
+    const blogId = req.params.id;
+    const blog = await Blog.findById(blogId);
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    if (req.file) {
+      blog.headerImage = req.file.path; // save multer uploaded file path
+      await blog.save();
+    }
+
+    res.json({ message: "Header image uploaded successfully", blog });
+  } catch (error) {
+    res.status(500).json({ message: "Error uploading blog header", error });
+  }
+};
+
 module.exports = {
   getBlogs,
   createBlog,
   viewBlog,
   updateBlog,
   deleteBlog,
+  uploadBlogPage,
 };

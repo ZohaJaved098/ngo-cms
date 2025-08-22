@@ -8,7 +8,7 @@ import { FaUsers, FaRegRectangleList } from "react-icons/fa6";
 import { MdOutlineEvent } from "react-icons/md";
 import { TfiDashboard } from "react-icons/tfi";
 import { RiPagesLine } from "react-icons/ri";
-
+import { GrGallery } from "react-icons/gr";
 import ActiveLink from "./ActiveLink";
 const Sidebar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -32,18 +32,20 @@ const Sidebar = () => {
           <p>Dashboard</p>
         </ActiveLink>
         <ActiveLink
+          href={"/"}
+          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+        >
+          <FaHome className="w-5 h-5" />
+          <p>Our NGO App </p>
+        </ActiveLink>
+        <hr className=" w-full bg-white" />
+        <h3 className="font-bold">Contents</h3>
+        <ActiveLink
           href={"/dashboard/pages"}
           className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
         >
           <RiPagesLine className="w-5 h-5" />
           <p>Pages</p>
-        </ActiveLink>
-        <ActiveLink
-          href={"/dashboard/image-sliders"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <FaRegImages className="w-5 h-5" />
-          <p>Images Slider</p>
         </ActiveLink>
         <ActiveLink
           href={"/dashboard/blogs"}
@@ -59,25 +61,39 @@ const Sidebar = () => {
           <MdOutlineEvent className="w-5 h-5" />
           <p>Events</p>
         </ActiveLink>
-
-        {user.role === "admin" && (
-          <ActiveLink
-            href={"/dashboard/users"}
-            className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-          >
-            <FaUsers className="w-5 h-5" />
-            <p>Users Management</p>
-          </ActiveLink>
-        )}
+        <hr className=" w-full bg-white" />
+        <h3 className="font-bold">Media Library</h3>
         <ActiveLink
-          href={"/"}
+          href={"/dashboard/image-sliders"}
           className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
         >
-          <FaHome className="w-5 h-5" />
-          <p>See website</p>
+          <FaRegImages className="w-5 h-5" />
+          <p>Images Slider</p>
         </ActiveLink>
+        <ActiveLink
+          href={"/dashboard/gallery"}
+          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+        >
+          <GrGallery className="w-5 h-5" />
+          <p>Gallery</p>
+        </ActiveLink>
+
+        {user.role === "admin" && (
+          <>
+            <hr className=" w-full bg-white" />
+            <h3 className="font-bold">Admin Only</h3>
+            <ActiveLink
+              href={"/dashboard/users"}
+              className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+            >
+              <FaUsers className="w-5 h-5" />
+              <p>Users Management</p>
+            </ActiveLink>
+          </>
+        )}
       </div>
       <hr className=" w-full bg-white" />
+      <h3 className="font-bold">Personal </h3>
       <div className="flex flex-col gap-5 w-full ">
         <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
           <FaCog className="w-5 h-5" />

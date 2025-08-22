@@ -10,7 +10,7 @@ const {
 
 const authorizedRoles = require("../middlewares/roleMiddleware");
 const verifyToken = require("../middlewares/authMiddleware");
-const upload = require("../middlewares/uploadMiddleware");
+const { uploadSlider } = require("../middlewares/uploadMiddleware");
 
 router.get("/all-images", getImages);
 
@@ -18,7 +18,7 @@ router.post(
   "/create",
   verifyToken,
   authorizedRoles("admin", "manager"),
-  upload.single("image"),
+  uploadSlider.single("image"),
   createImage
 );
 
@@ -26,7 +26,7 @@ router.put(
   "/:id",
   verifyToken,
   authorizedRoles("admin", "manager"),
-  upload.single("image"),
+  uploadSlider.single("image"),
   updateImage
 );
 

@@ -11,8 +11,9 @@ const userRoutes = require("./routes/userRoutes");
 const pageRoutes = require("./routes/pageRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const eventRoutes = require("./routes/eventRoutes");
+const contentRoutes = require("./routes/contentImageRoutes");
 const imagesRoutes = require("./routes/imagesRoutes");
-
+const galleryRoutes = require("./routes/galleryRoutes");
 // Connect to the database
 dbConnect();
 
@@ -44,6 +45,8 @@ app.use("/api/blogs", blogRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/images", imagesRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/gallery", galleryRoutes);
+app.use("/api/content", contentRoutes);
 
 //start server
 app.listen(PORT, () => {

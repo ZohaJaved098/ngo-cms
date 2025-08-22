@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/app/components/Button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Loader from "@/app/components/Loader";
 
 interface SliderImage {
   _id: string;
@@ -14,10 +15,12 @@ interface SliderImage {
 
 const ImageSlider = () => {
   const [images, setImages] = useState<SliderImage[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   // Fetch images from backend
   useEffect(() => {
     const fetchImages = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_IMAGES_API_URL}/all-images`,
@@ -35,6 +38,7 @@ const ImageSlider = () => {
     };
 
     fetchImages();
+    setLoading(false);
   }, []);
 
   const onNewClick = () => {
@@ -51,6 +55,7 @@ const ImageSlider = () => {
 
   const onDelete = async (id: string) => {
     if (confirm("Are you sure you want to delete this image?")) {
+      setLoading(true);
       try {
         await fetch(`${process.env.NEXT_PUBLIC_IMAGES_API_URL}/${id}`, {
           method: "DELETE",
@@ -59,9 +64,12 @@ const ImageSlider = () => {
         setImages((prev) => prev.filter((img) => img._id !== id));
       } catch (error) {
         console.error("Failed to delete image", error);
+      } finally {
+        setLoading(false);
       }
     }
   };
+  if (loading) return <Loader />;
 
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">

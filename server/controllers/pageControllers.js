@@ -139,6 +139,26 @@ const getPageBySlug = async (req, res, slugParam) => {
     res.status(500).json({ message: "Error fetching page by slug", error });
   }
 };
+// handle file upload for page banner
+const uploadPageImage = async (req, res) => {
+  try {
+    const pageId = req.params.id;
+    const page = await Page.findById(pageId);
+
+    if (!page) {
+      return res.status(404).json({ message: "Page not found" });
+    }
+
+    if (req.file) {
+      page.banner = req.file.path; // assuming your Page model has `banner`
+      await page.save();
+    }
+
+    res.json({ message: "Banner uploaded successfully", page });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 module.exports = {
   getPages,
@@ -147,4 +167,5 @@ module.exports = {
   updatePage,
   deletePage,
   getPageBySlug,
+  uploadPageImage,
 };
