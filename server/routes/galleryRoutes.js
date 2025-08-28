@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   getGalleries,
   createGallery,
@@ -16,8 +17,9 @@ const authorizedRoles = require("../middlewares/roleMiddleware");
 const verifyToken = require("../middlewares/authMiddleware");
 const { uploadGallery } = require("../middlewares/uploadMiddleware");
 
-// Albums
+//  Album routes
 router.get("/all-galleries", getGalleries);
+
 router.post(
   "/create",
   verifyToken,
@@ -25,7 +27,9 @@ router.post(
   uploadGallery.array("images", 10),
   createGallery
 );
+
 router.get("/:id", viewGallery);
+
 router.put(
   "/:id",
   verifyToken,
@@ -33,12 +37,14 @@ router.put(
   uploadGallery.array("images", 10),
   updateGallery
 );
+
 router.delete(
   "/:id",
   verifyToken,
   authorizedRoles("admin", "manager"),
   deleteGallery
 );
+
 router.patch(
   "/:id/toggle-publish",
   verifyToken,
@@ -46,8 +52,9 @@ router.patch(
   togglePublishGallery
 );
 
-// Images
+// 🖼️ Image routes
 router.get("/:id/images/:imageId", viewGalleryImage);
+
 router.put(
   "/:id/images/:imageId",
   verifyToken,
@@ -55,6 +62,7 @@ router.put(
   uploadGallery.single("image"),
   editGalleryImage
 );
+
 router.delete(
   "/:id/images/:imageId",
   verifyToken,

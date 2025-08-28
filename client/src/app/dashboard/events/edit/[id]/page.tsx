@@ -3,8 +3,11 @@
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
 import { RadioInput } from "@/app/components/RadioInput";
+import CKEditor from "@/app/components/CkEditor";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import Location from "@/app/components/Location";
 
 type FormErrors = {
   name?: string;
@@ -12,9 +15,11 @@ type FormErrors = {
   description?: string;
   guestSpeakers?: string;
   typeOfVenue?: string;
-  location?: string;
+  lng?: string;
+  lat?: string;
   eventDate?: string;
   status?: string;
+  coverImage?: string;
 };
 
 const EditEvent = () => {
@@ -25,10 +30,14 @@ const EditEvent = () => {
     description: "",
     guestSpeakers: "",
     typeOfVenue: "",
-    location: "",
+    lng: 0,
+    lat: 0,
     eventDate: "",
     status: "",
   });
+  const [description, setDescription] = useState<string>("");
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const router = useRouter();
   const { id } = useParams();
@@ -47,15 +56,24 @@ const EditEvent = () => {
         description: event.description,
         guestSpeakers: event.guestSpeakers.join(", "),
         typeOfVenue: event.typeOfVenue,
-        location: event.location,
+        lng: event.lng,
+        lat: event.lat,
         eventDate: new Date(event.eventDate).toISOString().slice(0, 16),
         status: event.status,
       });
+      setDescription(event.description);
+
+      setPreviewUrl(event.coverImage || "");
     };
 
     if (id) fetchEvent();
   }, [id]);
 
+  const onDescriptionChange = (editor: string, field: string): void => {
+    if (field === "description") {
+      setDescription(editor);
+    }
+  };
   const onChangeFunction = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -63,20 +81,41 @@ const EditEvent = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const onCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCoverImage(e.target.files[0]);
+      setPreviewUrl(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
   const onEditClick = async () => {
-    const payload = {
-      ...formData,
-      guestSpeakers: formData.guestSpeakers.split(",").map((g) => g.trim()),
-    };
+    const formDataToSend = new FormData();
+
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("typeOfEvent", formData.typeOfEvent);
+    formDataToSend.append("description", description || formData.description);
+    formDataToSend.append(
+      "guestSpeakers",
+      JSON.stringify(formData.guestSpeakers.split(",").map((g) => g.trim()))
+    );
+    formDataToSend.append("typeOfVenue", formData.typeOfVenue);
+    formDataToSend.append("lng", formData.lng.toString());
+    formDataToSend.append("lat", formData.lat.toString());
+    formDataToSend.append("eventDate", formData.eventDate);
+    formDataToSend.append("status", formData.status);
+
+    if (coverImage) {
+      formDataToSend.append("coverImage", coverImage);
+    }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_EVENTS_API_URL}/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      body: formDataToSend,
       credentials: "include",
-      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
+    console.log("data from event edit", data);
 
     if (!res.ok) {
       setErrors(data.errors || {});
@@ -94,10 +133,14 @@ const EditEvent = () => {
       description: "",
       guestSpeakers: "",
       typeOfVenue: "",
-      location: "",
+      lng: 0,
+      lat: 0,
       eventDate: "",
       status: "",
     });
+    setDescription("");
+    setCoverImage(null);
+    setPreviewUrl(null);
     router.push("/dashboard/events");
   };
 
@@ -107,6 +150,30 @@ const EditEvent = () => {
         <h1 className="font-bold text-3xl">Edit Event</h1>
       </div>
       <form method="POST" className="flex flex-col gap-5">
+        {/* Cover Image Preview + Upload */}
+        <div className="flex flex-col gap-3">
+          <InputField
+            label="Cover Image"
+            name="coverImage"
+            type="file"
+            accept="image/*"
+            onChange={onCoverImageChange}
+            error={errors.coverImage}
+          />
+          {previewUrl && (
+            <Image
+              src={previewUrl}
+              alt="Event Cover"
+              className=" rounded"
+              width={800}
+              height={600}
+            />
+          )}
+          {errors.coverImage && (
+            <p className="text-red-500">{errors.coverImage}</p>
+          )}
+        </div>
+
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField
             label="Event Name"
@@ -128,27 +195,6 @@ const EditEvent = () => {
           />
         </div>
 
-        <div className="flex justify-between items-start gap-5 w-full">
-          <InputField
-            label="Venue Type"
-            name="typeOfVenue"
-            value={formData.typeOfVenue}
-            error={errors.typeOfVenue}
-            type="text"
-            placeholder="Marquee, Hall"
-            onChange={onChangeFunction}
-          />
-          <InputField
-            label="Location"
-            name="location"
-            value={formData.location}
-            error={errors.location}
-            type="text"
-            placeholder="Lahore, PK"
-            onChange={onChangeFunction}
-          />
-        </div>
-
         <InputField
           label="Guest Speakers"
           name="guestSpeakers"
@@ -158,27 +204,6 @@ const EditEvent = () => {
           placeholder="Jane, Zoha, John"
           onChange={onChangeFunction}
         />
-
-        <InputField
-          label="Event Date & Time"
-          name="eventDate"
-          value={formData.eventDate}
-          error={errors.eventDate}
-          type="datetime-local"
-          onChange={onChangeFunction}
-        />
-
-        <label className="font-bold">Event Description</label>
-        <textarea
-          name="description"
-          placeholder="Write about the event..."
-          value={formData.description}
-          onChange={onChangeFunction}
-          className="border border-gray-300 p-3 rounded-md h-32 resize-none"
-        />
-        {errors.description && (
-          <p className="text-red-500">{errors.description}</p>
-        )}
 
         <div className="max-w-32 flex flex-col items-start justify-center">
           <label htmlFor="status" className="capitalize font-bold">
@@ -192,20 +217,59 @@ const EditEvent = () => {
           />
         </div>
 
-        <hr className="w-full text-gray-400" />
+        <InputField
+          label="Event Date & Time"
+          name="eventDate"
+          value={formData.eventDate}
+          error={errors.eventDate}
+          type="datetime-local"
+          onChange={onChangeFunction}
+        />
+        <InputField
+          label="Venue Type"
+          name="typeOfVenue"
+          value={formData.typeOfVenue}
+          error={errors.typeOfVenue}
+          type="text"
+          placeholder="Marquee, Hall"
+          onChange={onChangeFunction}
+        />
+        <Location
+          mode="edit"
+          lat={formData.lat}
+          lng={formData.lng}
+          onChange={(lat, lng) => {
+            setFormData((prev) => ({ ...prev, lat, lng }));
+          }}
+        />
+
+        {/* CKEditor for Description */}
+        <div className="flex flex-col gap-2">
+          <label className="font-bold">Event Description</label>
+          <CKEditor
+            editorData={description}
+            setEditorData={setDescription}
+            handleOnUpdate={onDescriptionChange}
+          />
+          {errors.description && (
+            <p className="text-red-500">{errors.description}</p>
+          )}
+        </div>
+
+        <hr className="w-full text-gray-300" />
 
         <div className="flex items-center justify-between">
           <Button
             type="button"
             btnText="Save Changes"
             onClickFunction={onEditClick}
-            tertiary={true}
+            tertiary
             className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
-            primary={true}
+            primary
             onClickFunction={onCancelClick}
             className="max-w-32"
           />

@@ -219,7 +219,7 @@ const EditImage = () => {
           </div>
         </div>
 
-        <div className="flex justify-between mt-5">
+        <div className="flex justify-between items-center gap-5 mt-8">
           <Button
             type="button"
             btnText="Update Image"

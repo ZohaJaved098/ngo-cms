@@ -4,26 +4,26 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
+import Image from "next/image";
+import CkEditor from "@/app/components/CkEditor";
 
 type FormErrors = {
   name?: string;
-  alt?: string;
-  title?: string;
-  image?: string;
+  description?: string;
+  file?: string;
+  bannerImage?: string;
 };
 
-const CreateImage = () => {
+const CreateDocument = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [formData, setFormData] = useState({
     name: "",
-    alt: "",
-    title: "",
     description: "",
-    link: "",
-    ctaText: "",
-    order: 0,
   });
+  const [editorDescription, setEditorDescription] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
+  const [previewBanner, setPreviewBanner] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -35,27 +35,36 @@ const CreateImage = () => {
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+    if (e.target.files) setFile(e.target.files[0]);
+  };
+
+  const onBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const img = e.target.files[0];
+      setBannerImage(img);
+      setPreviewBanner(URL.createObjectURL(img));
+    }
+  };
+
+  const onDescriptionChange = (editor: string, field: string) => {
+    if (field === "description") {
+      setEditorDescription(editor);
     }
   };
 
   const onCreateClick = async () => {
     const formPayload = new FormData();
     formPayload.append("name", formData.name);
-    formPayload.append("alt", formData.alt);
-    formPayload.append("title", formData.title);
-    formPayload.append("description", formData.description);
-    formPayload.append("link", formData.link);
-    formPayload.append("ctaText", formData.ctaText);
-    formPayload.append("order", String(formData.order));
-    if (file) {
-      formPayload.append("image", file);
-    }
+    formPayload.append(
+      "description",
+      editorDescription || formData.description
+    );
+    if (bannerImage) formPayload.append("bannerImage", bannerImage);
+    if (file) formPayload.append("file", file);
 
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_IMAGES_API_URL}/create`,
+        `${process.env.NEXT_PUBLIC_DOCUMENT_API_URL}/create`,
         {
           method: "POST",
           credentials: "include",
@@ -70,107 +79,80 @@ const CreateImage = () => {
       }
 
       setErrors({});
-      router.push("/dashboard/image-sliders");
+      router.push("/dashboard/documents");
     } catch (error) {
-      console.error("Error creating image", error);
+      console.error("Error creating document", error);
     }
   };
 
   const onCancelClick = () => {
-    router.push("/dashboard/images");
+    router.push("/dashboard/documents");
   };
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Add New Slider Image</h1>
+      <h1 className="font-bold text-3xl">Add New Document</h1>
+
       <form method="POST" className="flex flex-col gap-5">
-        <div className="flex justify-between gap-5">
+        <InputField
+          label="Document Name"
+          name="name"
+          type="text"
+          placeholder="Annual Report 2025"
+          value={formData.name}
+          onChange={onChangeFunction}
+          error={errors.name}
+        />
+
+        <div className="flex flex-col">
           <InputField
-            label="Name"
-            name="name"
-            type="text"
-            placeholder="Slide 1"
-            value={formData.name}
-            onChange={onChangeFunction}
-            error={errors.name}
+            label="Upload Banner Image"
+            name="bannerImage"
+            type="file"
+            accept="image/*"
+            onChange={onBannerChange}
+            error={errors.bannerImage}
           />
+          {previewBanner && (
+            <div className="mt-3">
+              <Image
+                src={previewBanner}
+                alt="Banner Preview"
+                width={200}
+                height={200}
+                className="rounded-md object-cover w-48 h-32"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col">
           <InputField
-            label="Alt Text"
-            name="alt"
-            type="text"
-            placeholder="Description for accessibility"
-            value={formData.alt}
-            onChange={onChangeFunction}
-            error={errors.alt}
+            label="Upload Document File"
+            name="file"
+            type="file"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+            onChange={onFileChange}
+            error={errors.file}
           />
         </div>
 
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="Title"
-            name="title"
-            type="text"
-            placeholder="Welcome to Our NGO"
-            value={formData.title}
-            onChange={onChangeFunction}
-            error={errors.title}
+        <div className="flex flex-col">
+          <label className="my-2 font-medium">Document Description</label>
+          <CkEditor
+            editorData={editorDescription}
+            setEditorData={setEditorDescription}
+            handleOnUpdate={onDescriptionChange}
           />
-          <InputField
-            label="Description"
-            name="description"
-            type="text"
-            placeholder="Short slide description"
-            value={formData.description}
-            onChange={onChangeFunction}
-          />
-        </div>
-
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="CTA Link"
-            name="link"
-            type="text"
-            placeholder="https://example.com"
-            value={formData.link}
-            onChange={onChangeFunction}
-          />
-          <InputField
-            label="CTA Text"
-            name="ctaText"
-            type="text"
-            placeholder="Learn More"
-            value={formData.ctaText}
-            onChange={onChangeFunction}
-          />
-        </div>
-
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="Order"
-            name="order"
-            type="number"
-            placeholder="0"
-            value={formData.order.toString()}
-            onChange={onChangeFunction}
-          />
-          <div className="flex flex-col w-full">
-            <label className="font-bold">Upload Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onFileChange}
-              className="border border-gray-300 p-2 rounded-md"
-            />
-            {errors.image && (
-              <p className="text-red-500 text-sm">{errors.image}</p>
-            )}
-          </div>
+          {errors.description && (
+            <p className="text-red-500 text-sm">{errors.description}</p>
+          )}
         </div>
 
         <div className="flex justify-between mt-5">
           <Button
             type="button"
-            btnText="Create Image"
+            btnText="Create Document"
             onClickFunction={onCreateClick}
             tertiary
             className="max-w-32"
@@ -188,4 +170,4 @@ const CreateImage = () => {
   );
 };
 
-export default CreateImage;
+export default CreateDocument;

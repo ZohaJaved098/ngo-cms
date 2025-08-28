@@ -6,6 +6,7 @@ import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
 import CkEditor from "@/app/components/CkEditor";
 import { RadioInput } from "@/app/components/RadioInput";
+import Location from "@/app/components/Location";
 
 type FormErrors = {
   name?: string;
@@ -13,9 +14,11 @@ type FormErrors = {
   description?: string;
   guestSpeakers?: string;
   typeOfVenue?: string;
-  location?: string;
+  lng?: string;
+  lat?: string;
   eventDate?: string;
   status?: string;
+  coverImage?: string;
 };
 
 const CreateEvent = () => {
@@ -26,11 +29,14 @@ const CreateEvent = () => {
     description: "",
     guestSpeakers: "",
     typeOfVenue: "",
-    location: "",
+    lng: 0,
+    lat: 0,
     eventDate: "",
     status: "",
   });
   const [description, setDescription] = useState<string>("");
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+
   const router = useRouter();
 
   const onChangeFunction = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,23 +50,36 @@ const CreateEvent = () => {
     }
   };
 
+  const onCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCoverImage(e.target.files[0]);
+    }
+  };
+
   const onCreateClick = async () => {
-    const payload = {
-      ...formData,
-      description: description || formData.description,
-      guestSpeakers: formData.guestSpeakers
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-    };
+    const formDataToSend = new FormData();
+
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("typeOfEvent", formData.typeOfEvent);
+    formDataToSend.append("description", description || formData.description);
+    formDataToSend.append("guestSpeakers", formData.guestSpeakers);
+    formDataToSend.append("typeOfVenue", formData.typeOfVenue);
+    formDataToSend.append("lng", formData.lng.toString());
+    formDataToSend.append("lat", formData.lat.toString());
+
+    formDataToSend.append("eventDate", formData.eventDate);
+    formDataToSend.append("status", formData.status);
+
+    if (coverImage) {
+      formDataToSend.append("coverImage", coverImage);
+    }
 
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_EVENTS_API_URL}/create`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        body: formDataToSend,
         credentials: "include",
-        body: JSON.stringify(payload),
       }
     );
 
@@ -82,6 +101,16 @@ const CreateEvent = () => {
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
       <h1 className="font-bold text-3xl">Create Event</h1>
       <form method="POST" className="flex flex-col gap-5">
+        {/* Cover Image */}
+        <InputField
+          label="Cover Image"
+          name="coverImage"
+          type="file"
+          accept="image/*"
+          onChange={onCoverImageChange}
+          error={errors.coverImage}
+        />
+
         <div className="flex justify-between gap-5">
           <InputField
             label="Event Name"
@@ -126,15 +155,6 @@ const CreateEvent = () => {
 
         <div className="flex justify-between gap-5">
           <InputField
-            label="Location"
-            name="location"
-            type="text"
-            placeholder="Islamabad, PK"
-            value={formData.location}
-            onChange={onChangeFunction}
-            error={errors.location}
-          />
-          <InputField
             label="Event Date & Time"
             name="eventDate"
             type="datetime-local"
@@ -142,20 +162,28 @@ const CreateEvent = () => {
             onChange={onChangeFunction}
             error={errors.eventDate}
           />
+          <div className="w-3/4 flex flex-col items-start">
+            <label htmlFor="status" className="font-bold">
+              Status
+            </label>
+            <RadioInput
+              name="status"
+              value={formData.status}
+              onChange={onChangeFunction}
+              options={["ongoing", "completed", "cancelled"]}
+            />
+            {errors.status && <p className="text-red-500">{errors.status}</p>}
+          </div>
         </div>
-
-        <div className="max-w-32 flex flex-col items-start">
-          <label htmlFor="status" className="font-bold">
-            Status
-          </label>
-          <RadioInput
-            name="status"
-            value={formData.status}
-            onChange={onChangeFunction}
-            options={["ongoing", "completed", "cancelled"]}
-          />
-          {errors.status && <p className="text-red-500">{errors.status}</p>}
-        </div>
+        <Location
+          mode="create"
+          lat={formData.lat}
+          lng={formData.lng}
+          onChange={(lat, lng) => {
+            setFormData((prev) => ({ ...prev, lat, lng }));
+          }}
+        />
+        {errors.lng && <p className="text-red-500">{errors.lng}</p>}
 
         <div className="flex flex-col items-center gap-5">
           <CkEditor

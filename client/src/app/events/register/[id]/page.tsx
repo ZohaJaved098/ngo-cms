@@ -76,7 +76,7 @@ const RegisterToEvent = () => {
     }
 
     setErrors({});
-    alert("🎉 Successfully registered!");
+    alert("Successfully registered!");
     router.push("/events");
   };
 

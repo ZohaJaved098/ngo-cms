@@ -5,6 +5,7 @@ const dbConnect = require("./config/dbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
+const path = require("path");
 //routes
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -14,6 +15,7 @@ const eventRoutes = require("./routes/eventRoutes");
 const contentRoutes = require("./routes/contentImageRoutes");
 const imagesRoutes = require("./routes/imagesRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
+const documentRoutes = require("./routes/documentRoutes");
 // Connect to the database
 dbConnect();
 
@@ -44,9 +46,10 @@ app.use("/api/pages", pageRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/images", imagesRoutes);
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/document", documentRoutes);
 
 //start server
 app.listen(PORT, () => {

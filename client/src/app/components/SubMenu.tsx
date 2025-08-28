@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { getDynamicMenu, MenuItem } from "../util/menuData";
+import Loader from "./Loader";
 
 type SubMenuProps = {
   items: MenuItem[];
@@ -109,7 +110,7 @@ export default function MenuWrapper() {
   }, []);
 
   if (menus.length === 0) {
-    return <div className="p-4 text-gray-500">Loading menu...</div>;
+    return <Loader />;
   }
 
   return <SubMenu items={menus} />;

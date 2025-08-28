@@ -1,4 +1,10 @@
 const Event = require("../models/eventsModel");
+const { toArray } = require("../utils/helper");
+
+const coverImageUrl = (req) =>
+  req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/events/${req.file.filename}`
+    : undefined;
 
 // Get all events
 const getEvents = async (req, res) => {
@@ -16,13 +22,13 @@ const createEvent = async (req, res) => {
     name,
     typeOfEvent,
     description,
-    guestSpeakers,
     typeOfVenue,
-    location,
-    eventDate,
+    lng,
+    lat,
     status,
-    coverImage, // optional
+    eventDate,
   } = req.body;
+  const guestSpeakers = toArray(req.body.guestSpeakers);
 
   const errors = {};
 
@@ -32,7 +38,7 @@ const createEvent = async (req, res) => {
   if (!Array.isArray(guestSpeakers) || guestSpeakers.length === 0)
     errors.guestSpeakers = "At least one guest speaker is required";
   if (!typeOfVenue) errors.typeOfVenue = "Venue Type is required";
-  if (!location) errors.location = "Location is required";
+  if (!lng || !lat) errors.lng = "Location is required";
   if (!eventDate) errors.eventDate = "Event date & time is required";
   if (!status) errors.status = "Event status is required";
 
@@ -47,10 +53,11 @@ const createEvent = async (req, res) => {
       description,
       guestSpeakers,
       typeOfVenue,
-      location,
+      lng,
+      lat,
       eventDate,
       status,
-      coverImage,
+      coverImage: coverImageUrl(req) ?? null,
       registeredUsers: [],
     });
 
@@ -70,9 +77,8 @@ const createEvent = async (req, res) => {
 
 // View single event
 const viewEvent = async (req, res) => {
-  const eventId = req.params.id;
   try {
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ message: "Event not found!" });
 
     res.status(200).json({
@@ -86,40 +92,40 @@ const viewEvent = async (req, res) => {
 
 // Update event
 const updateEvent = async (req, res) => {
-  const eventId = req.params.id;
   const {
     name,
     typeOfEvent,
     description,
-    guestSpeakers,
     typeOfVenue,
-    location,
-    eventDate,
+    lng,
+    lat,
     status,
-    coverImage,
+    eventDate,
   } = req.body;
+  const guestSpeakers = toArray(req.body.guestSpeakers);
 
   try {
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ message: "Event not found!" });
+    const newCoverImage = coverImageUrl(req);
+    const update = {
+      name,
+      typeOfEvent,
+      description,
+      guestSpeakers,
+      typeOfVenue,
+      lng,
+      lat,
+      eventDate,
+      status,
+    };
+    if (newCoverImage) update.coverImage = newCoverImage;
 
-    const updated = await Event.findByIdAndUpdate(
-      eventId,
-      {
-        name,
-        typeOfEvent,
-        description,
-        guestSpeakers,
-        typeOfVenue,
-        location,
-        eventDate,
-        status,
-        coverImage,
-      },
-      { new: true }
-    );
+    const updated = await Event.findByIdAndUpdate(req.params.id, update, {
+      new: true,
+    });
 
-    res.status(200).json({ message: "Event updated", updated });
+    res.status(200).json({ message: "Event updated", event: updated });
   } catch (error) {
     res.status(500).json({ message: "Error updating Event", error });
   }
@@ -127,12 +133,11 @@ const updateEvent = async (req, res) => {
 
 // Delete event
 const deleteEvent = async (req, res) => {
-  const eventId = req.params.id;
   try {
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ message: "Event not found!" });
 
-    await Event.findByIdAndDelete(eventId);
+    await Event.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Event deleted" });
   } catch (error) {
@@ -162,26 +167,6 @@ const registerUserToEvent = async (req, res) => {
     res.status(500).json({ message: "Error registering user", error });
   }
 };
-// handle file upload for event cover image
-const uploadEventPage = async (req, res) => {
-  try {
-    const eventId = req.params.id;
-    const event = await Event.findById(eventId);
-
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
-
-    if (req.file) {
-      event.coverImage = req.file.path; // save multer path into coverImage
-      await event.save();
-    }
-
-    res.json({ message: "Cover image uploaded successfully", event });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
 
 module.exports = {
   getEvents,
@@ -190,5 +175,4 @@ module.exports = {
   updateEvent,
   deleteEvent,
   registerUserToEvent,
-  uploadEventPage,
 };

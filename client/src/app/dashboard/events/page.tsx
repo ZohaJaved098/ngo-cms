@@ -13,7 +13,8 @@ type Event = {
   description: string;
   guestSpeakers: string[];
   typeOfVenue: string;
-  location: string;
+  lat: number;
+  lng: number;
   eventDate: string;
   registeredUsers: {
     name: string;
@@ -116,11 +117,11 @@ const Events = () => {
                     ))}
                   </ul>
                 </td>
-                <td className="border border-gray-400 px-4 py-2 min-w-28">
+                <td className="border border-gray-400 px-4 py-2 min-w-28 capitalize">
                   {event.typeOfVenue}
                 </td>
                 <td className="border border-gray-400 px-4 py-2 min-w-28">
-                  {event.location}
+                  {event.lng} , {event.lat}
                 </td>
                 <td className="border border-gray-400 px-4 py-2 min-w-28">
                   {new Date(event.eventDate).toLocaleString("en-US", {

@@ -7,7 +7,7 @@ type InputFieldProps = {
   label: string;
   type: string;
   name: string;
-  value: string;
+  value?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   autoComplete?: string;
@@ -60,6 +60,7 @@ export const InputField: React.FC<InputFieldProps> = ({
           placeholder={placeholder}
           disabled={disabled}
           accept={accept}
+          multiple={name === "images"}
         />
         {type === "password" && (
           <div className="absolute right-5 top-2.5 cursor-pointer text-black">

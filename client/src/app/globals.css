@@ -17,8 +17,12 @@ border is gray-600 and b-2
 /* ckeditor style */
 .prose-content {
   @apply text-base leading-relaxed text-gray-800 space-y-1;
+  @apply [&_h2]:text-3xl [&_h2]:font-bold;
+  @apply [&_h3]:text-2xl [&_h3]:font-semibold;
+  @apply [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:italic;
+  @apply [&_p]:text-pretty [&_p]:text-justify;
   @apply [&_ol]:list-decimal [&_ul]:list-disc [&_li]:ml-6;
-  @apply [&_img]:rounded-lg [&_img]:mx-auto [&_img]:w-3/4;
+  @apply [&_img]:rounded-lg [&_img]:mx-auto [&_img]:w-3/4 [&_img]:my-5;
   @apply [&_blockquote]:border-l-4 [&_blockquote]:border-gray-300;
   @apply [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600;
 }

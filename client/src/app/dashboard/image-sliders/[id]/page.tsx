@@ -137,7 +137,7 @@ const ViewImage = () => {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-5 mt-4">
+      <div className="flex justify-between items-center gap-5 mt-8">
         <Button
           type="button"
           btnText="Edit"
@@ -145,12 +145,14 @@ const ViewImage = () => {
           onClickFunction={() =>
             router.push(`/dashboard/image-sliders/edit/${image._id}`)
           }
+          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Back to List"
           primary
           onClickFunction={() => router.push("/dashboard/image-sliders")}
+          className="max-w-32"
         />
       </div>
     </div>

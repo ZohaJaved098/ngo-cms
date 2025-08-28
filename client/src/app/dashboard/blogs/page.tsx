@@ -50,17 +50,17 @@ const Blogs = () => {
     setLoading(true);
     const updatedStatus = !blog.isPublished;
 
-    const payload = {
-      ...blog,
-      isPublished: updatedStatus,
-    };
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", blog.name);
+    formDataToSend.append("typeOfBlog", blog.typeOfBlog);
+    formDataToSend.append("content", blog.content);
+    formDataToSend.append("author", JSON.stringify(blog.author));
+    formDataToSend.append("tags", JSON.stringify(blog.tags));
+    formDataToSend.append("isPublished", updatedStatus ? "true" : "false");
 
     await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${blog._id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
+      body: formDataToSend,
       credentials: "include",
     });
 
@@ -138,14 +138,17 @@ const Blogs = () => {
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   <Contents shortened={true} content={blog.content} />
                 </td>
-                <td className="border border-gray-400 px-4 py-2 max-w-28 ">
+                {/* <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   <ul>
                     {blog.author.map((a, i) => (
                       <li key={i}>{a};</li>
                     ))}
                   </ul>
+                </td> */}
+                <td className="border border-gray-400 px-4 py-2 max-w-28 ">
+                  {blog.author.join(", ")}
                 </td>
-                <td className="border border-gray-400 px-4 py-2 max-w-40 ">
+                {/* <td className="border border-gray-400 px-4 py-2 max-w-40 ">
                   <ul className="flex flex-wrap gap-2">
                     {blog.tags.map((tag, i) => (
                       <li
@@ -156,6 +159,18 @@ const Blogs = () => {
                       </li>
                     ))}
                   </ul>
+                </td> */}
+                <td className="border border-gray-400 px-4 py-2 max-w-40 ">
+                  <div className="flex flex-wrap gap-2">
+                    {blog.tags.map((tag, i) => (
+                      <span
+                        key={i}
+                        className="bg-cyan-600 text-white rounded-2xl py-1 px-3 text-xs"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </td>
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   {blog.publishedDate

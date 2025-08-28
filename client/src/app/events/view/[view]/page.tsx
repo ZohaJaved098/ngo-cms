@@ -77,7 +77,7 @@ const FilteredEventsPage = () => {
       </h1>
 
       {events.length === 0 ? (
-        <p className="text-gray-600">No events found 😕</p>
+        <p className="text-gray-600 text-center">No event found </p>
       ) : (
         <ul className="w-3/4 mx-auto">
           {events.map((event) => (

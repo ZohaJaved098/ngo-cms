@@ -2,6 +2,9 @@
 
 import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
+import Loader from "@/app/components/Loader";
+import Location from "@/app/components/Location";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,10 +19,12 @@ type Event = {
   _id: string;
   name: string;
   typeOfEvent: string;
+  coverImage: string;
   description: string;
   guestSpeakers: string[];
   typeOfVenue: string;
-  location: string;
+  lng: number;
+  lat: number;
   eventDate: string;
   registeredUsers: RegisteredUser[];
   status: "completed" | "ongoing" | "cancelled";
@@ -49,10 +54,19 @@ const ViewEvent = () => {
     router.push(`/dashboard/events`);
   };
 
-  if (!event) return <p className="text-center mt-10">Loading...</p>;
+  if (!event) return <Loader />;
 
   return (
     <div className="w-4/5 mx-auto my-10 flex flex-col gap-6">
+      {event.coverImage && (
+        <Image
+          src={event.coverImage}
+          alt="Event Cover"
+          className=" rounded"
+          width={800}
+          height={600}
+        />
+      )}
       <div className="flex justify-between items-start">
         <div className=" flex flex-col gap-3">
           <h1 className="text-3xl font-bold">{event.name}</h1>
@@ -72,8 +86,6 @@ const ViewEvent = () => {
           {event.status}
         </span>
       </div>
-
-      <Contents content={event.description} />
 
       <div className="grid grid-cols-2 gap-4">
         <div>
@@ -98,20 +110,20 @@ const ViewEvent = () => {
             })}
           </p>
         </div>
-        <div>
+
+        <div className="flex gap-3">
           <h3 className="font-bold">Venue:</h3>
           <p className="capitalize">{event.typeOfVenue}</p>
-          <p className="text-gray-700">{event.location}</p>
         </div>
 
-        <div>
+        <div className="flex gap-3">
           <h3 className="font-bold">Total Registrations</h3>
           <p>{event.registeredUsers?.length || 0}</p>
         </div>
       </div>
-
       {event.registeredUsers && event.registeredUsers.length > 0 && (
         <div>
+          <hr className="border-gray-300" />
           <h3 className="font-bold text-lg mt-5 mb-2">Registered Users</h3>
           <ul className="  space-y-1">
             {event.registeredUsers.map((user, idx) => (
@@ -125,7 +137,13 @@ const ViewEvent = () => {
           </ul>
         </div>
       )}
-      <hr className="text-gray-500" />
+      <hr className="text-gray-300" />
+      <h3 className="font-bold">Details</h3>
+      <Contents content={event.description} />
+      <hr className="text-gray-300" />
+      <Location mode="view" lat={event.lat} lng={event.lng} />
+
+      <hr className="border-gray-300" />
 
       <div className="flex justify-between items-center gap-5 mt-8">
         <Button

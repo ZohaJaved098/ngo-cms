@@ -11,7 +11,7 @@ WILL UPDATE THIS AT THE END!!
 ## 🛠️ Tech Stack
 
 - **Frontend**: NextJs, Tailwind CSS
-- **Backend**: Express
+- **Backend**: Express.js, Node.js
 - **Database**: MongoDb Atlas
 
 ## 🚀 Getting Started
@@ -69,7 +69,7 @@ npm install
 npm run dev
 ```
 
-💻 The frontend will start on http://localhost:5173 (or similar — Vite handles it)
+💻 The frontend will start on
 
 ## ✅ You're all set!
 

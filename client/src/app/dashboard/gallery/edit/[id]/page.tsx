@@ -1,243 +1,372 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
-import Image from "next/image";
+import CkEditor from "@/app/components/CkEditor";
 
 type FormErrors = {
-  name?: string;
-  alt?: string;
-  title?: string;
-  image?: string;
+  albumTitle?: string;
+  albumDescription?: string;
+  images?: string;
 };
 
-interface SliderImage {
+interface BackendImage {
   _id: string;
-  name: string;
-  alt: string;
-  title: string;
-  description?: string;
-  link?: string;
-  ctaText?: string;
-  order: number;
-  imageUrl: string;
+  url: string;
+  alt?: string;
+  caption?: string;
 }
 
-const EditImage = () => {
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [formData, setFormData] = useState<Partial<SliderImage>>({});
-  const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(true);
+interface GalleryResponse {
+  _id: string;
+  albumTitle: string;
+  albumDescription: string;
+  images: BackendImage[];
+  isPublished: boolean;
+}
 
+type ExistingImage = {
+  _id: string;
+  url: string;
+  caption: string;
+  remove: boolean;
+};
+
+type NewImage = {
+  file: File;
+  preview: string;
+  caption: string;
+};
+
+const MAX_NEW_FILES = 10;
+
+const EditAlbum = () => {
   const router = useRouter();
-  const params = useParams();
-  const imageId = params?.id as string;
+  const params = useParams() as { id: string };
+  const albumId = params.id;
 
-  // Fetch existing image data
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [albumTitle, setAlbumTitle] = useState<string>("");
+  const [albumDescription, setAlbumDescription] = useState<string>("");
+
+  const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
+  const [newImages, setNewImages] = useState<NewImage[]>([]);
+
+  // ───────────────────────────────── Fetch album
   useEffect(() => {
-    const fetchImage = async () => {
+    const load = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_IMAGES_API_URL}/${imageId}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
+          `${process.env.NEXT_PUBLIC_GALLERY_API_URL}/${albumId}`,
+          { credentials: "include" }
         );
-        const data = await res.json();
-        if (res.ok) {
-          setFormData(data.image);
-        } else {
-          console.error(data.message);
+        const data: GalleryResponse = await res.json();
+        if (!res.ok) {
+          console.error(data);
+          return;
         }
-      } catch (error) {
-        console.error("Error fetching image", error);
+        setAlbumTitle(data.albumTitle || "");
+        setAlbumDescription(data.albumDescription || "");
+        setExistingImages(
+          (data.images || []).map((img) => ({
+            _id: img._id,
+            url: img.url,
+            caption: img.caption || "",
+            remove: false,
+          }))
+        );
+      } catch (e) {
+        console.error("Failed to load album", e);
       } finally {
         setLoading(false);
       }
     };
+    load();
+  }, [albumId]);
 
-    if (imageId) {
-      fetchImage();
-    }
-  }, [imageId]);
-
-  const onChangeFunction = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
+  // ───────────────────────────────── File add / remove
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+    if (!e.target.files) return;
+
+    const selected = Array.from(e.target.files);
+    if (newImages.length + selected.length > MAX_NEW_FILES) {
+      setErrors((prev) => ({
+        ...prev,
+        images: `You can upload a maximum of ${MAX_NEW_FILES} images per update.`,
+      }));
+      return;
     }
+
+    const pack: NewImage[] = selected.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      caption: "",
+    }));
+
+    setNewImages((prev) => [...prev, ...pack]);
+    setErrors((prev) => ({ ...prev, images: undefined }));
+    // reset input so same file(s) can be picked again if needed
+    e.currentTarget.value = "";
   };
 
-  const onUpdateClick = async () => {
-    const formPayload = new FormData();
-    if (formData.name) formPayload.append("name", formData.name);
-    if (formData.alt) formPayload.append("alt", formData.alt);
-    if (formData.title) formPayload.append("title", formData.title);
-    if (formData.description)
-      formPayload.append("description", formData.description);
-    if (formData.link) formPayload.append("link", formData.link);
-    if (formData.ctaText) formPayload.append("ctaText", formData.ctaText);
-    if (formData.order !== undefined)
-      formPayload.append("order", String(formData.order));
-    if (file) {
-      formPayload.append("image", file);
-    }
+  // revoke blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      newImages.forEach((n) => URL.revokeObjectURL(n.preview));
+    };
+  }, [newImages]);
 
+  const updateExistingCaption = (id: string, caption: string) => {
+    setExistingImages((prev) =>
+      prev.map((img) => (img._id === id ? { ...img, caption } : img))
+    );
+  };
+
+  const toggleRemoveExisting = (id: string) => {
+    setExistingImages((prev) =>
+      prev.map((img) =>
+        img._id === id ? { ...img, remove: !img.remove } : img
+      )
+    );
+  };
+
+  const updateNewCaption = (index: number, caption: string) => {
+    setNewImages((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], caption };
+      return copy;
+    });
+  };
+
+  const removeNewImage = (index: number) => {
+    setNewImages((prev) => {
+      // revoke URL to avoid leaks
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  // ───────────────────────────────── Submit
+  const onUpdateClick = async () => {
+    const form = new FormData();
+    form.append("albumTitle", albumTitle);
+    form.append("albumDescription", albumDescription);
+
+    // existingCaptions: only for images NOT being removed
+    const captionsMap: Record<string, string> = {};
+    existingImages.forEach((img) => {
+      if (!img.remove) captionsMap[img._id] = img.caption || "";
+    });
+    form.append("existingCaptions", JSON.stringify(captionsMap));
+
+    // removeImages: ids marked for removal
+    const toRemove = existingImages.filter((i) => i.remove).map((i) => i._id);
+    form.append("removeImages", JSON.stringify(toRemove));
+
+    // new images + their captions (aligned by order)
+    newImages.forEach((n) => {
+      form.append("images", n.file);
+      form.append("captions", n.caption);
+    });
+
+    setLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_IMAGES_API_URL}/${imageId}`,
+        `${process.env.NEXT_PUBLIC_GALLERY_API_URL}/${albumId}`,
         {
           method: "PUT",
           credentials: "include",
-          body: formPayload,
+          body: form,
         }
       );
-
       const data = await res.json();
       if (!res.ok) {
         setErrors(data.errors || {});
         return;
       }
-
+      // success
       setErrors({});
-      router.push("/dashboard/image-sliders");
-    } catch (error) {
-      console.error("Error updating image", error);
+      router.push("/dashboard/gallery");
+    } catch (e) {
+      console.error("Error updating album", e);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const onCancelClick = () => {
-    router.push("/dashboard/image-sliders");
-  };
+  const onCancelClick = () => router.push("/dashboard/gallery");
 
-  if (loading) {
-    return <div className="text-center py-8">Loading image details...</div>;
-  }
+  const totalKept = useMemo(
+    () => existingImages.filter((i) => !i.remove).length,
+    [existingImages]
+  );
 
   return (
-    <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Edit Slider Image</h1>
-      <form method="POST" className="flex flex-col gap-5">
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="Name"
-            name="name"
-            type="text"
-            placeholder="Slide 1"
-            value={formData.name || ""}
-            onChange={onChangeFunction}
-            error={errors.name}
-          />
-          <InputField
-            label="Alt Text"
-            name="alt"
-            type="text"
-            placeholder="Description for accessibility"
-            value={formData.alt || ""}
-            onChange={onChangeFunction}
-            error={errors.alt}
-          />
+    <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-6">
+      <h1 className="font-bold text-3xl">Edit Album</h1>
+
+      {/* Album Title */}
+      <InputField
+        label="Album Title"
+        name="albumTitle"
+        type="text"
+        placeholder="Summer Trip 2025"
+        value={albumTitle}
+        onChange={(e) => setAlbumTitle(e.target.value)}
+        error={errors.albumTitle}
+      />
+
+      {/* Existing images */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-lg">
+            Existing Images ({totalKept} kept)
+          </h2>
+          <p className="text-sm text-gray-500">
+            Toggle “Remove” to delete an image on save.
+          </p>
         </div>
 
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="Title"
-            name="title"
-            type="text"
-            placeholder="Welcome to Our NGO"
-            value={formData.title || ""}
-            onChange={onChangeFunction}
-            error={errors.title}
-          />
-          <InputField
-            label="Description"
-            name="description"
-            type="text"
-            placeholder="Short slide description"
-            value={formData.description || ""}
-            onChange={onChangeFunction}
-          />
-        </div>
-
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="CTA Link"
-            name="link"
-            type="text"
-            placeholder="https://example.com"
-            value={formData.link || ""}
-            onChange={onChangeFunction}
-          />
-          <InputField
-            label="CTA Text"
-            name="ctaText"
-            type="text"
-            placeholder="Learn More"
-            value={formData.ctaText || ""}
-            onChange={onChangeFunction}
-          />
-        </div>
-
-        <div className="flex justify-between gap-5">
-          <InputField
-            label="Order"
-            name="order"
-            type="number"
-            placeholder="0"
-            value={formData.order?.toString() || "0"}
-            onChange={onChangeFunction}
-          />
-          <div className="flex flex-col w-full">
-            <label className="font-bold">Upload New Image (optional)</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onFileChange}
-              className="border border-gray-300 p-2 rounded-md"
-            />
-            {errors.image && (
-              <p className="text-red-500 text-sm">{errors.image}</p>
-            )}
-            {formData.imageUrl && (
-              <Image
-                src={formData.imageUrl}
-                alt={formData.alt || ""}
-                width={100}
-                height={100}
-                className="mt-2 w-40 rounded-md border"
-              />
-            )}
+        {existingImages.length === 0 ? (
+          <div className="text-gray-500 border rounded p-4">
+            No images in this album yet.
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {existingImages.map((img) => (
+              <div
+                key={img._id}
+                className="border border-gray-300 shadow-xl  rounded-md p-3 space-y-2"
+              >
+                <div className="relative">
+                  <Image
+                    src={img.url}
+                    alt={img.caption || "Album image"}
+                    width={600}
+                    height={400}
+                    className="rounded-md w-full h-48 object-cover"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={() => toggleRemoveExisting(img._id)}
+                    className={`absolute top-2 right-2 text-xs px-2 py-1 rounded-md ${
+                      img.remove ? "bg-red-600 text-white" : "bg-gray-200"
+                    }`}
+                  >
+                    {img.remove ? "Will Remove" : "Remove"}
+                  </button>
+                </div>
 
-        <div className="flex justify-between mt-5">
-          <Button
-            type="button"
-            btnText="Update Image"
-            onClickFunction={onUpdateClick}
-            tertiary
-            className="max-w-32"
-          />
-          <Button
-            type="button"
-            btnText="Cancel"
-            onClickFunction={onCancelClick}
-            primary
-            className="max-w-32"
-          />
-        </div>
-      </form>
+                <InputField
+                  label="Caption"
+                  name={`caption-${img._id}`}
+                  type="text"
+                  placeholder="Add caption..."
+                  value={img.caption}
+                  onChange={(e) =>
+                    updateExistingCaption(img._id, e.target.value)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* New images uploader */}
+      <div className="flex flex-col gap-2">
+        <InputField
+          label={`Upload New Images (max ${MAX_NEW_FILES} per update)`}
+          name="images"
+          type="file"
+          accept="image/*"
+          onChange={onFileChange}
+          error={errors.images}
+        />
+
+        {newImages.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {newImages.map((n, idx) => (
+              <div
+                key={`${n.preview}-${idx}`}
+                className="border border-gray-300 shadow-xl rounded-md p-3 space-y-2"
+              >
+                <div className="relative">
+                  <Image
+                    src={n.preview}
+                    alt={`New image ${idx + 1}`}
+                    width={600}
+                    height={400}
+                    className="rounded-md w-full h-48 object-cover"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeNewImage(idx)}
+                    className="absolute top-2 right-2 text-xs px-2 py-1 rounded-md bg-red-600 text-white"
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                <InputField
+                  label="New Image Caption"
+                  name={`new-caption-${idx}`}
+                  type="text"
+                  placeholder="Add caption..."
+                  value={n.caption}
+                  onChange={(e) => updateNewCaption(idx, e.target.value)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Description */}
+      <div className="flex flex-col">
+        <label className="my-2 font-medium">Album Description</label>
+        <CkEditor
+          editorData={albumDescription}
+          setEditorData={setAlbumDescription}
+          handleOnUpdate={(editor: string, field: string) => {
+            if (field === "description") {
+              setAlbumDescription(editor);
+            }
+          }}
+        />
+
+        {errors.albumDescription && (
+          <p className="text-red-500 text-sm mt-1">{errors.albumDescription}</p>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex justify-between mt-2">
+        <Button
+          type="button"
+          btnText={loading ? "Saving..." : "Update Album"}
+          onClickFunction={onUpdateClick}
+          tertiary
+          className="max-w-40"
+        />
+        <Button
+          type="button"
+          btnText="Cancel"
+          onClickFunction={onCancelClick}
+          primary
+          className="max-w-32"
+        />
+      </div>
     </div>
   );
 };
 
-export default EditImage;
+export default EditAlbum;

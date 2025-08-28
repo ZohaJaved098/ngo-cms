@@ -24,7 +24,8 @@ const staticMenus: MenuItem[] = [
     icon: <TfiLayoutMediaCenter className="w-5 h-5" />,
     children: [
       { id: "blogs", title: "Blogs", href: "/blogs" },
-      { id: "gallery", title: "Gallery", href: "/" },
+      { id: "gallery", title: "Gallery", href: "/gallery" },
+      { id: "documents", title: "Download Docs", href: "/documents" },
     ],
   },
   {

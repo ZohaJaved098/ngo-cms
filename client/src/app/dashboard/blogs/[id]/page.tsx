@@ -1,12 +1,12 @@
 "use client";
 
 import { Button } from "@/app/components/Button";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import Contents from "@/app/components/Contents";
+import Image from "next/image";
 
-type Blogs = {
+type Blog = {
   _id: string;
   name: string;
   typeOfBlog: string;
@@ -15,48 +15,44 @@ type Blogs = {
   tags: string[];
   publishedDate: string | null;
   isPublished: boolean;
+  headerImage?: string;
 };
 
 const ViewBlog = () => {
-  const [blog, setBlog] = useState<Blogs | null>(null);
+  const [blog, setBlog] = useState<Blog | null>(null);
   const params = useParams();
-  const id = params.id;
+  const id = params.id as string;
   const router = useRouter();
 
   useEffect(() => {
-    const fetchABlog = async () => {
+    const fetchBlog = async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${id}`);
       const data = await res.json();
       setBlog(data.blog);
     };
-    fetchABlog();
+    fetchBlog();
   }, [id]);
 
-  const onEditClick = (id: string) => {
-    router.push(`edit/${id}`);
-  };
-
-  const onCancelClick = () => {
-    router.push(`/dashboard/blogs`);
-  };
-
-  const onPublishToggle = async () => {
+  const togglePublish = async () => {
     if (!blog) return;
 
-    const payload = {
-      ...blog,
-      isPublished: !blog.isPublished,
-    };
+    const formData = new FormData();
+    formData.append("name", blog.name);
+    formData.append("typeOfBlog", blog.typeOfBlog);
+    formData.append("content", blog.content);
+    formData.append("author", JSON.stringify(blog.author));
+    formData.append("tags", JSON.stringify(blog.tags));
+    formData.append("isPublished", blog.isPublished ? "false" : "true");
+    if (blog.headerImage) {
+      formData.append("headerImage", blog.headerImage);
+    }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      body: formData,
       credentials: "include",
-      body: JSON.stringify(payload),
     });
 
-    const data = await res.json();
-    console.log(data);
     if (res.ok) {
       setBlog((prev) =>
         prev ? { ...prev, isPublished: !prev.isPublished } : prev
@@ -64,13 +60,22 @@ const ViewBlog = () => {
     }
   };
 
-  return blog == null ? (
-    <div className="">
-      <h1>Not found! Go back to /dashboard/blogs</h1>
-    </div>
-  ) : (
+  if (!blog) return <p>Loading...</p>;
+
+  return (
     <div className="w-4/5 mt-10 m-auto flex flex-col items-start gap-5">
-      <div className="w-full flex justify-between items-center">
+      {blog.headerImage && (
+        <div className="w-full h-80 relative rounded-lg overflow-hidden shadow-md">
+          <Image
+            src={blog.headerImage}
+            alt={blog.name}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
+
+      <div className="w-full flex justify-between items-center mt-5">
         <h1 className="font-bold text-3xl tracking-wider">{blog.name}</h1>
       </div>
       <div className="flex items-center justify-between gap-5 w-full">
@@ -107,31 +112,29 @@ const ViewBlog = () => {
         </div>
         <Button
           btnText={blog.isPublished ? "Unpublish" : "Publish"}
-          secondary={true}
+          secondary
           type="button"
           className="max-w-24"
-          onClickFunction={onPublishToggle}
+          onClickFunction={togglePublish}
         />
       </div>
 
-      {/* Content */}
-
       <Contents content={blog.content} />
-      {/* Actions */}
+
       <div className="flex items-center justify-between w-full mt-10">
         <Button
           type="button"
-          tertiary={true}
+          tertiary
           btnText="Edit"
           className="max-w-32"
-          onClickFunction={() => onEditClick(blog._id)}
+          onClickFunction={() => router.push(`/dashboard/blogs/edit/${id}`)}
         />
         <Button
           type="button"
-          primary={true}
+          primary
           btnText="Go Back"
           className="max-w-32"
-          onClickFunction={onCancelClick}
+          onClickFunction={() => router.push("/dashboard/blogs")}
         />
       </div>
     </div>

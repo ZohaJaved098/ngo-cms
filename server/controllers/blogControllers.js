@@ -1,141 +1,139 @@
 const Blog = require("../models/blogsModel");
+const { toArray, toBool } = require("../utils/helper");
 
-// Get all blogs
-const getBlogs = async (req, res) => {
+const headerImageUrl = (req) =>
+  req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/blogs/${req.file.filename}`
+    : undefined;
+
+// get all blogs
+const getBlogs = async (_req, res) => {
   try {
     const blogs = await Blog.find();
-    res.status(200).json({ message: `All blogs fetched`, blogs });
+    res.status(200).json({ message: "All blogs fetched", blogs });
   } catch (error) {
-    res.status(500).json({ message: "Error getting blogs", error });
+    res
+      .status(500)
+      .json({ message: "Error getting blogs", error: error.message });
   }
 };
 
-// Create a blog
+//create blog
 const createBlog = async (req, res) => {
-  const { name, typeOfBlog, content, author, tags, isPublished } = req.body;
+  const { name, typeOfBlog, content } = req.body;
+  const author = toArray(req.body.author);
+  const tags = toArray(req.body.tags);
+  const isPublished = toBool(req.body.isPublished);
   const errors = {};
 
   try {
     if (!name) errors.name = "Name is required";
     if (!typeOfBlog) errors.typeOfBlog = "Blog type is required";
     if (!content) errors.content = "Content is required";
-    if (!author || !author.length) errors.author = "Author is required";
+    if (!author.length) errors.author = "Author is required";
 
-    if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ message: "Error creating blog", errors });
+    if (Object.keys(errors).length) {
+      return res.status(400).json({ message: "Validation errors", errors });
     }
 
-    const newBlog = new Blog({
+    const newBlog = await Blog.create({
       name,
       typeOfBlog,
       content,
       author,
       tags,
       isPublished,
+      headerImage: headerImageUrl(req) ?? null,
       publishedDate: isPublished ? new Date() : null,
     });
 
-    await newBlog.save();
     res.status(201).json({
       message: `Blog '${newBlog.name}' created successfully`,
-      newBlog,
+      blog: newBlog,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error creating blog", error });
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Blog creation failed",
+        errors: { name: "Blog name already exists" },
+      });
+    }
+    res
+      .status(500)
+      .json({ message: "Error creating blog", error: error.message });
   }
 };
 
-// View a blog
 const viewBlog = async (req, res) => {
-  const blogId = req.params.id;
   try {
-    const blog = await Blog.findById(blogId);
-    if (!blog) return res.status(404).json({ message: `Blog not found!` });
-
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found!" });
     res.status(200).json({ message: "Blog found", blog });
   } catch (error) {
-    res.status(500).json({ message: `Error fetching blog`, error });
+    res
+      .status(500)
+      .json({ message: "Error fetching blog", error: error.message });
   }
 };
 
-// Update a blog
 const updateBlog = async (req, res) => {
-  const blogId = req.params.id;
-  const { name, typeOfBlog, content, author, tags, isPublished } = req.body;
-  const errors = {};
+  const { name, typeOfBlog, content } = req.body;
+  const author = toArray(req.body.author);
+  const tags = toArray(req.body.tags);
+  const isPublished = toBool(req.body.isPublished);
 
   try {
-    const blog = await Blog.findById(blogId);
-    if (!blog) return res.status(404).json({ message: `Blog not found!` });
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found!" });
 
-    if (!name) errors.name = "Name is required";
-    if (!typeOfBlog) errors.typeOfBlog = "Blog type is required";
-    if (!content) errors.content = "Content is required";
-    if (!author || !author.length) errors.author = "Author is required";
-
-    if (Object.keys(errors).length > 0) {
-      return res.status(400).json({ message: "Error updating blog", errors });
-    }
-
+    // Published date transition logic
     let publishedDate = blog.publishedDate;
-    if (isPublished && !blog.isPublished) {
-      publishedDate = new Date(); // Just got published
-    } else if (!isPublished && blog.isPublished) {
-      publishedDate = null; // Just got unpublished
-    }
+    if (isPublished && !blog.isPublished) publishedDate = new Date();
+    if (!isPublished && blog.isPublished) publishedDate = null;
 
-    await Blog.findByIdAndUpdate(
-      blogId,
-      {
-        name,
-        typeOfBlog,
-        content,
-        author,
-        tags,
-        isPublished,
-        publishedDate,
-      },
-      { new: true }
-    );
+    const newHeader = headerImageUrl(req);
+    const update = {
+      name,
+      typeOfBlog,
+      content,
+      author,
+      tags,
+      isPublished,
+      publishedDate,
+    };
+    if (newHeader) update.headerImage = newHeader;
 
-    res.status(200).json({ message: "Blog updated successfully" });
+    const updated = await Blog.findByIdAndUpdate(req.params.id, update, {
+      new: true,
+    });
+
+    res
+      .status(200)
+      .json({ message: "Blog updated successfully", blog: updated });
   } catch (error) {
-    res.status(500).json({ message: "Error updating blog", error });
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "Blog update failed",
+        errors: { name: "Blog name already exists" },
+      });
+    }
+    res
+      .status(500)
+      .json({ message: "Error updating blog", error: error.message });
   }
 };
 
-// Delete a blog
 const deleteBlog = async (req, res) => {
   try {
-    const blogId = req.params.id;
-    const blog = await Blog.findById(blogId);
-    if (!blog) return res.status(404).json({ message: `Blog not found!` });
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.status(404).json({ message: "Blog not found!" });
 
-    await Blog.findByIdAndDelete(blogId);
-    res.status(200).json({ message: `Blog deleted successfully` });
+    await Blog.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: `Error deleting blog`, error });
-  }
-};
-
-// Upload blog header image
-const uploadBlogPage = async (req, res) => {
-  try {
-    const blogId = req.params.id;
-    const blog = await Blog.findById(blogId);
-
-    if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
-    }
-
-    if (req.file) {
-      blog.headerImage = req.file.path; // save multer uploaded file path
-      await blog.save();
-    }
-
-    res.json({ message: "Header image uploaded successfully", blog });
-  } catch (error) {
-    res.status(500).json({ message: "Error uploading blog header", error });
+    res
+      .status(500)
+      .json({ message: "Error deleting blog", error: error.message });
   }
 };
 
@@ -145,5 +143,4 @@ module.exports = {
   viewBlog,
   updateBlog,
   deleteBlog,
-  uploadBlogPage,
 };

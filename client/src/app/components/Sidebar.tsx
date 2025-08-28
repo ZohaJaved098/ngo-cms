@@ -8,7 +8,7 @@ import { FaUsers, FaRegRectangleList } from "react-icons/fa6";
 import { MdOutlineEvent } from "react-icons/md";
 import { TfiDashboard } from "react-icons/tfi";
 import { RiPagesLine } from "react-icons/ri";
-import { GrGallery } from "react-icons/gr";
+import { GrGallery, GrDocumentUpload } from "react-icons/gr";
 import ActiveLink from "./ActiveLink";
 const Sidebar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -76,6 +76,13 @@ const Sidebar = () => {
         >
           <GrGallery className="w-5 h-5" />
           <p>Gallery</p>
+        </ActiveLink>
+        <ActiveLink
+          href={"/dashboard/documents"}
+          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+        >
+          <GrDocumentUpload className="w-5 h-5" />
+          <p>Documents</p>
         </ActiveLink>
 
         {user.role === "admin" && (

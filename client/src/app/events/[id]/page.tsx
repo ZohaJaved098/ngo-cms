@@ -8,6 +8,8 @@ import RelevantLinks from "@/app/components/RelevantLinks";
 import { Button } from "@/app/components/Button";
 import { RootState } from "@/app/redux/store";
 import Contents from "@/app/components/Contents";
+import Image from "next/image";
+import Location from "@/app/components/Location";
 
 type RegisteredUser = {
   name: string;
@@ -20,10 +22,12 @@ type Event = {
   _id: string;
   name: string;
   typeOfEvent: string;
+  coverImage: string;
   description: string;
   guestSpeakers: string[];
   typeOfVenue: string;
-  location: string;
+  lng: number;
+  lat: number;
   eventDate: string;
   registeredUsers: RegisteredUser[];
   status: "completed" | "ongoing" | "cancelled";
@@ -81,6 +85,15 @@ const EventDetailPage = () => {
     <div className="flex justify-center gap-10 mt-40 p-4 mx-auto items-start w-11/12">
       {/* Main content */}
       <div className="w-4/5 flex flex-col gap-6">
+        {event.coverImage && (
+          <Image
+            src={event.coverImage}
+            alt="Event Cover"
+            className=" rounded"
+            width={800}
+            height={600}
+          />
+        )}
         <div className="flex justify-between items-center w-full">
           <h1 className="text-4xl font-bold">{event.name}</h1>
           <span className="text-gray-700 capitalize font-medium text-lg">
@@ -89,7 +102,7 @@ const EventDetailPage = () => {
         </div>
 
         <div className="flex gap-10 justify-between items-start ">
-          <div>
+          <div className="flex gap-3">
             <p className="font-semibold">Date:</p>
             <p>
               {new Date(event.eventDate).toLocaleString("en-US", {
@@ -101,11 +114,9 @@ const EventDetailPage = () => {
               })}
             </p>
           </div>
-          <div>
+          <div className="flex gap-3">
             <p className="font-semibold ">Venue:</p>
-            <p className="capitalize">
-              {event.typeOfVenue} — {event.location}
-            </p>
+            <p className="capitalize">{event.typeOfVenue}</p>
           </div>
           {event.registeredUsers && event.registeredUsers.length > 0 && (
             <div className="flex items-center gap-3">
@@ -125,10 +136,10 @@ const EventDetailPage = () => {
             ))}
           </ul>
         </div>
-
-        <hr className="border-gray-300" />
-
         <Contents content={event.description} />
+
+        <Location mode="view" lat={event.lat} lng={event.lng} />
+        <hr className="border-gray-300" />
 
         <Button
           btnText={buttonText}

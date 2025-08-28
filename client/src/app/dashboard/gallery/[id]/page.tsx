@@ -4,157 +4,206 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/app/components/Button";
+import Contents from "@/app/components/Contents";
+import Loader from "@/app/components/Loader";
+import ImageModal from "@/app/components/ImageModal";
 
-interface SliderImage {
+interface ImageType {
   _id: string;
-  name: string;
-  alt: string;
-  title: string;
-  description?: string;
-  link?: string;
-  ctaText?: string;
-  order: number;
-  imageUrl: string;
-  createdAt?: string;
-  updatedAt?: string;
+  url: string;
+  alt?: string;
+  caption?: string;
 }
 
-const ViewImage = () => {
-  const [image, setImage] = useState<SliderImage | null>(null);
-  const [loading, setLoading] = useState(true);
+interface AlbumType {
+  _id: string;
+  albumTitle: string;
+  albumDescription?: string;
+  images: ImageType[];
+  isPublished: boolean;
+}
 
-  const params = useParams();
+const ViewAlbum = () => {
+  const [album, setAlbum] = useState<AlbumType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [modalImage, setModalImage] = useState<ImageType | null>(null);
+  const [modalEditable, setModalEditable] = useState(false);
+
+  const params = useParams() as { id: string };
+  const albumId = params.id;
   const router = useRouter();
-  const imageId = params?.id as string;
 
   useEffect(() => {
-    const fetchImage = async () => {
+    const fetchAlbum = async () => {
+      setLoading(true);
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_IMAGES_API_URL}/${imageId}`,
-          {
-            method: "GET",
-            credentials: "include",
-          }
+          `${process.env.NEXT_PUBLIC_GALLERY_API_URL}/${albumId}`,
+          { credentials: "include" }
         );
         const data = await res.json();
-        if (res.ok) {
-          setImage(data.image);
-        } else {
-          console.error(data.message);
+        if (!res.ok) {
+          console.error("Error loading album:", data.message);
+          return;
         }
-      } catch (error) {
-        console.error("Error fetching image", error);
+        setAlbum(data);
+      } catch (err) {
+        console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     };
+    fetchAlbum();
+  }, [albumId]);
 
-    if (imageId) {
-      fetchImage();
+  const handleOpenView = (img: ImageType) => {
+    setModalEditable(false);
+    setModalImage(img);
+  };
+
+  const handleOpenEdit = (img: ImageType) => {
+    setModalEditable(true);
+    setModalImage(img);
+  };
+
+  const handleDeleteImage = async (imageId: string) => {
+    if (!confirm("Are you sure you want to delete this image?")) return;
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_GALLERY_API_URL}/${albumId}/images/${imageId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Failed to delete image");
+        return;
+      }
+      setAlbum((prev) =>
+        prev
+          ? { ...prev, images: prev.images.filter((i) => i._id !== imageId) }
+          : prev
+      );
+    } catch (err) {
+      console.error("Delete error:", err);
     }
-  }, [imageId]);
+  };
 
-  if (loading) {
-    return <div className="text-center py-8">Loading image...</div>;
-  }
+  const handleModalUpdated = (updatedImage: ImageType) => {
+    // Replace image in album state
+    setAlbum((prev) =>
+      prev
+        ? {
+            ...prev,
+            images: prev.images.map((img) =>
+              img._id === updatedImage._id ? updatedImage : img
+            ),
+          }
+        : prev
+    );
+  };
 
-  if (!image) {
-    return <div className="text-center py-8 text-red-500">Image not found</div>;
-  }
+  const handleModalDeleted = (imageId: string) => {
+    setAlbum((prev) =>
+      prev
+        ? { ...prev, images: prev.images.filter((i) => i._id !== imageId) }
+        : prev
+    );
+  };
+
+  if (loading) return <Loader />;
+  if (!album) return <p className="text-center py-10">Album not found.</p>;
 
   return (
-    <div className="w-4/5 my-10 mx-auto flex flex-col gap-8">
-      <h1 className="font-bold text-3xl text-gray-800">{image.title}</h1>
+    <div className="w-4/5 my-10 mx-auto flex flex-col gap-6">
+      <div className="flex justify-between items-center">
+        <h1 className="font-semibold text-3xl">{album.albumTitle}</h1>
 
-      {/* Image Preview */}
-      <div className="w-full flex justify-center">
-        <Image
-          src={image.imageUrl}
-          alt={image.alt}
-          width={700}
-          height={450}
-          className="rounded-lg border shadow-lg"
-        />
-      </div>
-
-      {/* Info Section */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">
-          Image Details
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Name</p>
-            <p className="font-medium text-gray-800">{image.name}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Alt Text</p>
-            <p className="font-medium text-gray-800">{image.alt}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Description</p>
-            <p className="font-medium text-gray-800">
-              {image.description || "—"}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">CTA Text</p>
-            <p className="font-medium text-gray-800">{image.ctaText || "—"}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Link</p>
-            {image.link ? (
-              <a
-                href={image.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {image.link}
-              </a>
-            ) : (
-              <p className="font-medium text-gray-800">—</p>
-            )}
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Order</p>
-            <p className="font-medium text-gray-800">{image.order}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Created At</p>
-            <p className="font-medium text-gray-800">
-              {image.createdAt && new Date(image.createdAt).toLocaleString()}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-500">Updated At</p>
-            <p className="font-medium text-gray-800">
-              {image.updatedAt && new Date(image.updatedAt).toLocaleString()}
-            </p>
-          </div>
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            btnText="Edit Album"
+            onClickFunction={() =>
+              router.push(`/dashboard/gallery/edit/${albumId}`)
+            }
+            tertiary
+          />
+          <Button
+            type="button"
+            btnText="Go back"
+            secondary
+            className="max-w-28"
+            onClickFunction={() => router.push("/dashboard/gallery")}
+          />
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex gap-5 mt-4">
-        <Button
-          type="button"
-          btnText="Edit"
-          tertiary
-          onClickFunction={() =>
-            router.push(`/dashboard/image-sliders/edit/${image._id}`)
-          }
+      <Contents content={album.albumDescription || ""} />
+
+      <h2 className="font-semibold text-xl mt-5 mb-2">Album Images</h2>
+
+      {album.images.length === 0 ? (
+        <p>No images uploaded yet.</p>
+      ) : (
+        <div className="flex flex-wrap w-full gap-5">
+          {album.images.map((img) => (
+            <div
+              key={img._id}
+              className="relative group shadow-lg border border-gray-400 rounded-md p-3 flex flex-col items-center"
+            >
+              <Image
+                src={img.url}
+                alt={img.alt || img.caption || "Image"}
+                width={800}
+                height={600}
+                className="rounded-md object-cover w-60 h-60"
+              />
+              <div className="flex flex-col gap-5 my-5 items-center justify-center ">
+                {img.caption && (
+                  <p className="text-lg text-gray-900">{img.caption}</p>
+                )}
+                <div className="flex items-center justify-evenly gap-3 p-3 w-full">
+                  <Button
+                    btnText="View"
+                    type="button"
+                    secondary
+                    onClickFunction={() => handleOpenView(img)}
+                  />
+                  <Button
+                    btnText="Edit"
+                    type="button"
+                    tertiary
+                    onClickFunction={() => handleOpenEdit(img)}
+                  />
+                  <Button
+                    btnText="Delete"
+                    type="button"
+                    onClickFunction={() => handleDeleteImage(img._id)}
+                    primary
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* modal (view or edit) */}
+      {modalImage && (
+        <ImageModal
+          isOpen={!!modalImage}
+          onClose={() => setModalImage(null)}
+          image={modalImage}
+          albumId={albumId}
+          editable={modalEditable}
+          onUpdated={(img) => handleModalUpdated(img)}
+          onDeleted={(id) => handleModalDeleted(id)}
         />
-        <Button
-          type="button"
-          btnText="Back to List"
-          primary
-          onClickFunction={() => router.push("/dashboard/image-sliders")}
-        />
-      </div>
+      )}
     </div>
   );
 };
 
-export default ViewImage;
+export default ViewAlbum;

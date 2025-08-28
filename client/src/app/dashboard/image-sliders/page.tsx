@@ -11,13 +11,14 @@ interface SliderImage {
   imageUrl: string;
   alt: string;
   title: string;
+  order: number;
 }
 
 const ImageSlider = () => {
   const [images, setImages] = useState<SliderImage[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  // Fetch images from backend
+
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true);
@@ -95,7 +96,11 @@ const ImageSlider = () => {
           <table className="w-full min-w-max table-auto border border-gray-300 text-sm text-left">
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-300">
+                <th className="border border-gray-300 px-4 py-2">
+                  Order of Image
+                </th>
                 <th className="border border-gray-300 px-4 py-2">Image</th>
+
                 <th className="border border-gray-300 px-4 py-2">Title</th>
                 <th className="border border-gray-300 px-4 py-2">View</th>
                 <th className="border border-gray-300 px-4 py-2">
@@ -107,6 +112,9 @@ const ImageSlider = () => {
             <tbody>
               {images.map((img) => (
                 <tr key={img._id}>
+                  <td className="border border-gray-400 px-4 py-2">
+                    {img.order}
+                  </td>
                   <td className="border border-gray-400 px-4 py-2">
                     <Image
                       src={img.imageUrl}

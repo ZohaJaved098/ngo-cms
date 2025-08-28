@@ -2,7 +2,7 @@ import { FaChevronRight } from "react-icons/fa6";
 type Item = {
   _id: string;
   name: string;
-  type: "blog" | "event";
+  type: "blog" | "event" | "document";
 };
 
 type Props = {
