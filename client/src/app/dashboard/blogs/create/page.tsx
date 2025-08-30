@@ -77,7 +77,6 @@ const CreateBlog = () => {
     });
 
     const data = await res.json();
-    console.log("Data from create blog page", data);
 
     if (!res.ok) {
       setErrors(data.errors || {});
@@ -119,7 +118,7 @@ const CreateBlog = () => {
       </div>
       <form method="POST" className="flex flex-col gap-5">
         {/* Banner upload */}
-        <div className="flex flex-col gap-2 w-1/2">
+        <div className="flex flex-col gap-2">
           <InputField
             label="Banner Image"
             name="headerImage"
@@ -128,9 +127,6 @@ const CreateBlog = () => {
             onChange={onHeaderImageChange}
             error={errors.headerImage}
           />
-          {errors.headerImage && (
-            <p className="text-red-500">{errors.headerImage}</p>
-          )}
         </div>
         {/* Title + Type */}
         <div className="flex justify-between items-start gap-5 w-full">

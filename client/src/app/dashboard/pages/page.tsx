@@ -45,41 +45,49 @@ const Pages = () => {
   }, []);
 
   const onNewClick = () => {
-    router.push("pages/create");
+    router.push("/dashboard/pages/create");
   };
 
   const onViewClick = (id: string) => {
-    router.push(`pages/${id}`);
+    router.push(`/dashboard/pages/${id}`);
   };
 
   const onEditClick = (id: string) => {
-    router.push(`pages/edit/${id}`);
+    router.push(`/dashboard/pages/edit/${id}`);
   };
 
   // Toggle publish/unpublish
-  const onPublishToggle = async (id: string, currentStatus: boolean) => {
-    setLoading(true);
+  // Toggle publish/unpublish
+  const onPublishToggle = async (page: Page) => {
+    const formData = new FormData();
+    formData.append("title", page.title);
+    formData.append("slug", page.slug);
+    formData.append("isPublished", String(!page.isPublished)); // flip here
+    formData.append("parent", page.parent?._id || "");
+    formData.append("content", page.content);
+
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`,
+        `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${page._id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isPublished: !currentStatus }),
+          body: formData,
+          credentials: "include",
         }
       );
+
       if (res.ok) {
         setPages((prev) =>
           prev.map((p) =>
-            p._id === id ? { ...p, isPublished: !currentStatus } : p
+            p._id === page._id ? { ...p, isPublished: !p.isPublished } : p
           )
         );
       }
     } catch (err) {
       console.error("Error toggling publish:", err);
     }
-    setLoading(false);
   };
+
   if (loading) return <Loader />;
 
   return (
@@ -153,9 +161,7 @@ const Pages = () => {
                   type="button"
                   btnText={page.isPublished ? "Unpublish" : "Publish"}
                   primary={true}
-                  onClickFunction={() =>
-                    onPublishToggle(page._id, page.isPublished)
-                  }
+                  onClickFunction={() => onPublishToggle(page)}
                 />
               </td>
             </tr>

@@ -155,10 +155,6 @@ const EditBlog = () => {
               />
             )}
           </div>
-
-          {errors.headerImage && (
-            <p className="text-red-500">{errors.headerImage}</p>
-          )}
         </div>
         {/* Title + Type */}
         <div className="flex justify-between items-start gap-5 w-full">

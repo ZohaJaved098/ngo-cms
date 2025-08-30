@@ -19,18 +19,27 @@ router.get("/slug/{*slug}", (req, res) => {
 });
 
 router.get("/all-pages", getPages);
-router.post("/create", createPage);
-
-router.get("/:id", viewPage);
-router.put("/:id", updatePage);
-router.delete("/:id", deletePage);
-
 router.post(
-  "/:id/upload-banner",
+  "/create",
   verifyToken,
   authorizedRoles("admin", "manager"),
-  uploadPageBanner.single("pageBanner"),
-  uploadPageImage
+  uploadPageBanner.single("bannerImage"),
+  createPage
+);
+
+router.get("/:id", viewPage);
+router.put(
+  "/:id",
+  verifyToken,
+  authorizedRoles("admin", "manager"),
+  uploadPageBanner.single("bannerImage"),
+  updatePage
+);
+router.delete(
+  "/:id",
+  verifyToken,
+  authorizedRoles("admin", "manager"),
+  deletePage
 );
 
 module.exports = router;

@@ -5,11 +5,14 @@ import { InputField } from "@/app/components/InputField";
 import CkEditor from "@/app/components/CkEditor";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Image from "next/image";
 
 type FormErrors = {
   title?: string;
   slug?: string;
   content?: string;
+  bannerImage?: string;
+  isPublished?: string;
 };
 
 type ParentPage = {
@@ -29,6 +32,9 @@ const EditPage = () => {
   });
   const [content, setContent] = useState<string>("");
   const [parentPages, setParentPages] = useState<ParentPage[]>([]);
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
+  const [existingImage, setExistingImage] = useState<string>("");
+
   const router = useRouter();
   const params = useParams();
   const id = params.id;
@@ -59,6 +65,7 @@ const EditPage = () => {
           content: page.content,
         });
         setContent(page.content);
+        setExistingImage(page.bannerImage || "");
       } catch (err) {
         console.error("Error fetching page data:", err);
       }
@@ -95,22 +102,32 @@ const EditPage = () => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+  const onBannerImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setBannerImage(e.target.files[0]);
+      setExistingImage("");
+    }
+  };
 
   // Save changes
   const onEditClick = async () => {
-    const payload = {
-      ...formData,
-      content: content || formData.content,
-      parent: formData.parent || null,
-    };
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("slug", formData.slug);
+    formDataToSend.append("isPublished", String(formData.isPublished));
+    formDataToSend.append("parent", formData.parent);
+    formDataToSend.append("content", content);
+    if (bannerImage) {
+      formDataToSend.append("bannerImage", bannerImage);
+    }
 
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          credentials: "include",
+          body: formDataToSend,
         }
       );
 
@@ -128,6 +145,13 @@ const EditPage = () => {
   };
 
   const onCancelClick = () => {
+    setFormData({
+      title: "",
+      slug: "",
+      isPublished: false,
+      parent: "",
+      content: "",
+    });
     router.push("/dashboard/pages");
   };
 
@@ -136,6 +160,29 @@ const EditPage = () => {
       <h1 className="font-bold text-3xl">Edit Page</h1>
 
       <form className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-5  ">
+            <InputField
+              label="Banner Image"
+              name="bannerImage"
+              type="file"
+              accept="image/*"
+              onChange={onBannerImageChange}
+              error={errors.bannerImage}
+            />
+            {(existingImage || bannerImage) && (
+              <Image
+                src={
+                  bannerImage ? URL.createObjectURL(bannerImage) : existingImage
+                }
+                alt="Current Header"
+                className=" rounded"
+                width={800}
+                height={600}
+              />
+            )}
+          </div>
+        </div>
         {/* Title + Slug */}
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField

@@ -1,6 +1,10 @@
 const Page = require("../models/pagesModel");
 
 const slugRegex = /^\/[a-zA-Z0-9-/]+$/; // supports nested slugs like /parent/child
+const bannerImageUrl = (req) =>
+  req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/pages/${req.file.filename}`
+    : undefined;
 
 // ✅ Get all pages (admin/dashboard use)
 const getPages = async (_req, res) => {
@@ -42,6 +46,7 @@ const createPage = async (req, res) => {
       slug,
       content,
       isPublished,
+      bannerImage: bannerImageUrl(req) ?? null,
       parent: parent || null,
     });
 
@@ -85,7 +90,6 @@ const updatePage = async (req, res) => {
       return res.status(400).json({ message: "Validation error", errors });
     }
 
-    // 🔹 Auto-prefix slug if parent exists
     if (parent) {
       const parentPage = await Page.findById(parent);
       if (!parentPage) {
@@ -94,19 +98,19 @@ const updatePage = async (req, res) => {
       slug = `${parentPage.slug.replace(/\/$/, "")}/${slug.replace(/^\//, "")}`;
     }
 
-    await Page.findByIdAndUpdate(
-      pageId,
-      {
-        title,
-        slug,
-        content,
-        isPublished,
-        parent: parent || null,
-      },
-      { new: true }
-    );
+    const newBanner = bannerImageUrl(req);
+    const update = {
+      title,
+      slug,
+      content,
+      isPublished,
+      parent: parent || null,
+    };
+    if (newBanner) update.bannerImage = newBanner;
 
-    res.status(200).json({ message: "Page updated successfully" });
+    const updated = await Page.findByIdAndUpdate(pageId, update, { new: true });
+
+    res.status(200).json({ message: "Page updated successfully", updated });
   } catch (error) {
     res.status(500).json({ message: "Error updating page", error });
   }
@@ -127,10 +131,8 @@ const deletePage = async (req, res) => {
   }
 };
 
-// ✅ Get a page by its slug (frontend public use)
 const getPageBySlug = async (req, res, slugParam) => {
   try {
-    // console.log("Looking for slug:", slugParam);
     const page = await Page.findOne({ slug: slugParam, isPublished: true });
     if (!page) return res.status(404).json({ message: "Page not found!" });
 

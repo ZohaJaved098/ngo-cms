@@ -12,7 +12,7 @@ const PagesSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    banner: {
+    bannerImage: {
       type: String,
     },
     content: {

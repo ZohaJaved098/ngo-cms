@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/app/components/Button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { InputField } from "@/app/components/InputField";
 import { useRouter } from "next/navigation";
 import CkEditor from "@/app/components/CkEditor";
@@ -10,6 +10,7 @@ type FormErrors = {
   title?: string;
   slug?: string;
   content?: string;
+  bannerImage?: string;
   isPublished?: string;
 };
 
@@ -28,6 +29,8 @@ const CreatePage = () => {
     parent: "",
   });
   const [content, setContent] = useState<string>("");
+  const [bannerImage, setBannerImage] = useState<File | null>(null);
+  const bannerInputRef = useRef<HTMLInputElement>(null);
   const [parentPages, setParentPages] = useState<ParentPage[]>([]);
   const router = useRouter();
 
@@ -76,26 +79,36 @@ const CreatePage = () => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+  const onBannerImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setBannerImage(e.target.files[0]);
+    }
+  };
 
   // Create page
   const onCreateClick = async () => {
-    console.log("create btn clicked");
-    const payload = {
-      ...formData,
-      content,
-      parent: formData.parent || null,
-    };
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("slug", formData.slug);
+    formDataToSend.append("isPublished", String(formData.isPublished));
+    formDataToSend.append("parent", formData.parent || "");
+    formDataToSend.append("content", content);
+    if (bannerImage) {
+      formDataToSend.append("bannerImage", bannerImage);
+    }
 
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_PAGES_API_URL}/create`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+
+          body: formDataToSend,
+          credentials: "include",
         }
       );
       const data = await res.json();
+
       if (!res.ok) {
         setErrors(data.errors || {});
         return;
@@ -109,6 +122,8 @@ const CreatePage = () => {
         parent: "",
       });
       setContent("");
+      setBannerImage(null);
+      if (bannerInputRef.current) bannerInputRef.current.value = "";
       router.push("/dashboard/pages");
     } catch (err) {
       console.error("Error creating page:", err);
@@ -116,6 +131,14 @@ const CreatePage = () => {
   };
 
   const onCancelClick = () => {
+    setFormData({
+      title: "",
+      slug: "",
+      isPublished: false,
+      parent: "",
+    });
+    setContent("");
+    setBannerImage(null);
     router.push("/dashboard/pages");
   };
 
@@ -124,6 +147,16 @@ const CreatePage = () => {
       <h1 className="font-bold text-3xl">Create a Page</h1>
 
       <form className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
+          <InputField
+            label="Banner Image"
+            name="bannerImage"
+            type="file"
+            accept="image/*"
+            onChange={onBannerImageChange}
+            error={errors.bannerImage}
+          />
+        </div>
         {/* Title + Slug */}
         <div className="flex justify-between items-start gap-10 w-full">
           <InputField

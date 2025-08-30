@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { Button } from "@/app/components/Button";
+import { IoCloseOutline } from "react-icons/io5";
 
 interface ImageType {
   _id: string;
@@ -129,7 +130,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-md shadow-lg max-w-4xl w-full overflow-auto"
+        className="bg-white rounded-md shadow-lg max-w-4xl w-full overflow-auto relative "
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 flex gap-4 flex-col md:flex-row">
@@ -175,7 +176,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
 
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2  mt-3">
               {editable ? (
                 <>
                   <Button
@@ -192,12 +193,13 @@ const ImageModal: React.FC<ImageModalProps> = ({
                   />
                 </>
               ) : (
-                <Button
-                  type="button"
-                  btnText="Close"
-                  onClickFunction={onClose}
-                  primary
-                />
+                <button
+                  onClick={onClose}
+                  title="Close"
+                  className="absolute top-4 right-4  "
+                >
+                  <IoCloseOutline className="w-10 h-10 text-red-700 font-bold" />
+                </button>
               )}
             </div>
           </div>

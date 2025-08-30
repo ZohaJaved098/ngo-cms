@@ -4,6 +4,7 @@ import { Button } from "@/app/components/Button";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Contents from "@/app/components/Contents";
+import Image from "next/image";
 
 type ParentPage = {
   _id: string;
@@ -17,6 +18,7 @@ type Page = {
   slug: string;
   content: string;
   isPublished: boolean;
+  bannerImage?: string;
   parent?: ParentPage | null;
 };
 
@@ -44,7 +46,7 @@ const ViewPage = () => {
 
   // Edit navigation
   const onEditClick = (id: string) => {
-    router.push(`edit/${id}`);
+    router.push(`/dashboard/pages/edit/${id}`);
   };
 
   // Back to list
@@ -55,15 +57,24 @@ const ViewPage = () => {
   // Toggle publish/unpublish
   const onPublishToggle = async () => {
     if (!page) return;
+
+    const formData = new FormData();
+    formData.append("title", page.title);
+    formData.append("slug", page.slug);
+    formData.append("isPublished", String(!page.isPublished));
+    formData.append("parent", page.parent?._id || "");
+    formData.append("content", page.content);
+
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${page._id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isPublished: !page.isPublished }),
+          body: formData,
+          credentials: "include",
         }
       );
+
       if (res.ok) {
         setPage((prev) =>
           prev ? { ...prev, isPublished: !prev.isPublished } : prev
@@ -78,7 +89,7 @@ const ViewPage = () => {
     return (
       <div className="mt-10 w-4/5 mx-auto">
         <h1 className="text-red-500">
-          Page not found! Go back to{" "}
+          Page not found! Go back to
           <span
             className="underline text-blue-500 cursor-pointer"
             onClick={() => router.push("/dashboard/pages")}
@@ -92,6 +103,16 @@ const ViewPage = () => {
 
   return (
     <div className="w-4/5 mt-10 m-auto flex flex-col items-start gap-5">
+      {page.bannerImage && (
+        <div className="w-full h-80 relative rounded-lg overflow-hidden shadow-md">
+          <Image
+            src={page.bannerImage}
+            alt={page.title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
       {/* Title and Slug */}
       <div className="w-full flex justify-between items-center">
         <h1 className="font-black text-3xl">{page.title}</h1>

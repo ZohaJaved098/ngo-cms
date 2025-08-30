@@ -1,4 +1,5 @@
 import Contents from "@/app/components/Contents";
+import Image from "next/image";
 import Link from "next/link";
 import { FaHome } from "react-icons/fa";
 
@@ -39,9 +40,20 @@ export default async function Pages(props: {
   }
 
   return (
-    <div className="w-4/5 mx-auto mt-40 min-h-screen">
-      <h1 className="text-4xl font-bold mb-4">{page.title}</h1>
-      <Contents content={page.content} />
+    <div className=" mt-40 min-h-screen">
+      <div className="w-full h-92 bg-black/50">
+        <Image
+          src={page.bannerImage}
+          width={100}
+          height={100}
+          className="w-full aspect-auto object-contain h-92"
+          alt={page.title}
+        />
+      </div>
+      <div className="w-4/5 mt-10 mx-auto">
+        <h1 className="text-4xl font-bold mb-4">{page.title}</h1>
+        <Contents content={page.content} />
+      </div>
     </div>
   );
 }
