@@ -1,3 +1,4 @@
+import { Breadcrumbs } from "@/app/components/Breadcrumbs";
 import Contents from "@/app/components/Contents";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,6 +42,9 @@ export default async function Pages(props: {
 
   return (
     <div className=" mt-40 min-h-screen">
+      <div className="w-11/12 mx-auto mb-10">
+        <Breadcrumbs page={page} />
+      </div>
       <div className="w-full h-92 bg-black/50">
         <Image
           src={page.bannerImage}

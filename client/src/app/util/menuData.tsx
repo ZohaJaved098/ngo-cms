@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { TfiLayoutMediaCenter } from "react-icons/tfi";
 import { MdOutlineEventNote } from "react-icons/md";
 import { TbPageBreak } from "react-icons/tb";
+import { SiAlwaysdata } from "react-icons/si";
 export type MenuItem = {
   id: string;
   title: string;
@@ -41,6 +42,12 @@ const staticMenus: MenuItem[] = [
         href: "/events/view/registered",
       },
     ],
+  },
+  {
+    id: "ways-to-donate",
+    title: "Ways to Donate",
+    icon: <SiAlwaysdata className="w-5 h-5" />,
+    href: "/ways-to-donate",
   },
 ];
 

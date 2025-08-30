@@ -16,6 +16,7 @@ const contentRoutes = require("./routes/contentImageRoutes");
 const imagesRoutes = require("./routes/imagesRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const documentRoutes = require("./routes/documentRoutes");
+const donateRoutes = require("./routes/donateRoutes");
 // Connect to the database
 dbConnect();
 
@@ -50,6 +51,7 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/document", documentRoutes);
+app.use("/api/donation", donateRoutes);
 
 //start server
 app.listen(PORT, () => {

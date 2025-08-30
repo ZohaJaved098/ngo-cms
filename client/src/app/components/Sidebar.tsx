@@ -2,13 +2,11 @@
 import { useSelector } from "react-redux";
 
 import { RootState } from "@/app/redux/store";
+import { SideMenuData } from "../util/sideMenuData";
+import { FaCog, FaUserCog, FaHome } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa6";
 
-import { FaCog, FaUserCog, FaHome, FaRegImages } from "react-icons/fa";
-import { FaUsers, FaRegRectangleList } from "react-icons/fa6";
-import { MdOutlineEvent } from "react-icons/md";
 import { TfiDashboard } from "react-icons/tfi";
-import { RiPagesLine } from "react-icons/ri";
-import { GrGallery, GrDocumentUpload } from "react-icons/gr";
 import ActiveLink from "./ActiveLink";
 const Sidebar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -39,55 +37,25 @@ const Sidebar = () => {
           <p>Our NGO App </p>
         </ActiveLink>
         <hr className=" w-full bg-white" />
-        <h3 className="font-bold">Contents</h3>
-        <ActiveLink
-          href={"/dashboard/pages"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <RiPagesLine className="w-5 h-5" />
-          <p>Pages</p>
-        </ActiveLink>
-        <ActiveLink
-          href={"/dashboard/blogs"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <FaRegRectangleList className="w-5 h-5" />
-          <p>Blogs</p>
-        </ActiveLink>
-        <ActiveLink
-          href={"/dashboard/events"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <MdOutlineEvent className="w-5 h-5" />
-          <p>Events</p>
-        </ActiveLink>
-        <hr className=" w-full bg-white" />
-        <h3 className="font-bold">Media Library</h3>
-        <ActiveLink
-          href={"/dashboard/image-sliders"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <FaRegImages className="w-5 h-5" />
-          <p>Images Slider</p>
-        </ActiveLink>
-        <ActiveLink
-          href={"/dashboard/gallery"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <GrGallery className="w-5 h-5" />
-          <p>Gallery</p>
-        </ActiveLink>
-        <ActiveLink
-          href={"/dashboard/documents"}
-          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
-        >
-          <GrDocumentUpload className="w-5 h-5" />
-          <p>Documents</p>
-        </ActiveLink>
+        {SideMenuData.map((menu) => (
+          <div key={menu.id} className="flex flex-col gap-5 w-full ">
+            <h3 className="font-bold">{menu.title}</h3>
+            {menu.links.map((item) => (
+              <ActiveLink
+                key={item.name}
+                href={`/dashboard/${item.link}`}
+                className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+              >
+                {item.icon}
+                <p>{item.name}</p>
+              </ActiveLink>
+            ))}
+            <hr className=" w-full bg-white" />
+          </div>
+        ))}
 
         {user.role === "admin" && (
           <>
-            <hr className=" w-full bg-white" />
             <h3 className="font-bold">Admin Only</h3>
             <ActiveLink
               href={"/dashboard/users"}
@@ -110,7 +78,7 @@ const Sidebar = () => {
           <FaUserCog className="w-5 h-5" />
           My Profile
         </span>
-        <span></span>
+        {/* <span></span> */}
       </div>
     </div>
   );

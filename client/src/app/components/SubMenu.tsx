@@ -83,7 +83,7 @@ const SubMenu = ({ items, level = 0 }: SubMenuProps) => {
                 onClick={() => {
                   if (isNested) setOpenMenuId(null);
                 }}
-                className="flex gap-2 items-center group hover:font-semibold"
+                className="flex flex-col gap-2 items-center group hover:font-semibold"
               >
                 {item.icon}
                 <p className="text-sm font-light group-hover:font-semibold">

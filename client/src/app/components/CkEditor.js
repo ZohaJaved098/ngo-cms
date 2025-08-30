@@ -4,7 +4,7 @@ import React from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
-const CkEditor = ({ editorData, setEditorData, handleOnUpdate }) => {
+const CkEditor = ({ editorData, setEditorData, handleOnUpdate, field }) => {
   return (
     <div className="w-full min-h-[200px] overflow-y-auto overflow-x-hidden">
       <CKEditor
@@ -16,7 +16,6 @@ const CkEditor = ({ editorData, setEditorData, handleOnUpdate }) => {
             "redo",
             "|",
             "heading",
-            "fontSize",
             "|",
             "bold",
             "italic",
@@ -48,7 +47,7 @@ const CkEditor = ({ editorData, setEditorData, handleOnUpdate }) => {
         onChange={(_event, editor) => {
           const data = editor.getData();
           setEditorData(data);
-          handleOnUpdate(data, "description");
+          handleOnUpdate(data, field);
         }}
       />
     </div>

@@ -57,6 +57,14 @@ const uploadDocument = multer({
   storage: makeStorage("documents"),
   fileFilter: docFileFilter,
 });
+const uploadBankIcon = multer({
+  storage: makeStorage("bankIcon"),
+  fileFilter: imageFileFilter,
+});
+const uploadWaysBanner = multer({
+  storage: makeStorage("ways-to-donate"),
+  fileFilter: imageFileFilter,
+});
 
 // gallery uploader (unchanged)
 const galleryStorage = multer.diskStorage({
@@ -88,9 +96,6 @@ const uploadContentImage = multer({
   fileFilter: imageFileFilter,
 });
 
-// =======================
-// COMBINED parser for bannerImage + file (single multipart parse)
-// =======================
 const combinedStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     let folder = "others";
@@ -111,10 +116,9 @@ const combinedStorage = multer.diskStorage({
 const combinedFileFilter = (req, file, cb) => {
   if (file.fieldname === "bannerImage") return imageFileFilter(req, file, cb);
   if (file.fieldname === "file") return docFileFilter(req, file, cb);
-  cb(null, true); // accept other fields if any
+  cb(null, true);
 };
 
-// This is the single multer instance that will parse both fields at once:
 const uploadBannerAndFile = multer({
   storage: combinedStorage,
   fileFilter: combinedFileFilter,
@@ -131,7 +135,7 @@ module.exports = {
   uploadGallery,
   uploadContentImage,
   uploadDocument,
-
-  // combined middleware (use this in your document routes)
+  uploadBankIcon,
   uploadBannerAndFile,
+  uploadWaysBanner,
 };

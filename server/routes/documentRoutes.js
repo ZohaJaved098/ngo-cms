@@ -14,13 +14,10 @@ const {
   deleteDocument,
 } = require("../controllers/documentControllers");
 
-//  Public - get all
 router.get("/all-documents", getAllDocuments);
 
-//  Public - single doc by id
 router.get("/:id", getDocumentById);
 
-//  Protected - create
 router.post(
   "/create",
   verifyToken,
@@ -29,7 +26,6 @@ router.post(
   createDocument
 );
 
-//  Protected - update
 router.put(
   "/:id",
   verifyToken,
@@ -38,7 +34,6 @@ router.put(
   updateDocument
 );
 
-//  Protected - toggle publish/unpublish
 router.patch(
   "/:id/toggle",
   verifyToken,
@@ -46,7 +41,6 @@ router.patch(
   togglePublish
 );
 
-//  Protected - delete
 router.delete(
   "/:id",
   verifyToken,

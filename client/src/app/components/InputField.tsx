@@ -7,9 +7,10 @@ type InputFieldProps = {
   label: string;
   type: string;
   name: string;
-  value?: string;
+  value?: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string;
+
   autoComplete?: string;
   required?: boolean;
   placeholder?: string;
@@ -46,8 +47,9 @@ export const InputField: React.FC<InputFieldProps> = ({
       <div className="flex items-center gap-3 w-full relative ">
         <input
           className={`p-4 rounded-lg w-full outline-0 text-black ${
-            isDashboard ? "bg-gray-300" : "bg-white  "
-          }`}
+            isDashboard ? "bg-gray-300" : "bg-white border border-gray-500 "
+          }
+           ${type === "number" ? "max-w-1/2" : "w-full"} `}
           type={
             type === "password" ? (showPassword ? "text" : "password") : type
           }
