@@ -29,7 +29,7 @@ const registerUser = async (req, res) => {
       errors.password = "Password must be at most 30 characters long";
     } else if (!passwordRegex.test(password)) {
       errors.password =
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number";
+        "Password must contain at least one uppercase letter, one lowercase letter, one special character and one number";
     }
     if (password != confirmPassword) {
       errors.confirmPassword = "Password is not same!";

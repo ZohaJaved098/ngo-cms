@@ -5,7 +5,7 @@ const verifyToken = (req, res, next) => {
   const token = req.cookies["access-token"];
 
   if (!token) {
-    return res.status(401).json({ message: `No Token! Authorization Denied` });
+    return res.status(401).json({ message: `No Token! Can't Authenticate!` });
   }
 
   try {

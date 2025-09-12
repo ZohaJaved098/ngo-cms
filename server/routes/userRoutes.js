@@ -5,6 +5,10 @@ const {
   managerAccess,
   userAccess,
   getAllUsers,
+  deleteUser,
+  updateUserRole,
+  createNewUser,
+  getAUser,
 } = require("../controllers/userControllers");
 const verifyToken = require("../middlewares/authMiddleware");
 const authorizedRoles = require("../middlewares/roleMiddleware");
@@ -16,7 +20,10 @@ router.get(
   authorizedRoles("admin"),
   getAllUsers
 );
-
+router.delete("/:id", verifyToken, authorizedRoles("admin"), deleteUser);
+router.put("/:id/role", verifyToken, authorizedRoles("admin"), updateUserRole);
+router.post("/create", verifyToken, authorizedRoles("admin"), createNewUser);
+router.get("/:id", verifyToken, getAUser);
 router.get(
   "/manager",
   verifyToken,

@@ -222,6 +222,7 @@ const CreatePage = () => {
             editorData={content}
             setEditorData={setContent}
             handleOnUpdate={onContentChange}
+            field={"description"}
           />
           {errors.content && (
             <p className="text-red-500 text-sm">{errors.content}</p>
