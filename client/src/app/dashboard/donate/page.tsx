@@ -83,7 +83,7 @@ const Donation = () => {
 
       <div className="w-4/5 h-fit m-auto mt-10 flex flex-col gap-5">
         <div className="flex flex-wrap items-center justify-start gap-5">
-          <Card title="Donation Made" amount={donations.length} money />
+          <Card title="Donation Made by users" amount={donations.length} />
           <Card title="No. of Causes" amount={uniqueCauses} />
           <Card title="No. of Ways to Donate" amount={uniqueWays} />
           <Card title="Total Amount Donated" amount={totalAmount} money />
