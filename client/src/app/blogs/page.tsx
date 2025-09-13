@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Contents from "../components/Contents";
+import Title from "../components/Title";
 
 type Blog = {
   _id: string;
@@ -33,9 +34,7 @@ const PublicBlogs = () => {
 
   return (
     <div className="w-11/12 mx-auto mt-40 flex flex-col gap-10">
-      <h1 className="text-3xl font-semibold text-center tracking-widest">
-        All Blogs
-      </h1>
+      <Title text="All Blogs" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 place-items-center">
         {blogs.length === 0 ? (
@@ -46,7 +45,7 @@ const PublicBlogs = () => {
               key={blog._id}
               className="border p-5 rounded-xl shadow-lg flex flex-col gap-3 w-full h-64 bg-white hover:shadow-xl transition duration-300 overflow-hidden"
             >
-              <h2 className="text-xl font-bold text-gray-700 line-clamp-2">
+              <h2 className="text-xl font-bold capitalize text-gray-700 line-clamp-2">
                 {blog.name}
               </h2>
 

@@ -7,6 +7,7 @@ import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
 import Loader from "@/app/components/Loader";
 import ImageModal from "@/app/components/ImageModal";
+import Title from "@/app/components/Title";
 
 interface ImageType {
   _id: string;
@@ -92,7 +93,6 @@ const ViewAlbum = () => {
   };
 
   const handleModalUpdated = (updatedImage: ImageType) => {
-    // Replace image in album state
     setAlbum((prev) =>
       prev
         ? {
@@ -119,7 +119,7 @@ const ViewAlbum = () => {
   return (
     <div className="w-4/5 my-10 mx-auto flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <h1 className="font-semibold text-3xl">{album.albumTitle}</h1>
+        <Title text={album.albumTitle} />
 
         <div className="flex gap-3">
           <Button
@@ -134,7 +134,6 @@ const ViewAlbum = () => {
             type="button"
             btnText="Go back"
             secondary
-            className="max-w-28"
             onClickFunction={() => router.push("/dashboard/gallery")}
           />
         </div>
@@ -190,7 +189,6 @@ const ViewAlbum = () => {
         </div>
       )}
 
-      {/* modal (view or edit) */}
       {modalImage && (
         <ImageModal
           isOpen={!!modalImage}

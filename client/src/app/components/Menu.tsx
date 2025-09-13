@@ -29,7 +29,6 @@ export default function Menu() {
     setMenuOpened(isDesktop);
   }, [isDesktop]);
 
-  // on route change: only auto-close on mobile
   useEffect(() => {
     if (!isDesktop) setMenuOpened(false);
   }, [pathname, isDesktop]);
@@ -54,7 +53,6 @@ export default function Menu() {
           menuOpened
             ? "opacity-100 scale-y-100 visible"
             : "opacity-0 scale-y-0 invisible",
-          // force visible on desktop regardless of state
           "sm:opacity-100 sm:scale-y-100 sm:visible",
           "overflow-y-auto sm:overflow-visible absolute top-full right-0 sm:static sm:top-0 sm:right-0",
           "w-full sm:w-auto max-h-[80vh] p-5 sm:p-0",

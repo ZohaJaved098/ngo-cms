@@ -20,7 +20,10 @@ export const RadioInput: React.FC<RadioInputProps> = ({
       className={`flex flex-col justify-start items-start my-1 w-full relative rounded-lg  `}
     >
       {options.map((opt) => (
-        <label key={opt} className="flex capitalize items-center gap-3 my-2">
+        <label
+          key={opt}
+          className="flex capitalize font-medium items-center gap-3 my-2"
+        >
           <input
             type="radio"
             name={name}

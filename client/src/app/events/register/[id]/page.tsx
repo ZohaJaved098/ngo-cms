@@ -6,6 +6,7 @@ import { InputField } from "@/app/components/InputField";
 import { Button } from "@/app/components/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import Title from "@/app/components/Title";
 
 type FormData = {
   name: string;
@@ -82,7 +83,7 @@ const RegisterToEvent = () => {
 
   return (
     <div className="w-4/5 max-w-xl mx-auto mt-40 flex flex-col gap-6 auth_gradient p-6 rounded-lg text-white">
-      <h1 className="text-3xl font-bold">Register for Event</h1>
+      <Title text="Register for Event" />
 
       <InputField
         label="Full Name"

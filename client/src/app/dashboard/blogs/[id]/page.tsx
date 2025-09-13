@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Contents from "@/app/components/Contents";
 import Image from "next/image";
+import Title from "@/app/components/Title";
+import Loader from "@/app/components/Loader";
 
 type Blog = {
   _id: string;
@@ -60,7 +62,7 @@ const ViewBlog = () => {
     }
   };
 
-  if (!blog) return <p>Loading...</p>;
+  if (!blog) return <Loader />;
 
   return (
     <div className="w-4/5 mt-10 m-auto flex flex-col items-start gap-5">
@@ -76,7 +78,7 @@ const ViewBlog = () => {
       )}
 
       <div className="w-full flex justify-between items-center mt-5">
-        <h1 className="font-bold text-3xl tracking-wider">{blog.name}</h1>
+        <Title text={blog.name} />
       </div>
       <div className="flex items-center justify-between gap-5 w-full">
         <p className="font-medium text-xl text-blue-600">
@@ -126,14 +128,12 @@ const ViewBlog = () => {
           type="button"
           tertiary
           btnText="Edit"
-          className="max-w-32"
           onClickFunction={() => router.push(`/dashboard/blogs/edit/${id}`)}
         />
         <Button
           type="button"
           primary
           btnText="Go Back"
-          className="max-w-32"
           onClickFunction={() => router.push("/dashboard/blogs")}
         />
       </div>

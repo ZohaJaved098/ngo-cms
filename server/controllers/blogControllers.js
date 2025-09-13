@@ -7,7 +7,7 @@ const headerImageUrl = (req) =>
     : undefined;
 
 // get all blogs
-const getBlogs = async (_req, res) => {
+const getBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find();
     res.status(200).json({ message: "All blogs fetched", blogs });

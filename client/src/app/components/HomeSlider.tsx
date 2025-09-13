@@ -9,6 +9,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
+import Title from "./Title";
 
 interface SliderImage {
   _id: string;
@@ -71,9 +72,7 @@ const HomeSlider = () => {
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-center p-6">
-                <h2 className="text-white text-3xl font-bold mb-2">
-                  {slide.title}
-                </h2>
+                <Title text={slide.title} className={`text-white`} />
                 {slide.description && (
                   <p className="text-white max-w-2xl mb-4">
                     {slide.description}

@@ -6,6 +6,7 @@ import { InputField } from "@/app/components/InputField";
 import { useRouter } from "next/navigation";
 import CkEditor from "@/app/components/CkEditor";
 import { RadioInput } from "@/app/components/RadioInput";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -31,7 +32,6 @@ const CreateBlog = () => {
   const headerInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  //on change functions
   const onContentChange = (editor: string, field: string): void => {
     if (field === "description") {
       setContent(editor);
@@ -114,10 +114,9 @@ const CreateBlog = () => {
   return (
     <div className="w-4/5 my-10 m-auto flex flex-col gap-5">
       <div className="flex items-start justify-between">
-        <h1 className="font-bold text-3xl">Create a Blog</h1>
+        <Title text="Create new Blog" />
       </div>
       <form method="POST" className="flex flex-col gap-5">
-        {/* Banner upload */}
         <div className="flex flex-col gap-2">
           <InputField
             label="Banner Image"
@@ -127,8 +126,7 @@ const CreateBlog = () => {
             onChange={onHeaderImageChange}
             error={errors.headerImage}
           />
-        </div>
-        {/* Title + Type */}
+        </div>{" "}
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField
             label="Title of Blog"
@@ -149,8 +147,6 @@ const CreateBlog = () => {
             onChange={onChangeFunction}
           />
         </div>
-
-        {/* Authors + Tags */}
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField
             label="Author(s)"
@@ -171,10 +167,7 @@ const CreateBlog = () => {
             onChange={onChangeFunction}
           />
         </div>
-
         <hr className="w-full text-gray-400" />
-
-        {/* Published toggle */}
         <div className="max-w-32 flex flex-col items-start justify-center">
           <label className="capitalize font-bold">Published</label>
           <RadioInput
@@ -184,34 +177,28 @@ const CreateBlog = () => {
             options={["published", "unpublished"]}
           />
         </div>
-
-        {/* CKEditor */}
         <div className="flex flex-col items-center gap-5 w-full">
           <CkEditor
             editorData={content}
             setEditorData={setContent}
             handleOnUpdate={onContentChange}
+            field={"description"}
           />
           {errors.content && <p className="text-red-500">{errors.content}</p>}
         </div>
-
         <hr className="w-full text-gray-400" />
-
-        {/* Buttons */}
         <div className="flex items-center justify-between">
           <Button
             type="button"
             btnText="Create Blog"
             onClickFunction={onCreateClick}
             tertiary={true}
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             primary={true}
             onClickFunction={onCancelClick}
-            className="max-w-32"
           />
         </div>
       </form>

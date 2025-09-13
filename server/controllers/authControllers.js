@@ -5,22 +5,26 @@ const jwt = require("jsonwebtoken");
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,20}$/;
 const emailRegex = /\S+@\S+\.\S+/;
 
+const profilePicUrl = (req) =>
+  req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/profilePic/${
+        req.file.filename
+      }`
+    : undefined;
+
 // Register a new user
 const registerUser = async (req, res) => {
   try {
     const { username, email, password, confirmPassword, role } = req.body;
     const errors = {};
-    //validate username
     if (!username) {
       errors.username = "Name is required";
     }
-    //validate email
     if (!email) {
       errors.email = "Email is required";
     } else if (!emailRegex.test(email)) {
       errors.email = "Email is invalid";
     }
-    //validate password
     if (!password) {
       errors.password = "Password is required";
     } else if (password.length < 8) {
@@ -35,12 +39,10 @@ const registerUser = async (req, res) => {
       errors.confirmPassword = "Password is not same!";
     }
 
-    //validate role
     if (!role) {
       errors.role = "Role is required";
     }
 
-    //if user already exist
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       errors.existingUser = "User already exists";
@@ -49,21 +51,27 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // If there are validation errors, do not proceed with the form submission
     if (Object.keys(errors).length > 0) {
       return res
         .status(400)
         .json({ message: `Error Registering!`, errors: errors });
     }
 
-    //if no errors proceed
     const hashedPassword = await bcrypt.hash(password, 5);
 
+    let profilePic = "";
+    if (req.file) {
+      profilePic = profilePicUrl(req);
+    } else {
+      const seed = encodeURIComponent(username || Date.now().toString());
+      profilePic = `https://api.dicebear.com/6.x/avataaars/png?seed=${seed}`;
+    }
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       role,
+      profilePic,
     });
 
     await newUser.save();
@@ -84,23 +92,22 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const errors = {};
-    //validate email
+
     if (!email) {
       errors.email = "Email is required";
     } else if (!emailRegex.test(email)) {
       errors.email = "Email is invalid";
     }
-    //validate password
+
     if (!password) {
       errors.password = "Password is required";
     }
-    // If there are validation errors, do not proceed with the form submission
     if (Object.keys(errors).length > 0) {
       return res.status(400).json({ message: `Error Login!`, errors: errors });
     }
 
     const user = await User.findOne({ email });
-    //if user don't exist
+
     if (!user) {
       return res.status(404).json({
         message: `User with ${email} doesn't exist!`,
@@ -108,7 +115,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    //match current pw with pw stored in db
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
@@ -150,29 +156,8 @@ const logoutUser = (req, res) => {
   }
 };
 
-// const getMe = async (req, res) => {
-//   try {
-//     const token = req.cookies["access-token"];
-//     if (!token) {
-//       return res.status(401).json({ message: "No token provided" });
-//     }
-
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     const user = await User.findById(decoded.id).select("-password");
-
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     res.status(200).json({ user });
-//   } catch (err) {
-//     res.status(401).json({ message: "Invalid token", err });
-//   }
-// };
-
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
-  // getMe,
 };

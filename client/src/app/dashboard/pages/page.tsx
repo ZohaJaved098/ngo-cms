@@ -3,6 +3,7 @@
 import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -26,7 +27,6 @@ const Pages = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  // Fetch all pages
   useEffect(() => {
     const fetchAllPages = async () => {
       setLoading(true);
@@ -56,13 +56,11 @@ const Pages = () => {
     router.push(`/dashboard/pages/edit/${id}`);
   };
 
-  // Toggle publish/unpublish
-  // Toggle publish/unpublish
   const onPublishToggle = async (page: Page) => {
     const formData = new FormData();
     formData.append("title", page.title);
     formData.append("slug", page.slug);
-    formData.append("isPublished", String(!page.isPublished)); // flip here
+    formData.append("isPublished", String(!page.isPublished));
     formData.append("parent", page.parent?._id || "");
     formData.append("content", page.content);
 
@@ -93,13 +91,12 @@ const Pages = () => {
   return (
     <div className="flex flex-col gap-10 h-full">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold">All Pages</h3>
+        <Title text="All Pages" />
         <Button
           type="button"
           btnText="New Page"
           secondary={true}
           onClickFunction={onNewClick}
-          className="max-w-40"
         />
       </div>
 

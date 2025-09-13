@@ -40,7 +40,7 @@ export const InputField: React.FC<InputFieldProps> = ({
       className={`flex flex-col justify-start gap-3 items-start my-1 w-full  rounded-lg  `}
     >
       {label && (
-        <label className=" capitalize" htmlFor={name}>
+        <label className=" font-medium capitalize" htmlFor={name}>
           {label}
         </label>
       )}
@@ -54,7 +54,6 @@ export const InputField: React.FC<InputFieldProps> = ({
             type === "password" ? (showPassword ? "text" : "password") : type
           }
           name={name}
-          id={name}
           value={value}
           onChange={onChange}
           autoComplete={autoComplete}

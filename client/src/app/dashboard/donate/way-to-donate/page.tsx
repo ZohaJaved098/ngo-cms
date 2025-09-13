@@ -7,6 +7,7 @@ import Loader from "@/app/components/Loader";
 import Image from "next/image";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
+import Title from "@/app/components/Title";
 type AccountForm = {
   id: string;
   title: string;
@@ -91,14 +92,13 @@ const WaysToDonateDashboard = () => {
   return (
     <div className="flex flex-col gap-5 w-full">
       <div className="flex justify-between items-start w-full mt-5 ">
-        <h3 className="text-xl font-semibold">All Ways to Donate</h3>
+        <Title text="All Ways to Donate" />
         <div className="flex gap-3 items-center">
           <Button
             type="button"
             btnText="Add new Way"
             secondary={true}
             onClickFunction={() => onNewClick()}
-            className="max-w-40"
           />
           {!bannerImage && (
             <Button
@@ -108,7 +108,6 @@ const WaysToDonateDashboard = () => {
               onClickFunction={() =>
                 router.push(`/dashboard/donate/way-to-donate/banner/create`)
               }
-              className="max-w-60"
             />
           )}
         </div>

@@ -211,7 +211,6 @@ const EditAlbum = () => {
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-6">
       <h1 className="font-bold text-3xl">Edit Album</h1>
 
-      {/* Album Title */}
       <InputField
         label="Album Title"
         name="albumTitle"
@@ -280,7 +279,6 @@ const EditAlbum = () => {
         )}
       </div>
 
-      {/* New images uploader */}
       <div className="flex flex-col gap-2">
         <InputField
           label={`Upload New Images (max ${MAX_NEW_FILES} per update)`}
@@ -330,12 +328,12 @@ const EditAlbum = () => {
         )}
       </div>
 
-      {/* Description */}
       <div className="flex flex-col">
         <label className="my-2 font-medium">Album Description</label>
         <CkEditor
           editorData={albumDescription}
           setEditorData={setAlbumDescription}
+          field={"description"}
           handleOnUpdate={(editor: string, field: string) => {
             if (field === "description") {
               setAlbumDescription(editor);
@@ -348,21 +346,18 @@ const EditAlbum = () => {
         )}
       </div>
 
-      {/* Actions */}
       <div className="flex justify-between mt-2">
         <Button
           type="button"
           btnText={loading ? "Saving..." : "Update Album"}
           onClickFunction={onUpdateClick}
           tertiary
-          className="max-w-40"
         />
         <Button
           type="button"
           btnText="Cancel"
           onClickFunction={onCancelClick}
           primary
-          className="max-w-32"
         />
       </div>
     </div>

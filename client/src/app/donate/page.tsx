@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import DropDown from "../components/DropDown";
 import { Button } from "../components/Button";
 import { InputField } from "../components/InputField";
+import Title from "../components/Title";
 
 type Ways = {
   _id: string;
@@ -59,14 +60,12 @@ const DonatePage = () => {
         }
       );
     }
-    alert("✅ Donations submitted!");
+    alert(" Donations submitted!");
   };
 
   return (
     <div className="mt-40 min-h-screen h-full w-4/5 mx-auto flex flex-col gap-3">
-      <h2 className="text-3xl font-bold text-gray-700 ">
-        Make a Donation Online
-      </h2>
+      <Title text="Make a Donation Online" />
       <p className="ml-3 text-pretty">
         Give Your Zakat, Sadaqah and General Donations today through your
         Debit/Credit Card, JazzCash, Easypaisa & Bank ATM Card

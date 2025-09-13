@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
+import Title from "@/app/components/Title";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -49,9 +50,7 @@ const AddBanner = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">
-        Add Banner Image to Ways to Donate Page{" "}
-      </h1>
+      <Title text="Add Banner Image to Ways to Donate Page" />
       <form method="POST" className="flex flex-col gap-5">
         <InputField
           label="Banner Image"
@@ -77,14 +76,12 @@ const AddBanner = () => {
             btnText="Add Banner"
             onClickFunction={onCreateClick}
             tertiary
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             onClickFunction={onCancelClick}
             primary
-            className="max-w-32"
           />
         </div>
       </form>

@@ -3,6 +3,7 @@ import { TfiLayoutMediaCenter } from "react-icons/tfi";
 import { MdOutlineEventNote } from "react-icons/md";
 import { TbPageBreak } from "react-icons/tb";
 import { SiAlwaysdata } from "react-icons/si";
+import { RiTeamLine } from "react-icons/ri";
 export type MenuItem = {
   id: string;
   title: string;
@@ -44,10 +45,27 @@ const staticMenus: MenuItem[] = [
     ],
   },
   {
-    id: "ways-to-donate",
-    title: "Ways to Donate",
+    id: "team",
+    title: "Our Team",
+    icon: <RiTeamLine className="w-5 h-5" />,
+    href: "/team",
+  },
+  {
+    id: "action",
+    title: "Actions",
     icon: <SiAlwaysdata className="w-5 h-5" />,
-    href: "/ways-to-donate",
+    children: [
+      {
+        id: "ways-to-donate",
+        title: "Ways to Donate",
+        href: "/ways-to-donate",
+      },
+      {
+        id: "volunteer",
+        title: "Become Volunteer",
+        href: "/volunteer",
+      },
+    ],
   },
 ];
 

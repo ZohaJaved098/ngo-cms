@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Location from "@/app/components/Location";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -147,10 +148,9 @@ const EditEvent = () => {
   return (
     <div className="w-4/5 my-10 m-auto h-full flex flex-col gap-5">
       <div className="flex items-start justify-between">
-        <h1 className="font-bold text-3xl">Edit Event</h1>
+        <Title text="Edit Event" />
       </div>
       <form method="POST" className="flex flex-col gap-5">
-        {/* Cover Image Preview + Upload */}
         <div className="flex flex-col gap-3">
           <InputField
             label="Cover Image"
@@ -168,9 +168,6 @@ const EditEvent = () => {
               width={800}
               height={600}
             />
-          )}
-          {errors.coverImage && (
-            <p className="text-red-500">{errors.coverImage}</p>
           )}
         </div>
 
@@ -242,14 +239,13 @@ const EditEvent = () => {
             setFormData((prev) => ({ ...prev, lat, lng }));
           }}
         />
-
-        {/* CKEditor for Description */}
         <div className="flex flex-col gap-2">
           <label className="font-bold">Event Description</label>
           <CKEditor
             editorData={description}
             setEditorData={setDescription}
             handleOnUpdate={onDescriptionChange}
+            field={"description"}
           />
           {errors.description && (
             <p className="text-red-500">{errors.description}</p>
@@ -264,14 +260,12 @@ const EditEvent = () => {
             btnText="Save Changes"
             onClickFunction={onEditClick}
             tertiary
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             primary
             onClickFunction={onCancelClick}
-            className="max-w-32"
           />
         </div>
       </form>

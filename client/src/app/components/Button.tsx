@@ -1,4 +1,5 @@
 import React from "react";
+import Loader from "./Loader";
 type ButtonProps = {
   btnText: string;
   primary?: boolean;
@@ -20,7 +21,7 @@ export const Button: React.FC<ButtonProps> = ({
   type,
   onClickFunction,
   className,
-  // loading,
+  loading,
   disabled,
 }) => {
   return (
@@ -32,14 +33,19 @@ export const Button: React.FC<ButtonProps> = ({
         ${secondary && "bg-blue-700  "}
         ${tertiary && "bg-green-700  "}
         ${cancel && "bg-gray-500 "}
-        
+        ${disabled && "opacity-80 cursor-not-allowed"}
         ${className}
          focus:outline-0 px-4 py-2 rounded-lg text-center tracking-wide w-full
          cursor-pointer
+         max-w-fit
       `}
-      onClick={onClickFunction}
+      onClick={disabled ? undefined : onClickFunction}
     >
-      <p className={`text-white text-base`}>{btnText}</p>
+      {loading ? (
+        <Loader />
+      ) : (
+        <p className={`text-white text-base`}>{btnText}</p>
+      )}
     </button>
   );
 };

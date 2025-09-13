@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Contents from "../components/Contents";
+import Title from "../components/Title";
+import { FaArrowRight } from "react-icons/fa";
 
 type Event = {
   _id: string;
@@ -26,7 +28,6 @@ const PublicEvents = () => {
       );
       const data = await res.json();
 
-      // You can filter ongoing or future events if you want
       const validEvents = data.events || [];
       setEvents(validEvents);
     };
@@ -36,7 +37,7 @@ const PublicEvents = () => {
 
   return (
     <div className="w-11/12 h-screen mx-auto mt-40 mb-16">
-      <h1 className="text-4xl font-bold mb-10 text-center">Upcoming Events</h1>
+      <Title text="Upcoming Events" />
 
       {events.length === 0 ? (
         <p className="text-center text-gray-600">
@@ -86,7 +87,7 @@ const PublicEvents = () => {
                 href={`/events/${event._id}`}
                 className="text-blue-600 hover:underline text-sm mt-auto pt-4"
               >
-                View Details →
+                View Details <FaArrowRight />
               </Link>
             </div>
           ))}

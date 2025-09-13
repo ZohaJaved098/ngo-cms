@@ -10,6 +10,7 @@ import { RootState } from "@/app/redux/store";
 import Contents from "@/app/components/Contents";
 import Image from "next/image";
 import Location from "@/app/components/Location";
+import Title from "@/app/components/Title";
 
 type RegisteredUser = {
   name: string;
@@ -50,13 +51,11 @@ const EventDetailPage = () => {
       const fetchedEvent = data.event;
       setEvent(fetchedEvent);
 
-      // check if user already registered
       const isRegistered = fetchedEvent.registeredUsers?.some(
         (u: RegisteredUser) => u.email === user?.email
       );
       setAlreadyRegistered(isRegistered);
 
-      // get related events
       const allRes = await fetch(
         `${process.env.NEXT_PUBLIC_EVENTS_API_URL}/all-events`
       );
@@ -83,7 +82,6 @@ const EventDetailPage = () => {
 
   return (
     <div className="flex justify-center gap-10 mt-40 p-4 mx-auto items-start w-11/12">
-      {/* Main content */}
       <div className="w-4/5 flex flex-col gap-6">
         {event.coverImage && (
           <Image
@@ -95,7 +93,7 @@ const EventDetailPage = () => {
           />
         )}
         <div className="flex justify-between items-center w-full">
-          <h1 className="text-4xl font-bold">{event.name}</h1>
+          <Title text={event.name} />
           <span className="text-gray-700 capitalize font-medium text-lg">
             {event.typeOfEvent}
           </span>

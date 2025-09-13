@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
         port: "5000",
         pathname: "/uploads/**",
       },
+      {
+        hostname: "api.dicebear.com",
+      },
+      {
+        hostname: "volunteer.alkhidmat.org",
+      },
     ],
   },
 };

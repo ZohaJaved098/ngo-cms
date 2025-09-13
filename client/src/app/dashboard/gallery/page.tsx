@@ -5,6 +5,7 @@ import { Button } from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
 import { useRouter } from "next/navigation";
 import Contents from "@/app/components/Contents";
+import Title from "@/app/components/Title";
 
 interface Album {
   _id: string;
@@ -19,7 +20,6 @@ const GalleryDashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  // Fetch albums
   useEffect(() => {
     const fetchAlbums = async () => {
       setLoading(true);
@@ -96,13 +96,12 @@ const GalleryDashboard = () => {
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5">
-        <h3 className="text-xl font-semibold">Gallery Albums</h3>
+        <Title text="Gallery Albums" />
         <Button
           type="button"
           btnText="Add New Album"
           secondary={true}
           onClickFunction={onNewClick}
-          className="max-w-40"
         />
       </div>
 

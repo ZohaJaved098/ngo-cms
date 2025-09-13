@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Contents from "@/app/components/Contents";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 
 type Blogs = {
   _id: string;
@@ -81,7 +82,7 @@ const Blogs = () => {
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5 ">
-        <h3 className="text-xl font-semibold">All Blogs</h3>
+        <Title text="All Blogs" />
         <Button
           type="button"
           btnText="Add new Blog"
@@ -138,28 +139,9 @@ const Blogs = () => {
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   <Contents shortened={true} content={blog.content} />
                 </td>
-                {/* <td className="border border-gray-400 px-4 py-2 max-w-28 ">
-                  <ul>
-                    {blog.author.map((a, i) => (
-                      <li key={i}>{a};</li>
-                    ))}
-                  </ul>
-                </td> */}
                 <td className="border border-gray-400 px-4 py-2 max-w-28 ">
                   {blog.author.join(", ")}
                 </td>
-                {/* <td className="border border-gray-400 px-4 py-2 max-w-40 ">
-                  <ul className="flex flex-wrap gap-2">
-                    {blog.tags.map((tag, i) => (
-                      <li
-                        key={i}
-                        className="bg-cyan-600 text-white rounded-2xl py-2 px-3"
-                      >
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                </td> */}
                 <td className="border border-gray-400 px-4 py-2 max-w-40 ">
                   <div className="flex flex-wrap gap-2">
                     {blog.tags.map((tag, i) => (

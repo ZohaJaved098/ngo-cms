@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Contents from "@/app/components/Contents";
 import Image from "next/image";
+import Title from "@/app/components/Title";
 
 type ParentPage = {
   _id: string;
@@ -113,18 +114,17 @@ const ViewPage = () => {
           />
         </div>
       )}
-      {/* Title and Slug */}
+
       <div className="w-full flex justify-between items-center">
-        <h1 className="font-black text-3xl">{page.title}</h1>
+        <Title text={page.title} />
+
         <p className="font-light text-lg text-gray-500">{page.slug}</p>
       </div>
 
-      {/* Parent */}
       <p className="text-sm text-gray-600">
         Parent: {page.parent?.title || "—"}
       </p>
 
-      {/* Status + Toggle */}
       <div className="flex items-center justify-between w-full ">
         <span
           className={`px-3 py-1 rounded-full text-sm font-semibold ${
@@ -140,28 +140,23 @@ const ViewPage = () => {
           btnText={page.isPublished ? "Unpublish" : "Publish"}
           secondary={true}
           type="button"
-          className="max-w-20"
           onClickFunction={onPublishToggle}
         />
       </div>
 
-      {/* Page content */}
       <Contents content={page.content} />
 
-      {/* Actions */}
       <div className="flex items-center justify-between w-full">
         <Button
           type="button"
           tertiary={true}
           btnText="Edit"
-          className="max-w-32 "
           onClickFunction={() => onEditClick(page._id)}
         />
         <Button
           type="button"
           primary={true}
           btnText="Go Back"
-          className="max-w-32"
           onClickFunction={onCancelClick}
         />
       </div>

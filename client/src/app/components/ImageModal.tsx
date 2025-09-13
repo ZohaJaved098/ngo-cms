@@ -5,6 +5,7 @@ import Image from "next/image";
 import { InputField } from "@/app/components/InputField";
 import { Button } from "@/app/components/Button";
 import { IoCloseOutline } from "react-icons/io5";
+import Title from "./Title";
 
 interface ImageType {
   _id: string;
@@ -148,7 +149,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
           </div>
 
           <div className="w-full md:w-96 flex flex-col gap-3">
-            <h3 className="text-lg font-semibold">Image details</h3>
+            <Title text="Image details" className="text-xl" />
 
             {caption && (
               <InputField

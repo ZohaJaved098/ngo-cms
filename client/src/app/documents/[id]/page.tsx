@@ -6,6 +6,7 @@ import Image from "next/image";
 import Contents from "@/app/components/Contents";
 import RelevantLinks from "@/app/components/RelevantLinks";
 import { Button } from "@/app/components/Button";
+import Title from "@/app/components/Title";
 
 type Document = {
   _id: string;
@@ -26,7 +27,6 @@ const DocumentViewPage = () => {
 
     const fetchDocumentAndRelated = async () => {
       try {
-        // Fetch the main document
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_DOCUMENT_API_URL}/${id}`,
           { credentials: "include" }
@@ -58,7 +58,6 @@ const DocumentViewPage = () => {
 
   return (
     <div className="flex mt-40 justify-center gap-10 p-4 mx-auto items-start w-11/12">
-      {/* Main content */}
       <div className="w-4/5 flex flex-col gap-6">
         {document.bannerImage && (
           <Image
@@ -69,7 +68,7 @@ const DocumentViewPage = () => {
             className="rounded-t-lg h-60 object-cover object-center"
           />
         )}
-        <h1 className="text-3xl font-bold">{document.name}</h1>
+        <Title text={document.name} />
         <Contents content={document.description || "No description"} />
         <hr className="border-gray-300" />
 
@@ -77,7 +76,6 @@ const DocumentViewPage = () => {
           btnText="Download Now"
           type="button"
           tertiary
-          className="max-w-40"
           onClickFunction={() => window.open(document.fileUrl, "_blank")}
         />
       </div>

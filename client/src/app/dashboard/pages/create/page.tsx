@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { InputField } from "@/app/components/InputField";
 import { useRouter } from "next/navigation";
 import CkEditor from "@/app/components/CkEditor";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   title?: string;
@@ -34,7 +35,6 @@ const CreatePage = () => {
   const [parentPages, setParentPages] = useState<ParentPage[]>([]);
   const router = useRouter();
 
-  // Fetch all existing pages for parent dropdown
   useEffect(() => {
     const fetchPages = async () => {
       try {
@@ -50,14 +50,12 @@ const CreatePage = () => {
     fetchPages();
   }, []);
 
-  // CKEditor change
   const onContentChange = (editor: string, field: string): void => {
     if (field === "description") {
       setContent(editor);
     }
   };
 
-  // input change handler
   const onChangeFunction = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -85,7 +83,6 @@ const CreatePage = () => {
     }
   };
 
-  // Create page
   const onCreateClick = async () => {
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
@@ -144,7 +141,7 @@ const CreatePage = () => {
 
   return (
     <div className="w-4/5 my-10 m-auto flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Create a Page</h1>
+      <Title text="Create a Page" />
 
       <form className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
@@ -157,7 +154,7 @@ const CreatePage = () => {
             error={errors.bannerImage}
           />
         </div>
-        {/* Title + Slug */}
+
         <div className="flex justify-between items-start gap-10 w-full">
           <InputField
             label="Title"
@@ -185,11 +182,9 @@ const CreatePage = () => {
           </div>
         </div>
 
-        {/* Publish checkbox */}
         <div className="flex justify-between w-full items-center gap-3">
-          {/* Parent page selection */}
           <div className="flex gap-5 items-center w-full">
-            <label className="">Parent Page:</label>
+            <label>Parent Page:</label>
             <select
               name="parent"
               value={formData.parent}
@@ -216,7 +211,6 @@ const CreatePage = () => {
           </div>
         </div>
 
-        {/* Content editor */}
         <div className="flex flex-col gap-3">
           <CkEditor
             editorData={content}
@@ -229,21 +223,18 @@ const CreatePage = () => {
           )}
         </div>
 
-        {/* Actions */}
         <div className="flex items-center justify-between">
           <Button
             type="button"
             btnText="Create Page"
             onClickFunction={onCreateClick}
             tertiary={true}
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             primary={true}
             onClickFunction={onCancelClick}
-            className="max-w-32"
           />
         </div>
       </form>

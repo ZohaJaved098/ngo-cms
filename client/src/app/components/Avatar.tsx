@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { logout } from "@/app/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const Avatar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -41,10 +42,20 @@ const Avatar = () => {
         className="flex flex-col items-center group relative"
         onClick={() => setAvatarOpened(!avatarOpened)}
       >
-        <FaRegUserCircle
-          title="Avatar"
-          className="w-5 h-5 group-hover:w-7 group-hover:h-7 transition-all"
-        />
+        {user.profilePic ? (
+          <Image
+            src={user.profilePic}
+            alt={user.username}
+            width={50}
+            height={50}
+            className="w-7 h-7 object-cover group-hover:w-10 group-hover:h-10 transition-all border-2 border-gray-700 rounded-full"
+          />
+        ) : (
+          <FaRegUserCircle
+            title="Avatar"
+            className="w-5 h-5 group-hover:w-7 group-hover:h-7 transition-all"
+          />
+        )}
         <p className="hidden sm:block text-sm font-light group-hover:font-semibold ">
           {user ? user.username : "Avatar"}
         </p>
@@ -79,7 +90,7 @@ const Avatar = () => {
                 </Link>
               </li>
               <li className="cursor-pointer">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/profile" className="flex items-center gap-2">
                   <FaUserCog />
                   <p className="text-sm">My Profile</p>
                 </Link>

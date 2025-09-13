@@ -7,6 +7,7 @@ import { InputField } from "@/app/components/InputField";
 import CkEditor from "@/app/components/CkEditor";
 import { RadioInput } from "@/app/components/RadioInput";
 import Location from "@/app/components/Location";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -99,7 +100,7 @@ const CreateEvent = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Create Event</h1>
+      <Title text="Create Event" />
       <form method="POST" className="flex flex-col gap-5">
         {/* Cover Image */}
         <InputField
@@ -190,6 +191,7 @@ const CreateEvent = () => {
             editorData={description}
             setEditorData={setDescription}
             handleOnUpdate={onDescriptionChange}
+            field={"description"}
           />
           {errors.description && (
             <p className="text-red-500">{errors.description}</p>
@@ -202,14 +204,12 @@ const CreateEvent = () => {
             btnText="Create Event"
             onClickFunction={onCreateClick}
             tertiary
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             onClickFunction={onCancelClick}
             primary
-            className="max-w-32"
           />
         </div>
       </form>

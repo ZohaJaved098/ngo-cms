@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -82,7 +83,7 @@ const CreateImage = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Add New Slider Image</h1>
+      <Title text="Add New Slider Image" />
       <form method="POST" className="flex flex-col gap-5">
         <div className="flex justify-between gap-5">
           <InputField
@@ -153,18 +154,15 @@ const CreateImage = () => {
             value={formData.order.toString()}
             onChange={onChangeFunction}
           />
-          <div className="flex flex-col w-full">
-            <label className="font-bold">Upload Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onFileChange}
-              className="border border-gray-300 p-2 rounded-md"
-            />
-            {errors.image && (
-              <p className="text-red-500 text-sm">{errors.image}</p>
-            )}
-          </div>
+
+          <InputField
+            label={`Upload Images`}
+            name="image"
+            type="file"
+            accept="image/*"
+            onChange={onFileChange}
+            error={errors.image}
+          />
         </div>
 
         <div className="flex justify-between items-center gap-5 mt-8">
@@ -173,14 +171,12 @@ const CreateImage = () => {
             btnText="Create Image"
             onClickFunction={onCreateClick}
             tertiary
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             onClickFunction={onCancelClick}
             primary
-            className="max-w-32"
           />
         </div>
       </form>

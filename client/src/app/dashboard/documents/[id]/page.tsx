@@ -7,6 +7,7 @@ import Loader from "@/app/components/Loader";
 import Contents from "@/app/components/Contents";
 import { Button } from "@/app/components/Button";
 import Link from "next/link";
+import Title from "@/app/components/Title";
 
 interface Document {
   _id: string;
@@ -50,7 +51,7 @@ const ViewDocument = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto flex flex-col gap-5">
-      <h1 className="text-3xl font-bold">{document.name}</h1>
+      <Title text={document.name} />
 
       {document.bannerImage && (
         <Image

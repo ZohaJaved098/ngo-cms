@@ -6,6 +6,7 @@ import Image from "next/image";
 import Loader from "@/app/components/Loader";
 import { Button } from "@/app/components/Button";
 import Contents from "../components/Contents";
+import Title from "../components/Title";
 
 interface Document {
   _id: string;
@@ -52,7 +53,7 @@ const PublicDocuments = () => {
 
   return (
     <div className="w-11/12 mx-auto mt-40 my-10">
-      <h1 className="text-3xl font-bold mb-6">All Documents</h1>
+      <Title text="All Documents" />
       <div className="flex flex-wrap gap-10">
         {documents.map((doc) => (
           <div
@@ -85,14 +86,12 @@ const PublicDocuments = () => {
                   type="button"
                   btnText="View"
                   secondary
-                  className="max-w-28 max-h-10"
                   onClickFunction={() => router.push(`/documents/${doc._id}`)}
                 />
                 <Button
                   type="button"
                   btnText="Download"
                   primary
-                  className="max-w-28 max-h-10"
                   onClickFunction={() => window.open(doc.fileUrl, "_blank")}
                 />
               </div>

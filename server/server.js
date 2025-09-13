@@ -1,6 +1,6 @@
 const dotenv = require("dotenv").config();
-
 const express = require("express");
+
 const dbConnect = require("./config/dbConnection");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
@@ -17,12 +17,18 @@ const imagesRoutes = require("./routes/imagesRoutes");
 const galleryRoutes = require("./routes/galleryRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const donateRoutes = require("./routes/donateRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const volunteerRoutes = require("./routes/volunteerRoutes");
+const teamRoutes = require("./routes/teamRoutes");
+
 // Connect to the database
 dbConnect();
 
 //create express app
 const app = express();
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -52,6 +58,9 @@ app.use("/api/gallery", galleryRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/document", documentRoutes);
 app.use("/api/donation", donateRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/team", teamRoutes);
+app.use("/api/volunteer", volunteerRoutes);
 
 //start server
 app.listen(PORT, () => {

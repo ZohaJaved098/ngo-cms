@@ -9,11 +9,12 @@ const {
   updateUserRole,
   createNewUser,
   getAUser,
+  updateUser,
 } = require("../controllers/userControllers");
 const verifyToken = require("../middlewares/authMiddleware");
 const authorizedRoles = require("../middlewares/roleMiddleware");
+const { uploadProfilePic } = require("../middlewares/uploadMiddleware");
 
-router.get("/admin", verifyToken, authorizedRoles("admin"), adminAccess);
 router.get(
   "/admin/all-users",
   verifyToken,
@@ -22,20 +23,19 @@ router.get(
 );
 router.delete("/:id", verifyToken, authorizedRoles("admin"), deleteUser);
 router.put("/:id/role", verifyToken, authorizedRoles("admin"), updateUserRole);
-router.post("/create", verifyToken, authorizedRoles("admin"), createNewUser);
+router.post(
+  "/create",
+  verifyToken,
+  authorizedRoles("admin"),
+  uploadProfilePic.single("profilePic"),
+  createNewUser
+);
+router.put(
+  "/:id",
+  verifyToken,
+  uploadProfilePic.single("profilePic"),
+  updateUser
+);
 router.get("/:id", verifyToken, getAUser);
-router.get(
-  "/manager",
-  verifyToken,
-  authorizedRoles("admin", "manager"),
-  managerAccess
-);
-
-router.get(
-  "/user",
-  verifyToken,
-  authorizedRoles("admin", "manager", "user"),
-  userAccess
-);
 
 module.exports = router;

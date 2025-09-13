@@ -30,7 +30,6 @@ export default function WaysToDonate() {
     );
     const data = await res.json();
     setWays(data.waysToDonate || []);
-    // set first banking type as default open
 
     console.log("active", data.waysToDonate.length);
     if (data.waysToDonate.length > 0) {
@@ -41,7 +40,6 @@ export default function WaysToDonate() {
     fetchWays();
   }, []);
 
-  // group ways by bankingType
   const groupedWays = ways.reduce<Record<string, Way[]>>((acc, way) => {
     if (!acc[way.bankingType]) acc[way.bankingType] = [];
     acc[way.bankingType].push(way);
@@ -57,7 +55,6 @@ export default function WaysToDonate() {
 
   return (
     <div className="w-full max-w-5xl mt-40 mx-auto my-10">
-      {/* Tabs (row of banking types) */}
       <div className="flex gap-4">
         {Object.keys(groupedWays).map((bankingType) => (
           <button

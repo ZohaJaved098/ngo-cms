@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import RelevantLinks from "@/app/components/RelevantLinks";
 import Contents from "@/app/components/Contents";
 import Image from "next/image";
+import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 
 type Blog = {
   _id: string;
@@ -44,10 +46,10 @@ const BlogDetailPage = () => {
     if (id) fetchBlogAndRelated();
   }, [id]);
 
-  if (!blog) return <p className="text-center mt-20">Loading blog...</p>;
+  if (!blog) return <Loader />;
   if (!blog.isPublished)
     return (
-      <p className="text-center mt-20">🚫 This blog is not published yet.</p>
+      <p className="text-center mt-20"> This blog is not published yet.</p>
     );
 
   return (
@@ -61,9 +63,7 @@ const BlogDetailPage = () => {
           width={800}
           height={600}
         />
-        <h1 className="text-4xl capitalize tracking-wider font-bold w-full">
-          {blog.name}
-        </h1>
+        <Title text={blog.name} />
 
         <div className="flex justify-between items-center">
           <span className="flex items-center gap-3 text-sm text-gray-600">

@@ -6,7 +6,7 @@ import Image from "next/image";
 import Loader from "@/app/components/Loader";
 import ImageModal from "@/app/components/ImageModal";
 import Contents from "@/app/components/Contents";
-
+import Title from "@/app/components/Title";
 interface ImageType {
   _id: string;
   url: string;
@@ -49,16 +49,13 @@ const PublicGalleryAlbum = () => {
 
   return (
     <div className="w-11/12 mx-auto mt-40 my-10">
-      <h1 className="text-3xl font-bold text-center mb-4">
-        {album.albumTitle}
-      </h1>
+      <Title text={album.albumTitle} />
 
       {album.albumDescription && <Contents content={album.albumDescription} />}
       <p className="text-right font-light text-gray-500">
         Click on image to view them
       </p>
 
-      {/* Grid of images */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-5">
         {album.images.map((img) => (
           <div

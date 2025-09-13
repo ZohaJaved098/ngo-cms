@@ -1,9 +1,10 @@
 import AuthForm from "@/app/components/AuthForm";
+import Title from "@/app/components/Title";
 
 const Register = () => {
   return (
     <div className="w-full h-full">
-      <h2 className="text-2xl font-bold mb-5">Register</h2>
+      <Title text="Register" className="text-white" />
       <AuthForm login={false} />
     </div>
   );

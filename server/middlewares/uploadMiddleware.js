@@ -65,6 +65,18 @@ const uploadWaysBanner = multer({
   storage: makeStorage("ways-to-donate"),
   fileFilter: imageFileFilter,
 });
+const uploadContactIcon = multer({
+  storage: makeStorage("contactIcon"),
+  fileFilter: imageFileFilter,
+});
+const uploadMemberPic = multer({
+  storage: makeStorage("memberPic"),
+  fileFilter: imageFileFilter,
+});
+const uploadProfilePic = multer({
+  storage: makeStorage("profilePic"),
+  fileFilter: imageFileFilter,
+});
 
 // gallery uploader (unchanged)
 const galleryStorage = multer.diskStorage({
@@ -138,4 +150,7 @@ module.exports = {
   uploadBankIcon,
   uploadBannerAndFile,
   uploadWaysBanner,
+  uploadContactIcon,
+  uploadMemberPic,
+  uploadProfilePic,
 };

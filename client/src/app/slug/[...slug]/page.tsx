@@ -1,5 +1,6 @@
 import { Breadcrumbs } from "@/app/components/Breadcrumbs";
 import Contents from "@/app/components/Contents";
+import Title from "@/app/components/Title";
 import Image from "next/image";
 import Link from "next/link";
 import { FaHome } from "react-icons/fa";
@@ -55,7 +56,7 @@ export default async function Pages(props: {
         />
       </div>
       <div className="w-4/5 mt-10 mx-auto">
-        <h1 className="text-4xl font-bold mb-4">{page.title}</h1>
+        <Title text={page.title} />
         <Contents content={page.content} />
       </div>
     </div>

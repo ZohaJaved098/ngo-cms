@@ -7,6 +7,7 @@ import { InputField } from "@/app/components/InputField";
 import Loader from "@/app/components/Loader";
 import { RadioInput } from "@/app/components/RadioInput";
 import Image from "next/image";
+import Title from "@/app/components/Title";
 
 type BankingType =
   | "online_banking"
@@ -94,7 +95,6 @@ const CreateWay: React.FC = () => {
       const updatedAccounts = [...p.accounts];
       const lastAcc = updatedAccounts[updatedAccounts.length - 1];
 
-      // only lock in the last account if it has some data
       if (
         lastAcc.title ||
         lastAcc.IBAN ||
@@ -145,14 +145,13 @@ const CreateWay: React.FC = () => {
 
     if (form.useAccounts) {
       const accountsPayload = form.accounts.map((a) => ({
-        _id: a._id, // backend can ignore or use this if needed
+        _id: a._id,
         title: a.title,
         IBAN: a.IBAN,
         branch: a.branch,
         swift: a.swift,
       }));
 
-      // append all files with same key => backend pairs by index
       form.accounts.forEach((a) => {
         if (a.bankIcon instanceof File) {
           fd.append("bankIcon", a.bankIcon);
@@ -179,7 +178,7 @@ const CreateWay: React.FC = () => {
         setErrors(data.errors || {});
         return;
       }
-      console.log("✅ Created:", data);
+
       router.push("/dashboard/donate/way-to-donate");
     } catch (err) {
       console.error(err);
@@ -192,7 +191,7 @@ const CreateWay: React.FC = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Create Way To Donate</h1>
+      <Title text="Create Way to Donate" />
 
       <div className="w-3/4 flex flex-col items-start">
         <label className="font-bold">Banking Type</label>
@@ -336,7 +335,9 @@ const CreateWay: React.FC = () => {
         </div>
       ) : (
         <div>
-          <label className="font-medium">Accounts Detail...</label>
+          <label htmlFor="accountsParagraph" className="font-medium">
+            Accounts Detail
+          </label>
           <CkEditor
             editorData={accountsParagraph}
             setEditorData={setAccountsParagraph}
@@ -353,14 +354,12 @@ const CreateWay: React.FC = () => {
           btnText="Create Way"
           onClickFunction={onCreateClick}
           tertiary
-          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Cancel"
           onClickFunction={() => router.push("/dashboard/donate/way-to-donate")}
           primary
-          className="max-w-32"
         />
       </div>
     </div>

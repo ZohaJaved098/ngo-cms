@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/app/components/Button";
+import Title from "@/app/components/Title";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 type User = {
@@ -69,7 +70,7 @@ const ViewUser = () => {
   return (
     <div className="w-4/5 mt-10 m-auto flex flex-col items-start gap-5">
       <div className="w-full flex justify-between items-center">
-        <h1 className="font-black text-3xl">User Information:</h1>
+        <Title text="User Information" />
       </div>
       <div className="flex items-start w-full justify-between">
         <div className="flex flex-col justify-between items-start gap-5">
@@ -94,7 +95,6 @@ const ViewUser = () => {
               btnText={getBtnText(user.role)}
               secondary={true}
               type="button"
-              className="max-w-32"
               onClickFunction={() => onRoleChange(user._id, user.role)}
             />
           )}
@@ -105,7 +105,7 @@ const ViewUser = () => {
         type="button"
         primary={true}
         btnText="Go Back"
-        className="max-w-32 flex self-end "
+        className="flex self-end "
         onClickFunction={onCancelClick}
       />
     </div>

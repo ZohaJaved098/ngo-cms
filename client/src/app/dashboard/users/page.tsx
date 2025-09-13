@@ -1,10 +1,9 @@
 "use client";
 
-// import { useSelector } from "react-redux";
-
-// import { RootState } from "@/app/redux/store";
 import { Button } from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 type User = {
@@ -12,6 +11,7 @@ type User = {
   username: string;
   email: string;
   role: string;
+  profilePic: string;
 };
 
 const Users = () => {
@@ -57,7 +57,6 @@ const Users = () => {
     });
     await res.json();
     if (res.ok) {
-      // remove user from state immediately
       setUsers((prev) => prev.filter((user) => user._id !== id));
     }
     setLoading(false);
@@ -89,9 +88,7 @@ const Users = () => {
     );
 
     const data = await res.json();
-    console.log(data);
 
-    // refresh after update
     setUsers((prev) =>
       prev.map((user) =>
         user._id === id ? { ...user, role: data.updatedUser.role } : user
@@ -101,23 +98,25 @@ const Users = () => {
     setLoading(false);
   };
 
-  if (loading) <Loader />;
+  if (loading) return <Loader />;
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5 ">
-        <h3 className="text-xl font-semibold">All Users</h3>
+        <Title text="All Users" />
         <Button
           type="button"
           btnText="Add new Admin"
           secondary={true}
           onClickFunction={onNewClick}
-          className="max-w-40"
         />
       </div>
       <div className="overflow-x-auto w-full">
         <table className="w-full min-w-max table-auto border border-gray-300 text-sm text-left">
           <thead className="sticky top-0 z-10 rounded-md">
             <tr className="bg-gray-300">
+              <th className="border border-gray-300 px-4 py-2 max-w-28">
+                Profile Pic
+              </th>
               <th className="border border-gray-300 px-4 py-2 max-w-28">
                 Name
               </th>
@@ -141,6 +140,15 @@ const Users = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user._id}>
+                <td className="border border-gray-400 px-4 py-2 max-w-52 capitalize ">
+                  <Image
+                    src={user.profilePic}
+                    alt={user.username}
+                    width={100}
+                    height={100}
+                    className="rounded"
+                  />
+                </td>
                 <td className="border border-gray-400 px-4 py-2 max-w-52 capitalize ">
                   {user.username}
                 </td>

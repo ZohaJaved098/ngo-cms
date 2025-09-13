@@ -9,6 +9,7 @@ import { Button } from "@/app/components/Button";
 import { useDispatch } from "react-redux";
 import { loginSuccess, registerSuccess } from "@/app/redux/auth/authSlice";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 type AuthFormProps = {
   login: boolean;
@@ -20,6 +21,7 @@ type FormErrors = {
   confirmPassword?: string;
   role?: string;
   existingUser?: string;
+  profilePic?: string;
 };
 
 const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
@@ -34,10 +36,19 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
   const router = useRouter();
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
+  const [profilePic, setProfilePic] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const onProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfilePic(e.target.files[0]);
+      setPreviewUrl(URL.createObjectURL(e.target.files[0]));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,15 +59,35 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
       ? `${process.env.NEXT_PUBLIC_AUTH_API_URL}/login`
       : `${process.env.NEXT_PUBLIC_AUTH_API_URL}/register`;
 
-    const res = await fetch(authUrl, {
-      method: "POST",
-      body: JSON.stringify(inputs),
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    let options: RequestInit;
 
+    if (login) {
+      options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: inputs.email,
+          password: inputs.password,
+        }),
+        credentials: "include",
+      };
+    } else {
+      const fd = new FormData();
+      fd.append("username", inputs.username);
+      fd.append("email", inputs.email);
+      fd.append("password", inputs.password);
+      fd.append("confirmPassword", inputs.confirmPassword);
+      fd.append("role", inputs.role);
+      if (profilePic) fd.append("profilePic", profilePic);
+
+      options = {
+        method: "POST",
+        body: fd,
+        credentials: "include",
+      };
+    }
+
+    const res = await fetch(authUrl, options);
     const data = await res.json();
 
     if (!res.ok) {
@@ -73,6 +104,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
       confirmPassword: "",
       role: "",
     });
+    setProfilePic(null);
 
     if (login) {
       dispatch(loginSuccess({ ...data.user, token: data.token }));
@@ -99,6 +131,35 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
         onSubmit={handleSubmit}
         className="flex flex-col gap-2 w-full h-full"
       >
+        {!login && (
+          <>
+            <div className="h-32 w-32 mx-auto mt-5  rounded-full shadow-lg ">
+              <Image
+                src={
+                  previewUrl
+                    ? previewUrl
+                    : profilePic && typeof profilePic === "string"
+                    ? profilePic
+                    : `https://api.dicebear.com/6.x/avataaars/png?seed=${
+                        inputs.username || "default"
+                      }`
+                }
+                alt="profile pic"
+                className="rounded-full w-32 h-32 object-cover border-4 border-gray-300"
+                width={100}
+                height={100}
+              />
+            </div>
+            <InputField
+              label="Profile Pic"
+              name="profilePic"
+              type="file"
+              accept="image/*"
+              onChange={onProfilePicChange}
+              error={errors.profilePic}
+            />
+          </>
+        )}
         {!login && (
           <InputField
             type={"text"}
@@ -129,11 +190,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ login }) => {
               onChange={handleChange}
               error={errors.password}
             />
-            {/* <div className="flex justify-end text-sm">
-              <Link href="/" className="text-blue-400 underline">
-                Forgot Password?
-              </Link>
-            </div> */}
           </>
         ) : (
           <>

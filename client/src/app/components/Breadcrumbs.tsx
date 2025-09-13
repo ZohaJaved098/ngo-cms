@@ -8,7 +8,7 @@ type Page = {
   _id: string;
   title: string;
   slug: string;
-  parent?: string | null; // sirf id
+  parent?: string | null;
 };
 
 async function fetchPageById(id: string) {
@@ -27,7 +27,6 @@ async function buildBreadcrumbs(page: Page) {
 
   let current: Page | null = null;
 
-  // agar page ka parent hai toh fetch karo
   if (page.parent) {
     current = await fetchPageById(page.parent);
   }

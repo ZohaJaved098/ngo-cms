@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
 import Image from "next/image";
+import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -35,7 +37,6 @@ const EditImage = () => {
   const params = useParams();
   const imageId = params?.id as string;
 
-  // Fetch existing image data
   useEffect(() => {
     const fetchImage = async () => {
       try {
@@ -120,12 +121,12 @@ const EditImage = () => {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Loading image details...</div>;
+    return <Loader />;
   }
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Edit Slider Image</h1>
+      <Title text="Edit Slider Image" />
       <form method="POST" className="flex flex-col gap-5">
         <div className="flex justify-between gap-5">
           <InputField
@@ -197,16 +198,14 @@ const EditImage = () => {
             onChange={onChangeFunction}
           />
           <div className="flex flex-col w-full">
-            <label className="font-bold">Upload New Image (optional)</label>
-            <input
+            <InputField
+              label={`Upload New Image (optional)`}
+              name="image"
               type="file"
               accept="image/*"
               onChange={onFileChange}
-              className="border border-gray-300 p-2 rounded-md"
+              error={errors.image}
             />
-            {errors.image && (
-              <p className="text-red-500 text-sm">{errors.image}</p>
-            )}
             {formData.imageUrl && (
               <Image
                 src={formData.imageUrl}
@@ -225,14 +224,12 @@ const EditImage = () => {
             btnText="Update Image"
             onClickFunction={onUpdateClick}
             tertiary
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             onClickFunction={onCancelClick}
             primary
-            className="max-w-32"
           />
         </div>
       </form>

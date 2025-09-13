@@ -4,8 +4,10 @@ import { GrDocumentUpload, GrGallery } from "react-icons/gr";
 import { MdOutlineEvent } from "react-icons/md";
 import { RiPagesLine } from "react-icons/ri";
 import { BiDonateBlood } from "react-icons/bi";
-// import { SiAlwaysdata } from "react-icons/si";
+import { FaPeopleCarry } from "react-icons/fa";
 import { FaPeopleLine } from "react-icons/fa6";
+import { BiSolidContact } from "react-icons/bi";
+import { LuHandHelping } from "react-icons/lu";
 export const SideMenuData = [
   {
     id: "content",
@@ -53,11 +55,6 @@ export const SideMenuData = [
     id: "donation",
     title: "Donations",
     links: [
-      // {
-      //   name: "Ways to Donate",
-      //   icon: <SiAlwaysdata className="w-5 h-5" />,
-      //   link: "donate-ways",
-      // },
       {
         name: "Donate Informations",
         icon: <BiDonateBlood className="w-5 h-5" />,
@@ -70,9 +67,24 @@ export const SideMenuData = [
     title: "People",
     links: [
       {
-        name: "Our Team",
+        name: "Overall",
         icon: <FaPeopleLine className="w-5 h-5" />,
         link: "people",
+      },
+      {
+        name: "Our Team",
+        icon: <FaPeopleCarry className="w-5 h-5" />,
+        link: "people/teams",
+      },
+      {
+        name: "Our Contacts",
+        icon: <BiSolidContact className="w-5 h-5" />,
+        link: "people/contact",
+      },
+      {
+        name: "Volunteers",
+        icon: <LuHandHelping className="w-5 h-5" />,
+        link: "people/volunteers",
       },
     ],
   },

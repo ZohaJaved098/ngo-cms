@@ -7,6 +7,7 @@ import { InputField } from "@/app/components/InputField";
 import Loader from "@/app/components/Loader";
 import { RadioInput } from "@/app/components/RadioInput";
 import Image from "next/image";
+import Title from "@/app/components/Title";
 
 type BankingType =
   | "online_banking"
@@ -64,7 +65,6 @@ const EditWay: React.FC = () => {
   const [causeDescription, setCauseDescription] = useState("");
   const [accountsParagraph, setAccountsParagraph] = useState("");
 
-  // fetch existing way
   useEffect(() => {
     const fetchWay = async () => {
       try {
@@ -163,7 +163,6 @@ const EditWay: React.FC = () => {
         bankIcon: typeof a.bankIcon === "string" ? a.bankIcon : undefined,
       }));
 
-      // attach each file with its account _id
       form.accounts.forEach((a) => {
         if (a.bankIcon instanceof File) {
           fd.append(`bankIcon-${a._id}`, a.bankIcon);
@@ -202,7 +201,7 @@ const EditWay: React.FC = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">Edit Way To Donate</h1>
+      <Title text="Edit Way To Donate" />
 
       <RadioInput
         name="bankingType"
@@ -344,7 +343,7 @@ const EditWay: React.FC = () => {
         </div>
       ) : (
         <div>
-          <label>Accounts Detail...</label>
+          <label htmlFor="accountsParagraph">Accounts Detail</label>
           <CkEditor
             editorData={accountsParagraph}
             setEditorData={setAccountsParagraph}
@@ -360,14 +359,12 @@ const EditWay: React.FC = () => {
           btnText="Update Way"
           onClickFunction={onEditClick}
           tertiary
-          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Cancel"
           onClickFunction={() => router.push("/dashboard/donate/way-to-donate")}
           primary
-          className="max-w-32"
         />
       </div>
     </div>

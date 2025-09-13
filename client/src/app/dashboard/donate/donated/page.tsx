@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 type Donations = {
@@ -9,6 +10,7 @@ type Donations = {
   amount: number;
   way: Way;
   donorEmail: string;
+  donateStatus: string;
 };
 type Way = {
   _id: string;
@@ -47,7 +49,7 @@ const DonatedDashboard = () => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <h3 className="text-xl font-semibold">Donation Made</h3>
+      <Title text="Donation Made" />
       <div className="overflow-x-auto w-full">
         <table className="w-full min-w-max table-auto border border-gray-300 text-sm text-left">
           <thead className="sticky top-0 z-10 rounded-md">
@@ -63,6 +65,9 @@ const DonatedDashboard = () => {
               </th>
               <th className="border border-gray-300 px-4 py-2 max-w-28">
                 Amount Donated
+              </th>
+              <th className="border border-gray-300 px-4 py-2 max-w-28">
+                Status
               </th>
               <th className="border border-gray-300 px-4 py-2 max-w-28">
                 View
@@ -86,6 +91,19 @@ const DonatedDashboard = () => {
                     {donation.amount}
                   </td>
                   <td className="border border-gray-400 px-4 py-2 max-w-28">
+                    <p
+                      className={`capitalize ${
+                        (donation.donateStatus === "confirmed" &&
+                          "text-green-600") ||
+                        (donation.donateStatus === "pending" &&
+                          "text-gray-600") ||
+                        (donation.donateStatus === "failed" && "text-red-700")
+                      }`}
+                    >
+                      {donation.donateStatus}
+                    </p>
+                  </td>
+                  <td className="border border-gray-400 px-4 py-2 max-w-28">
                     <Button
                       type="button"
                       btnText="View"
@@ -97,7 +115,7 @@ const DonatedDashboard = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="text-center py-4">
+                <td colSpan={6} className="text-center py-4">
                   No donation methods found.
                 </td>
               </tr>

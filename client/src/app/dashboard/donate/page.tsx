@@ -5,13 +5,12 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import Chart from "@/app/components/Chart";
 import Card from "@/app/components/Card";
+import Title from "@/app/components/Title";
 const Donation = () => {
   const router = useRouter();
   return (
     <div className="w-full h-full py-10  ">
-      <h3 className="text-3xl text-gray-600 font-semibold">
-        Donation Informations
-      </h3>
+      <Title text="Donation Informations" />
       <div className="flex justify-between gap-10 flex-wrap sm:flex-nowrap items-center mt-5 w-4/5 m-auto">
         <Button
           type="button"

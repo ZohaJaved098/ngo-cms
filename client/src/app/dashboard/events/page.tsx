@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 
 type Event = {
   _id: string;
@@ -61,13 +62,12 @@ const Events = () => {
   return (
     <div className="flex flex-col gap-10 h-full w-full">
       <div className="flex justify-between items-center mt-5 w-full">
-        <h3 className="text-xl font-semibold">All Events</h3>
+        <Title text="All Events" />
         <Button
           type="button"
           btnText="Add new Event"
           secondary={true}
           onClickFunction={() => router.push("/dashboard/events/create")}
-          className="max-w-40"
         />
       </div>
 

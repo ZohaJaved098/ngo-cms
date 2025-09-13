@@ -6,6 +6,7 @@ import { Button } from "@/app/components/Button";
 import { InputField } from "@/app/components/InputField";
 import Image from "next/image";
 import CkEditor from "@/app/components/CkEditor";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -101,7 +102,7 @@ const EditDocument = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto flex flex-col gap-5">
-      <h1 className="text-3xl font-bold">Edit Document</h1>
+      <Title text="Edit Document" />
 
       <InputField
         label="Document Title"
@@ -170,6 +171,7 @@ const EditDocument = () => {
           editorData={description}
           setEditorData={setDescription}
           handleOnUpdate={onDescriptionChange}
+          field={"description"}
         />
         {errors.description && (
           <p className="text-red-500 text-sm">{errors.description}</p>
@@ -182,14 +184,12 @@ const EditDocument = () => {
           btnText="Update Document"
           onClickFunction={onUpdateClick}
           tertiary
-          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Cancel"
           onClickFunction={onCancelClick}
           primary
-          className="max-w-32"
         />
       </div>
     </div>

@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import { ReduxProvider } from "./redux/provider";
 import Footer from "./components/Footer";
-// import AuthInit from "./components/AuthInit";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +32,6 @@ export default function RootLayout({
       >
         <ReduxProvider>
           <Navbar />
-          {/* <AuthInit /> */}
           {children}
           <Footer />
         </ReduxProvider>

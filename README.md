@@ -1,77 +1,110 @@
-# 🛍️ A NGO-CMS website!
+# 🚽️ NGO-CMS Website
 
-WILL UPDATE THIS AT THE END!!
+A full-stack CMS built for NGOs to manage **events, blogs, dynamic pages, donations, teams, volunteers** ✨
+(Currently using demo data — you can swap in real data later.)
+
+---
 
 ## 🚀 Features
 
+- Manage **Events, Blogs, Dynamic Pages, Team Members, Users, Ways To Donate**
+- Track and visualize **Donations**
+- Interactive **Admin Dashboard** with charts
+- Authentication & User Management
+- Built with a **scalable MERN stack**
+
+---
+
 ## 📸 Data
 
-**_All data used here are Demo Data_**
+📢 **Note**: All data used here are **Demo Data** for testing and development purposes.
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: NextJs, Tailwind CSS
-- **Backend**: Express.js, Node.js
-- **Database**: MongoDb Atlas
+- **Frontend**: Next.js, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB Atlas
 
-## 🚀 Getting Started
+---
 
-Follow these simple steps to run the project locally:
+## 🏁 Getting Started
 
-1. **Clone**
+Follow these steps to run the project locally:
+
+### 1. Clone the Repository
 
 ```bash
-# Clone the repo
-git clone
-
+git clone <your-repo-url>
+cd <your-repo-name>
 ```
 
 ---
 
-2. **Set Up the MongoDb Database**
-
----
-
-3. **Configure Configure Environment Variables**
-
-- Before starting the server, create a .env file inside the server folder.
-  Here's what it should contain:
-
-5. **Start the Backend Server**
-
-- Navigate to the server directory and install dependencies:
+### 2. Set Up the Backend
 
 ```bash
-# go to server
 cd server
-
-# install dependencies
 npm install
-
-#start server
-npm start
 ```
 
----
+#### Create `.env` file in `/server`
 
-6. **Run the Frontend**
+```env
+PORT=5000
+MONGO_URI=your-mongodb-connection-string
+JWT_SECRET=your-secret-key
 
-- In a new terminal, navigate to the frontend directory:
+```
+
+Start the backend:
 
 ```bash
-#Go to frontend
-cd client
-
-#install dependencies
-npm install
-
-#start frontend
 npm run dev
 ```
 
-💻 The frontend will start on
+---
 
-## ✅ You're all set!
+### 3. Set Up the Frontend
 
-Now open your browser and explore fully working ngo site!
-Happy coding 🧁
+Open a new terminal:
+
+```bash
+cd client
+npm install
+```
+
+#### Create `.env` file in `/client`
+
+```env
+NEXT_PUBLIC_AUTH_API_URL=http://localhost:5000/api/auth
+NEXT_PUBLIC_USER_API_URL=http://localhost:5000/api/users
+NEXT_PUBLIC_PAGES_API_URL=http://localhost:5000/api/pages
+NEXT_PUBLIC_IMAGES_API_URL=http://localhost:5000/api/images
+NEXT_PUBLIC_BLOGS_API_URL=http://localhost:5000/api/blogs
+NEXT_PUBLIC_EVENTS_API_URL=http://localhost:5000/api/events
+NEXT_PUBLIC_CONTENT_API_URL=http://localhost:5000/api/content
+NEXT_PUBLIC_GALLERY_API_URL=http://localhost:5000/api/gallery
+NEXT_PUBLIC_DOCUMENT_API_URL=http://localhost:5000/api/document
+NEXT_PUBLIC_DONATION_API_URL=http://localhost:5000/api/donation
+NEXT_PUBLIC_CONTACT_API_URL=http://localhost:5000/api/contact
+NEXT_PUBLIC_TEAM_API_URL=http://localhost:5000/api/team
+NEXT_PUBLIC_VOLUNTEER_API_URL=http://localhost:5000/api/volunteer
+```
+
+Run the frontend:
+
+```bash
+npm run dev
+```
+
+Frontend will start at 👉 **[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## ✅ You're All Set!
+
+Now open your browser and explore your fully working NGO-CMS 🎉
+
+Happy coding 🦁

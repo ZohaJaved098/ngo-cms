@@ -2,6 +2,7 @@
 import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 type Account = {
@@ -73,7 +74,7 @@ const DonatedInformation = () => {
 
       const data = await res.json();
       if (res.ok) {
-        setDonation(data.donation); // update UI with latest status
+        setDonation(data.donation);
       } else {
         console.error("Failed to update status", data.message);
       }
@@ -88,9 +89,9 @@ const DonatedInformation = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">
-        View {donation.way?.cause}&apos;s Donation by {donation.donorName}
-      </h1>
+      <Title
+        text={`View ${donation.way?.cause}'s Donation by ${donation.donorName}`}
+      />
 
       <div className=" flex justify-between items-start">
         <div className="flex gap-3 items-center">
@@ -119,7 +120,7 @@ const DonatedInformation = () => {
         <div className="flex flex-col gap-3">
           <label className="font-semibold text-xl">Donor Informations</label>
           <p>
-            Name:{" "}
+            Name:
             <span>{donation.donorName ? donation.donorName : "Anonymous"}</span>
           </p>
           <div className="flex gap-3 items-center">
@@ -156,14 +157,12 @@ const DonatedInformation = () => {
             btnText="Edit Status to Confirmed"
             onClickFunction={() => handleStatusUpdate("confirmed")}
             tertiary
-            className="max-w-fit"
           />
           <Button
             type="button"
             btnText="Edit Status to Failed"
             onClickFunction={() => handleStatusUpdate("failed")}
             secondary
-            className="max-w-fit"
           />
         </div>
         <Button
@@ -171,7 +170,6 @@ const DonatedInformation = () => {
           btnText="Cancel"
           onClickFunction={onCancelClick}
           primary
-          className="max-w-32"
         />
       </div>
     </div>

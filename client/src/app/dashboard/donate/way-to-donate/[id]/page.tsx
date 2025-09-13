@@ -5,6 +5,7 @@ import { Button } from "@/app/components/Button";
 import Loader from "@/app/components/Loader";
 import Image from "next/image";
 import Contents from "@/app/components/Contents";
+import Title from "@/app/components/Title";
 
 type BankingType =
   | "online_banking"
@@ -70,7 +71,7 @@ const ViewWay: React.FC = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
-      <h1 className="font-bold text-3xl">View {way?.cause}</h1>
+      <Title text={`View ${way?.cause}`} />
 
       <div className="w-3/4 flex justify-between items-start">
         <div>
@@ -154,14 +155,12 @@ const ViewWay: React.FC = () => {
           btnText="Edit"
           onClickFunction={onEditClick}
           tertiary
-          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Cancel"
           onClickFunction={() => router.push("/dashboard/donate/way-to-donate")}
           primary
-          className="max-w-32"
         />
       </div>
     </div>

@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
+  _id: string;
   username: string;
   email: string;
   role: string;
   token: string;
+  profilePic?: string;
 }
 
 const guestUser: User = {
+  _id: "",
   username: "Guest",
   email: "",
   role: "guest",

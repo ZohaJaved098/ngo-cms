@@ -7,6 +7,7 @@ import { RootState } from "@/app/redux/store";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa6";
 import Contents from "@/app/components/Contents";
+import Title from "@/app/components/Title";
 
 type RegisteredUser = {
   name: string;
@@ -68,13 +69,15 @@ const FilteredEventsPage = () => {
 
   return (
     <div className="w-4/5 mx-auto mt-40 h-screen flex flex-col gap-10">
-      <h1 className="text-3xl font-bold">
-        {view === "month"
-          ? "Events This Month"
-          : view === "registered"
-          ? "Events You're Attending"
-          : "Events"}
-      </h1>
+      <Title
+        text={
+          view === "month"
+            ? "Events This Month"
+            : view === "registered"
+            ? "Events You're Attending"
+            : "Events"
+        }
+      />
 
       {events.length === 0 ? (
         <p className="text-gray-600 text-center">No event found </p>

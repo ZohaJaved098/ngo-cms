@@ -8,13 +8,14 @@ import { FaUsers } from "react-icons/fa6";
 
 import { TfiDashboard } from "react-icons/tfi";
 import ActiveLink from "./ActiveLink";
+import Title from "./Title";
 const Sidebar = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (
     <div className="min-w-3xs h-screen max-h-full overflow-y-scroll p-5 bg-blue-700 text-white flex flex-col gap-5 items-start">
       <div className="flex flex-col gap-5">
-        <h3 className="text-2xl font-bold capitalize">{user.role} Panel</h3>
+        <Title className="text-white" text={`${user.role} Panel`} />
         <p className="text-xl font-semibold capitalize">
           Hello {user.username}!
         </p>
@@ -70,15 +71,20 @@ const Sidebar = () => {
       <hr className=" w-full bg-white" />
       <h3 className="font-bold">Personal </h3>
       <div className="flex flex-col gap-5 w-full ">
-        <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
+        <span
+          // href="/dashboard/profile"
+          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+        >
           <FaCog className="w-5 h-5" />
-          Settings
+          Settings (demo)
         </span>
-        <span className="flex gap-5 items-center justify-normal w-full cursor-pointer ">
+        <ActiveLink
+          href="/dashboard/profile"
+          className="flex gap-5 items-center justify-normal w-full cursor-pointer p-2 hover:bg-blue-400/50 rounded-lg"
+        >
           <FaUserCog className="w-5 h-5" />
           My Profile
-        </span>
-        {/* <span></span> */}
+        </ActiveLink>
       </div>
     </div>
   );

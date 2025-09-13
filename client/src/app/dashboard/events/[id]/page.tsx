@@ -4,6 +4,7 @@ import { Button } from "@/app/components/Button";
 import Contents from "@/app/components/Contents";
 import Loader from "@/app/components/Loader";
 import Location from "@/app/components/Location";
+import Title from "@/app/components/Title";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -69,7 +70,7 @@ const ViewEvent = () => {
       )}
       <div className="flex justify-between items-start">
         <div className=" flex flex-col gap-3">
-          <h1 className="text-3xl font-bold">{event.name}</h1>
+          <Title text={event.name} />
           <p className="text-gray-600 text-base capitalize">
             {event.typeOfEvent}
           </p>
@@ -151,14 +152,12 @@ const ViewEvent = () => {
           btnText="Edit"
           onClickFunction={onEditClick}
           tertiary={true}
-          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Go Back"
           onClickFunction={onCancelClick}
           primary={true}
-          className="max-w-32"
         />
       </div>
     </div>

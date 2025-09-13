@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Button } from "@/app/components/Button";
+import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 
 interface SliderImage {
   _id: string;
@@ -56,7 +58,7 @@ const ViewImage = () => {
   }, [imageId]);
 
   if (loading) {
-    return <div className="text-center py-8">Loading image...</div>;
+    return <Loader />;
   }
 
   if (!image) {
@@ -65,9 +67,8 @@ const ViewImage = () => {
 
   return (
     <div className="w-4/5 my-10 mx-auto flex flex-col gap-8">
-      <h1 className="font-bold text-3xl text-gray-800">{image.title}</h1>
+      <Title text={image.title} />
 
-      {/* Image Preview */}
       <div className="w-full flex justify-center">
         <Image
           src={image.imageUrl}
@@ -78,7 +79,6 @@ const ViewImage = () => {
         />
       </div>
 
-      {/* Info Section */}
       <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
           Image Details
@@ -136,7 +136,6 @@ const ViewImage = () => {
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex justify-between items-center gap-5 mt-8">
         <Button
           type="button"
@@ -145,14 +144,12 @@ const ViewImage = () => {
           onClickFunction={() =>
             router.push(`/dashboard/image-sliders/edit/${image._id}`)
           }
-          className="max-w-32"
         />
         <Button
           type="button"
           btnText="Back to List"
           primary
           onClickFunction={() => router.push("/dashboard/image-sliders")}
-          className="max-w-32"
         />
       </div>
     </div>

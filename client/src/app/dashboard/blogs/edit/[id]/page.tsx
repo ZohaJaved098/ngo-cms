@@ -7,6 +7,7 @@ import { useRouter, useParams } from "next/navigation";
 import CkEditor from "@/app/components/CkEditor";
 import { RadioInput } from "@/app/components/RadioInput";
 import Image from "next/image";
+import Title from "@/app/components/Title";
 
 type FormErrors = {
   name?: string;
@@ -129,10 +130,9 @@ const EditBlog = () => {
   return (
     <div className="w-4/5 my-10 m-auto flex flex-col gap-5">
       <div className="flex items-start justify-between">
-        <h1 className="font-bold text-3xl">Edit Blog</h1>
+        <Title text="Edit Blog" />
       </div>
       <form method="POST" className="flex flex-col gap-5">
-        {/* Header Image Upload */}
         <div className="flex flex-col gap-2">
           <div className="flex flex-col gap-5  ">
             <InputField
@@ -156,7 +156,7 @@ const EditBlog = () => {
             )}
           </div>
         </div>
-        {/* Title + Type */}
+
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField
             label="Title of Blog"
@@ -178,7 +178,6 @@ const EditBlog = () => {
           />
         </div>
 
-        {/* Authors + Tags */}
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField
             label="Author(s) of Blog"
@@ -202,7 +201,6 @@ const EditBlog = () => {
 
         <hr className="w-full text-gray-400" />
 
-        {/* Published toggle */}
         <div className="max-w-32 flex flex-col items-start justify-center">
           <label htmlFor={"isPublished"} className="capitalize font-bold">
             Published
@@ -215,33 +213,30 @@ const EditBlog = () => {
           />
         </div>
 
-        {/* CKEditor */}
         <div className="flex flex-col items-center gap-5 w-full">
           <CkEditor
             editorData={content}
             setEditorData={setContent}
             handleOnUpdate={onContentChange}
+            field={"description"}
           />
           {errors.content && <p className="text-red-500">{errors.content}</p>}
         </div>
 
         <hr className="w-full text-gray-400" />
 
-        {/* Buttons */}
         <div className="flex items-center justify-between">
           <Button
             type="button"
             btnText="Save Changes"
             onClickFunction={onEditClick}
             tertiary={true}
-            className="max-w-32"
           />
           <Button
             type="button"
             btnText="Cancel"
             primary={true}
             onClickFunction={onCancelClick}
-            className="max-w-32"
           />
         </div>
       </form>

@@ -10,11 +10,13 @@ type Props = {
   heading: string;
 };
 import Link from "next/link";
+import Title from "./Title";
 
 const RelevantLinks = ({ items, heading }: Props) => {
   return (
     <div className="flex flex-col w-full md:w-1/4 gap-4">
-      <h2 className="text-2xl text-left font-bold ">{heading}</h2>
+      <Title text={heading} />
+      {/* <h2 className="text-2xl text-left font-bold ">{heading}</h2> */}
       <hr className="border-gray-300" />
 
       {items.length === 0 ? (

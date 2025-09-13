@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Loader from "@/app/components/Loader";
 import Contents from "../components/Contents";
+import Title from "../components/Title";
 
 interface AlbumType {
   _id: string;
@@ -38,7 +39,7 @@ const PublicGallery = () => {
 
   return (
     <div className="w-11/12 mx-auto mt-40 ">
-      <h1 className="text-3xl font-bold text-center mb-8">Photo Gallery</h1>
+      <Title text="Photo Gallery" />
       {albums.length === 0 ? (
         <p className="text-center text-gray-600">No albums available.</p>
       ) : (

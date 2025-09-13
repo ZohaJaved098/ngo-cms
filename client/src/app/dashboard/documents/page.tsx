@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Contents from "@/app/components/Contents";
 import Image from "next/image";
 import Link from "next/link";
+import Title from "@/app/components/Title";
 
 interface Document {
   _id: string;
@@ -23,7 +24,6 @@ const DocumentDashboard = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch documents
   useEffect(() => {
     const fetchDocuments = async () => {
       setLoading(true);
@@ -36,8 +36,6 @@ const DocumentDashboard = () => {
           }
         );
         const data = await res.json();
-        // console.log("data from dashboard documents", data);
-
         setDocuments(data || "");
       } catch (err) {
         console.error("Failed to fetch documents", err);
@@ -96,7 +94,7 @@ const DocumentDashboard = () => {
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5">
-        <h3 className="text-xl font-semibold">Documents</h3>
+        <Title text="Documents" />
         <Button
           type="button"
           btnText="Add New Document"

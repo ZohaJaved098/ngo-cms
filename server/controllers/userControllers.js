@@ -1,5 +1,13 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
+
+const profilePicUrl = (req) =>
+  req.file
+    ? `${req.protocol}://${req.get("host")}/uploads/profilePic/${
+        req.file.filename
+      }`
+    : undefined;
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -22,10 +30,10 @@ const getAUser = async (req, res) => {
 };
 const deleteUser = async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
     if (req.user.id === req.params.id) {
       return res.status(400).json({ message: "You cannot delete yourself" });
     }
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: `Users Deleted`, deletedUser });
   } catch (error) {
@@ -49,11 +57,19 @@ const createNewUser = async (req, res) => {
         .json({ message: "Username, Email and Password required" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    let profilePic = "";
+    if (req.file) {
+      profilePic = profilePicUrl(req);
+    } else {
+      const seed = encodeURIComponent(username || Date.now().toString());
+      profilePic = `https://api.dicebear.com/6.x/avataaars/png?seed=${seed}`;
+    }
     const newUser = await User.create({
       username,
       email,
       role: "admin",
       password: hashedPassword,
+      profilePic,
     });
     await newUser.save();
     res.status(201).json({ message: "New Admin created", newUser });
@@ -80,24 +96,30 @@ const updateUserRole = async (req, res) => {
       .json({ message: "Error updating role", error: error.message });
   }
 };
-
-const adminAccess = (req, res) => {
-  res.json({ message: `Only admin can access this` });
-};
-const managerAccess = (req, res) => {
-  res.json({ message: `Manager and Admin can access this` });
-};
-const userAccess = (req, res) => {
-  res.json({ message: `All can access this` });
+const updateUser = async (req, res) => {
+  const { username } = req.body;
+  try {
+    if (req.user.id !== req.params.id) {
+      return res
+        .status(403)
+        .json({ message: "Not authorized to update this profile" });
+    }
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    user.username = username || user.username;
+    if (req.file) user.profilePic = profilePicUrl(req);
+    await user.save();
+    res.status(200).json({ message: "User info updated", user });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating user", err });
+  }
 };
 
 module.exports = {
   getAllUsers,
-  adminAccess,
-  managerAccess,
-  userAccess,
   getAUser,
   deleteUser,
   updateUserRole,
   createNewUser,
+  updateUser,
 };

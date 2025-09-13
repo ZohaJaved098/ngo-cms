@@ -5,6 +5,7 @@ import { Button } from "@/app/components/Button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Loader from "@/app/components/Loader";
+import Title from "@/app/components/Title";
 
 interface SliderImage {
   _id: string;
@@ -75,15 +76,12 @@ const ImageSlider = () => {
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5">
-        <h3 className="text-xl font-semibold">
-          Images for Slider in Home Page
-        </h3>
+        <Title text="Images for Slider in Home Page" />
         <Button
           type="button"
           btnText="Add new Image"
           secondary={true}
           onClickFunction={onNewClick}
-          className="max-w-40"
         />
       </div>
 
