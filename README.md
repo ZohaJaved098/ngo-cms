@@ -36,8 +36,8 @@ Follow these steps to run the project locally:
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd <your-repo-name>
+git clone [<repo>](https://github.com/ZohaJaved098/ngo-cms.git)
+cd ngo-cms
 ```
 
 ---
