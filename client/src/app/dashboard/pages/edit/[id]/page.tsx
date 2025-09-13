@@ -35,7 +35,7 @@ const EditPage = () => {
   const [parentPages, setParentPages] = useState<ParentPage[]>([]);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState<string>("");
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams();
   const id = params.id;
@@ -117,6 +117,7 @@ const EditPage = () => {
     }
 
     try {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_PAGES_API_URL}/${id}`,
         {
@@ -136,6 +137,8 @@ const EditPage = () => {
       router.push("/dashboard/pages");
     } catch (err) {
       console.error("Error updating page:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -251,6 +254,7 @@ const EditPage = () => {
             btnText="Save Changes"
             onClickFunction={onEditClick}
             tertiary={true}
+            loading={loading}
           />
           <Button
             type="button"

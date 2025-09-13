@@ -16,6 +16,7 @@ type FormErrors = {
 const NewAdmin = () => {
   const router = useRouter();
   const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
   const [profilePic, setProfilePic] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -53,6 +54,7 @@ const NewAdmin = () => {
     formDataToSend.append("password", formData.password);
     if (profilePic) formDataToSend.append("profilePic", profilePic);
     try {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_USER_API_URL}/create`,
         {
@@ -72,6 +74,8 @@ const NewAdmin = () => {
       router.push("/dashboard/users");
     } catch (err) {
       console.error("Error creating admin:", err);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -145,6 +149,7 @@ const NewAdmin = () => {
             btnText="Add them as Admin"
             onClickFunction={onCreateClick}
             tertiary={true}
+            loading={loading}
           />
           <Button
             type="button"

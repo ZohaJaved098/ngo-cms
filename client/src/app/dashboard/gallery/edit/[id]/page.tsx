@@ -57,7 +57,6 @@ const EditAlbum = () => {
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
   const [newImages, setNewImages] = useState<NewImage[]>([]);
 
-  // ───────────────────────────────── Fetch album
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -90,7 +89,6 @@ const EditAlbum = () => {
     load();
   }, [albumId]);
 
-  // ───────────────────────────────── File add / remove
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
 
@@ -111,11 +109,9 @@ const EditAlbum = () => {
 
     setNewImages((prev) => [...prev, ...pack]);
     setErrors((prev) => ({ ...prev, images: undefined }));
-    // reset input so same file(s) can be picked again if needed
     e.currentTarget.value = "";
   };
 
-  // revoke blob URLs on unmount
   useEffect(() => {
     return () => {
       newImages.forEach((n) => URL.revokeObjectURL(n.preview));
@@ -146,37 +142,32 @@ const EditAlbum = () => {
 
   const removeNewImage = (index: number) => {
     setNewImages((prev) => {
-      // revoke URL to avoid leaks
       URL.revokeObjectURL(prev[index].preview);
       return prev.filter((_, i) => i !== index);
     });
   };
 
-  // ───────────────────────────────── Submit
   const onUpdateClick = async () => {
     const form = new FormData();
     form.append("albumTitle", albumTitle);
     form.append("albumDescription", albumDescription);
 
-    // existingCaptions: only for images NOT being removed
     const captionsMap: Record<string, string> = {};
     existingImages.forEach((img) => {
       if (!img.remove) captionsMap[img._id] = img.caption || "";
     });
     form.append("existingCaptions", JSON.stringify(captionsMap));
 
-    // removeImages: ids marked for removal
     const toRemove = existingImages.filter((i) => i.remove).map((i) => i._id);
     form.append("removeImages", JSON.stringify(toRemove));
 
-    // new images + their captions (aligned by order)
     newImages.forEach((n) => {
       form.append("images", n.file);
       form.append("captions", n.caption);
     });
 
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_GALLERY_API_URL}/${albumId}`,
         {
@@ -190,7 +181,7 @@ const EditAlbum = () => {
         setErrors(data.errors || {});
         return;
       }
-      // success
+
       setErrors({});
       router.push("/dashboard/gallery");
     } catch (e) {
@@ -221,7 +212,6 @@ const EditAlbum = () => {
         error={errors.albumTitle}
       />
 
-      {/* Existing images */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold text-lg">
@@ -349,9 +339,10 @@ const EditAlbum = () => {
       <div className="flex justify-between mt-2">
         <Button
           type="button"
-          btnText={loading ? "Saving..." : "Update Album"}
+          btnText={"Update Album"}
           onClickFunction={onUpdateClick}
           tertiary
+          loading={loading}
         />
         <Button
           type="button"

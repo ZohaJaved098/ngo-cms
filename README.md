@@ -1,4 +1,4 @@
-# 🚽️ NGO-CMS Website
+# NGO-CMS Website
 
 A full-stack CMS built for NGOs to manage **events, blogs, dynamic pages, donations, teams, volunteers** ✨
 (Currently using demo data — you can swap in real data later.)

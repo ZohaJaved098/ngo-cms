@@ -15,6 +15,7 @@ type FormErrors = {
 
 const CreateImage = () => {
   const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     alt: "",
@@ -55,6 +56,7 @@ const CreateImage = () => {
     }
 
     try {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_IMAGES_API_URL}/create`,
         {
@@ -74,6 +76,8 @@ const CreateImage = () => {
       router.push("/dashboard/image-sliders");
     } catch (error) {
       console.error("Error creating image", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,6 +175,7 @@ const CreateImage = () => {
             btnText="Create Image"
             onClickFunction={onCreateClick}
             tertiary
+            loading={loading}
           />
           <Button
             type="button"

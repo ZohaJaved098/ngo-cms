@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Contents from "../components/Contents";
 import Title from "../components/Title";
+import Loader from "../components/Loader";
 
 type Blog = {
   _id: string;
@@ -17,9 +18,11 @@ type Blog = {
 
 const PublicBlogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchBlogs = async () => {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BLOGS_API_URL}/all-blogs`
       );
@@ -27,10 +30,13 @@ const PublicBlogs = () => {
 
       const publishedOnly = data.blogs.filter((blog: Blog) => blog.isPublished);
       setBlogs(publishedOnly);
+      setLoading(true);
     };
 
     fetchBlogs();
   }, []);
+
+  if (loading) return <Loader />;
 
   return (
     <div className="w-11/12 mx-auto mt-40 flex flex-col gap-10">

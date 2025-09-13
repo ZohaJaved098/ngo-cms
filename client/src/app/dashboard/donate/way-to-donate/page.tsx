@@ -14,8 +14,8 @@ type AccountForm = {
   IBAN: string;
   branch: string;
   swift: string;
-  bankIconFile?: File | null; // newly uploaded file
-  bankIconUrl?: string | null; // existing server URL (for edit case)
+  bankIconFile?: File | null;
+  bankIconUrl?: string | null;
 };
 
 type WaysToDonate = {

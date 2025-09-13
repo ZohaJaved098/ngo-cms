@@ -11,6 +11,7 @@ const AddBanner = () => {
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [errors, setErrors] = useState<string | "">("");
+  const [loading, setLoading] = useState(false);
   const onBannerImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setBannerImage(e.target.files[0]);
@@ -19,6 +20,7 @@ const AddBanner = () => {
   };
 
   const onCreateClick = async () => {
+    setLoading(true);
     const formDataToSend = new FormData();
     if (bannerImage) {
       formDataToSend.append("bannerImage", bannerImage);
@@ -39,12 +41,16 @@ const AddBanner = () => {
         return;
       }
       setErrors("");
+      setBannerImage(null);
       router.push(`/dashboard/donate/way-to-donate`);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   const onCancelClick = () => {
+    setBannerImage(null);
     router.push("/dashboard/donate/way-to-donate");
   };
 
@@ -75,6 +81,7 @@ const AddBanner = () => {
             type="button"
             btnText="Add Banner"
             onClickFunction={onCreateClick}
+            loading={loading}
             tertiary
           />
           <Button

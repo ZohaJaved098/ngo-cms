@@ -22,6 +22,7 @@ type Blog = {
 
 const ViewBlog = () => {
   const [blog, setBlog] = useState<Blog | null>(null);
+  const [loading, setLoading] = useState(false);
   const params = useParams();
   const id = params.id as string;
   const router = useRouter();
@@ -37,7 +38,7 @@ const ViewBlog = () => {
 
   const togglePublish = async () => {
     if (!blog) return;
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("name", blog.name);
     formData.append("typeOfBlog", blog.typeOfBlog);
@@ -60,6 +61,7 @@ const ViewBlog = () => {
         prev ? { ...prev, isPublished: !prev.isPublished } : prev
       );
     }
+    setLoading(false);
   };
 
   if (!blog) return <Loader />;
@@ -117,6 +119,7 @@ const ViewBlog = () => {
           secondary
           type="button"
           className="max-w-24"
+          loading={loading}
           onClickFunction={togglePublish}
         />
       </div>

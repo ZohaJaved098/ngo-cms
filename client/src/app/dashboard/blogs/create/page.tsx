@@ -30,6 +30,7 @@ const CreateBlog = () => {
   const [content, setContent] = useState<string>("");
   const [headerImage, setHeaderImage] = useState<File | null>(null);
   const headerInputRef = useRef<HTMLInputElement>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onContentChange = (editor: string, field: string): void => {
@@ -48,6 +49,7 @@ const CreateBlog = () => {
   };
 
   const onCreateClick = async () => {
+    setLoading(true);
     const formDataToSend = new FormData();
 
     formDataToSend.append("name", formData.name);
@@ -94,7 +96,7 @@ const CreateBlog = () => {
     setContent("");
     setHeaderImage(null);
     if (headerInputRef.current) headerInputRef.current.value = "";
-
+    setLoading(false);
     router.push("/dashboard/blogs");
   };
 
@@ -126,7 +128,7 @@ const CreateBlog = () => {
             onChange={onHeaderImageChange}
             error={errors.headerImage}
           />
-        </div>{" "}
+        </div>
         <div className="flex justify-between items-start gap-5 w-full">
           <InputField
             label="Title of Blog"
@@ -192,6 +194,7 @@ const CreateBlog = () => {
             type="button"
             btnText="Create Blog"
             onClickFunction={onCreateClick}
+            loading={loading}
             tertiary={true}
           />
           <Button

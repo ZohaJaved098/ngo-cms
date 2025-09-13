@@ -23,6 +23,7 @@ const CreateDocument = () => {
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onChangeFunction = (
@@ -48,6 +49,7 @@ const CreateDocument = () => {
   };
 
   const onCreateClick = async () => {
+    setLoading(true);
     const formPayload = new FormData();
     formPayload.append("name", formData.name);
     formPayload.append("description", description);
@@ -71,13 +73,23 @@ const CreateDocument = () => {
       }
 
       setErrors({});
+      setBannerImage(null);
+      setDescription("");
+      setFormData({ name: "" });
       router.push("/dashboard/documents");
     } catch (error) {
       console.error("Error creating document", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const onCancelClick = () => router.push("/dashboard/documents");
+  const onCancelClick = () => {
+    setBannerImage(null);
+    setDescription("");
+    setFormData({ name: "" });
+    router.push("/dashboard/documents");
+  };
 
   return (
     <div className="w-4/5 my-10 mx-auto flex flex-col gap-5">
@@ -143,6 +155,7 @@ const CreateDocument = () => {
           type="button"
           btnText="Create"
           onClickFunction={onCreateClick}
+          loading={loading}
           tertiary
         />
         <Button

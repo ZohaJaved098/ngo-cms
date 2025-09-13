@@ -33,6 +33,7 @@ const CreatePage = () => {
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
   const [parentPages, setParentPages] = useState<ParentPage[]>([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -95,6 +96,7 @@ const CreatePage = () => {
     }
 
     try {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_PAGES_API_URL}/create`,
         {
@@ -124,6 +126,8 @@ const CreatePage = () => {
       router.push("/dashboard/pages");
     } catch (err) {
       console.error("Error creating page:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -229,6 +233,7 @@ const CreatePage = () => {
             btnText="Create Page"
             onClickFunction={onCreateClick}
             tertiary={true}
+            loading={loading}
           />
           <Button
             type="button"

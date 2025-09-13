@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/app/components/Button";
 import CkEditor from "@/app/components/CkEditor";
 import { InputField } from "@/app/components/InputField";
-import Loader from "@/app/components/Loader";
 import { RadioInput } from "@/app/components/RadioInput";
 import Image from "next/image";
 import Title from "@/app/components/Title";
@@ -187,8 +186,6 @@ const CreateWay: React.FC = () => {
     }
   };
 
-  if (loading) return <Loader />;
-
   return (
     <div className="w-4/5 my-10 mx-auto h-full flex flex-col gap-5">
       <Title text="Create Way to Donate" />
@@ -354,6 +351,7 @@ const CreateWay: React.FC = () => {
           btnText="Create Way"
           onClickFunction={onCreateClick}
           tertiary
+          loading={loading}
         />
         <Button
           type="button"

@@ -25,7 +25,7 @@ const CreateDocument = () => {
   const [file, setFile] = useState<File | null>(null);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [previewBanner, setPreviewBanner] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onChangeFunction = (
@@ -64,6 +64,7 @@ const CreateDocument = () => {
     if (file) formPayload.append("file", file);
 
     try {
+      setLoading(true);
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_DOCUMENT_API_URL}/create`,
         {
@@ -83,6 +84,8 @@ const CreateDocument = () => {
       router.push("/dashboard/documents");
     } catch (error) {
       console.error("Error creating document", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -157,6 +160,7 @@ const CreateDocument = () => {
             btnText="Create Document"
             onClickFunction={onCreateClick}
             tertiary
+            loading={loading}
           />
           <Button
             type="button"

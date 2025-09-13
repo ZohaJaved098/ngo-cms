@@ -10,6 +10,7 @@ const EditBanner = () => {
   const router = useRouter();
   const [bannerImage, setBannerImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string | "">("");
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const EditBanner = () => {
   };
 
   const onEditClick = async () => {
+    setLoading(true);
     const formDataToSend = new FormData();
     if (bannerImage) {
       formDataToSend.append("bannerImage", bannerImage);
@@ -52,12 +54,16 @@ const EditBanner = () => {
         return;
       }
       setErrors("");
+      setBannerImage(null);
       router.push(`/dashboard/donate/way-to-donate`);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
   const onCancelClick = () => {
+    setBannerImage(null);
     router.push("/dashboard/donate/way-to-donate");
   };
 
@@ -89,6 +95,7 @@ const EditBanner = () => {
             btnText="Save Edit"
             onClickFunction={onEditClick}
             tertiary
+            loading={loading}
           />
           <Button
             type="button"

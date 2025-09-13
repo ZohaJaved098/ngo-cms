@@ -23,10 +23,12 @@ type Blog = {
 const BlogDetailPage = () => {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [relatedBlogs, setRelatedBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
     const fetchBlogAndRelated = async () => {
+      setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${id}`);
       const data = await res.json();
       setBlog(data.blog);
@@ -41,12 +43,13 @@ const BlogDetailPage = () => {
         .slice(0, 4);
 
       setRelatedBlogs(related);
+      setLoading(false);
     };
 
     if (id) fetchBlogAndRelated();
   }, [id]);
 
-  if (!blog) return <Loader />;
+  if (!blog || loading) return <Loader />;
   if (!blog.isPublished)
     return (
       <p className="text-center mt-20"> This blog is not published yet.</p>
@@ -54,7 +57,6 @@ const BlogDetailPage = () => {
 
   return (
     <div className="flex justify-center gap-10 mt-40 p-4 mx-auto items-start w-11/12">
-      {/* Main blog content */}
       <div className="w-4/5 flex flex-col gap-6">
         <Image
           src={blog.headerImage || ""}
@@ -94,7 +96,6 @@ const BlogDetailPage = () => {
         <Contents content={blog.content} />
       </div>
 
-      {/* Relevant rightbar */}
       <RelevantLinks
         heading="Relevant Blogs"
         items={relatedBlogs.map((b) => ({

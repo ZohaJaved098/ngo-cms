@@ -30,6 +30,7 @@ const EditBlog = () => {
     isPublished: "",
   });
   const [content, setContent] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const [headerImage, setHeaderImage] = useState<File | null>(null);
   const [existingImage, setExistingImage] = useState<string>("");
 
@@ -77,6 +78,7 @@ const EditBlog = () => {
   };
 
   const onEditClick = async () => {
+    setLoading(true);
     const formDataToSend = new FormData();
 
     formDataToSend.append("name", formData.name);
@@ -109,6 +111,18 @@ const EditBlog = () => {
     }
 
     setErrors({});
+    setFormData({
+      name: "",
+      typeOfBlog: "",
+      content: "",
+      author: "",
+      tags: "",
+      isPublished: "",
+    });
+    setContent("");
+    setHeaderImage(null);
+    setExistingImage("");
+    setLoading(false);
     router.push("/dashboard/blogs");
   };
 
@@ -126,7 +140,6 @@ const EditBlog = () => {
     setExistingImage("");
     router.push("/dashboard/blogs");
   };
-
   return (
     <div className="w-4/5 my-10 m-auto flex flex-col gap-5">
       <div className="flex items-start justify-between">
@@ -230,6 +243,7 @@ const EditBlog = () => {
             type="button"
             btnText="Save Changes"
             onClickFunction={onEditClick}
+            loading={loading}
             tertiary={true}
           />
           <Button

@@ -37,7 +37,7 @@ const CreateEvent = () => {
   });
   const [description, setDescription] = useState<string>("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const onChangeFunction = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +59,7 @@ const CreateEvent = () => {
 
   const onCreateClick = async () => {
     const formDataToSend = new FormData();
-
+    setLoading(true);
     formDataToSend.append("name", formData.name);
     formDataToSend.append("typeOfEvent", formData.typeOfEvent);
     formDataToSend.append("description", description || formData.description);
@@ -91,6 +91,7 @@ const CreateEvent = () => {
     }
 
     setErrors({});
+    setLoading(false);
     router.push("/dashboard/events");
   };
 
@@ -204,6 +205,7 @@ const CreateEvent = () => {
             btnText="Create Event"
             onClickFunction={onCreateClick}
             tertiary
+            loading={loading}
           />
           <Button
             type="button"

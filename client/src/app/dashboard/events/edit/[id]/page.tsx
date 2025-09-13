@@ -39,7 +39,7 @@ const EditEvent = () => {
   const [description, setDescription] = useState<string>("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { id } = useParams();
 
@@ -90,6 +90,7 @@ const EditEvent = () => {
   };
 
   const onEditClick = async () => {
+    setLoading(true);
     const formDataToSend = new FormData();
 
     formDataToSend.append("name", formData.name);
@@ -124,6 +125,7 @@ const EditEvent = () => {
     }
 
     setErrors({});
+    setLoading(false);
     router.push("/dashboard/events");
   };
 
@@ -259,6 +261,7 @@ const EditEvent = () => {
             type="button"
             btnText="Save Changes"
             onClickFunction={onEditClick}
+            loading={loading}
             tertiary
           />
           <Button

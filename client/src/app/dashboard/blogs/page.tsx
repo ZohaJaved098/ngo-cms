@@ -4,7 +4,6 @@ import { Button } from "@/app/components/Button";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Contents from "@/app/components/Contents";
-import Loader from "@/app/components/Loader";
 import Title from "@/app/components/Title";
 
 type Blogs = {
@@ -24,14 +23,12 @@ const Blogs = () => {
 
   const router = useRouter();
   const fetchAllBlogs = async () => {
-    setLoading(true);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BLOGS_API_URL}/all-blogs`
     );
     const data = await res.json();
 
     setBlogs(data.blogs);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -70,15 +67,12 @@ const Blogs = () => {
   };
 
   const onDelete = async (id: string) => {
-    setLoading(true);
     await fetch(`${process.env.NEXT_PUBLIC_BLOGS_API_URL}/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
     fetchAllBlogs();
-    setLoading(false);
   };
-  if (loading) return <Loader />;
   return (
     <div className="flex flex-col gap-10 max-h-screen h-full w-full">
       <div className="flex justify-between items-center w-full mt-5 ">
@@ -180,6 +174,7 @@ const Blogs = () => {
                     type="button"
                     btnText={blog.isPublished ? "Unpublish" : "Publish"}
                     primary={true}
+                    loading={loading}
                     onClickFunction={() => handlePublishToggle(blog)}
                   />
                 </td>

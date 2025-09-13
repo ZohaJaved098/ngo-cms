@@ -23,6 +23,7 @@ const EditDocument = () => {
   const [existingBanner, setExistingBanner] = useState<string | null>(null);
   const [existingFile, setExistingFile] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const { id } = useParams();
@@ -35,7 +36,6 @@ const EditDocument = () => {
           { credentials: "include" }
         );
         const data = await res.json();
-        // console.log("data from edit document", data);
         setFormData({ name: data.name });
         setDescription(data.description || "");
         setExistingBanner(data.bannerImage || null);
@@ -69,6 +69,7 @@ const EditDocument = () => {
 
   const onUpdateClick = async () => {
     if (!id) return;
+    setLoading(true);
     const formPayload = new FormData();
     formPayload.append("name", formData.name);
     formPayload.append("description", description);
@@ -92,13 +93,23 @@ const EditDocument = () => {
       }
 
       setErrors({});
+      setBannerImage(null);
+      setDescription("");
+      setFormData({ name: "" });
       router.push("/dashboard/documents");
     } catch (error) {
       console.error("Error updating document", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const onCancelClick = () => router.push("/dashboard/documents");
+  const onCancelClick = () => {
+    setBannerImage(null);
+    setDescription("");
+    setFormData({ name: "" });
+    router.push("/dashboard/documents");
+  };
 
   return (
     <div className="w-4/5 my-10 mx-auto flex flex-col gap-5">
@@ -184,6 +195,7 @@ const EditDocument = () => {
           btnText="Update Document"
           onClickFunction={onUpdateClick}
           tertiary
+          loading={loading}
         />
         <Button
           type="button"
